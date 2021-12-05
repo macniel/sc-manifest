@@ -178,7 +178,7 @@ window.selectShop = function () {
   classifications.forEach((classification, index) => {
     buttonBoxHtml += `<button class="source-selector source--${classification.type}" onclick="showShopSelector(${index})"><span class="source__label">${classification.code}</span></button>`;
   });
-  document.getElementById("sourceStationName").value = page.name;
+  document.getElementById("sourceStationName").textContent = page.name;
   buttonBox.innerHTML = buttonBoxHtml;
   document.getElementById("shim").click();
   window.updateCommand();
@@ -227,7 +227,71 @@ window.renderManifest = function (data) {
   targetTable.innerHTML = "";
   let markup = "";
   data.forEach((set) => {
-    markup += `<tr><td>${set.commodity}</td><td>${set.shop}</td><td>${set.quantity} SCU</td><td>${set.price} aUEC</td><td><input type='number'><button>sell</button></td>`;
+    const commodityDetails = window.commodities.find(
+      (commodity) => commodity.code == set.commodity
+    );
+    const shopDetails = window.stations.find(
+      (shop) => shop.code == set.shop || shop.symbol == set.shop
+    );
+    markup += `<tr data-transaction="${set.transaction}"><td>${
+      commodityDetails.name
+    }</td><td>${shopDetails ? shopDetails.name : set.shop}</td><td>${
+      set.quantity
+    } cSCU</td><td>${
+      set.price
+    } aUEC</td><td class="manifest-item-actions"><button class="manifest-item-action action--harmful" ondblclick="dump('${
+      set.transaction
+    }')">dump</button><button class="manifest-item-action action" onclick="sell('${
+      set.transaction
+    }')">sell</button></td></tr>`;
   });
+  document.getElementById(
+    "tabHeader-current"
+  ).textContent = `Manifest (${data.length}/0)`;
   targetTable.innerHTML = markup;
+};
+
+window.dump = async function (transaction) {
+  await fetch("/dump", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ transaction }),
+  })
+    .then((response) => response.json())
+    .then((data) => renderManifest(data));
+};
+
+window.sell = function (transaction) {
+  // TODO: show popup for sell information
+  const transactionItem = document.querySelector(
+    `[data-transaction="${transaction}"]`
+  );
+  console.log(transactionItem);
+  if (transactionItem.parentNode.querySelector(".sellline")) {
+    transactionItem.parentNode.removeChild(
+      transactionItem.parentNode.querySelector(".sellline")
+    );
+  }
+  transactionItem.insertAdjacentHTML(
+    "afterend",
+    "<tr class='sellline'><td></td><td>Set Destination</td><td><input type='number' max='12000' min='0'></td><td><input/></td><td/></tr>"
+  );
+};
+
+window.switchToTab = function (tabName) {
+  document.querySelectorAll("#tabBar li").forEach((tab) => {
+    document.querySelectorAll("section.manifest").forEach((section) => {
+      if (section.classList.contains("manifest--" + tabName)) {
+        section.hidden = false;
+      } else {
+        section.hidden = true;
+      }
+    });
+
+    if (tab.id.indexOf("tabHeader-" + tabName) != -1) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
 };

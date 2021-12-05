@@ -4,11 +4,14 @@ import bodyParser from "body-parser";
 import path, { join } from "path";
 import { engine } from "express-handlebars";
 import fetch from "node-fetch";
+import guid from "guid";
 
 const app = express();
 const PORT = 80;
 const publicData = {};
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", "./views");
@@ -26,6 +29,7 @@ app.get("/", (req, res) => {
         unrefined: isRaw || isOre,
       };
     }),
+    commodityListing: JSON.stringify(publicData.commodities),
     stations: JSON.stringify(publicData.tradeports),
     systemmap: JSON.stringify(publicData.systems),
   });
@@ -38,8 +42,22 @@ app.get("/manifest", (req, res) => {
   res.send(JSON.stringify(userData));
 });
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.delete("/dump", (req, res) => {
+  console.log(req.body);
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  userData = userData.filter(
+    (manifestItem) => manifestItem.transaction != req.body.transaction
+  );
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(userData));
+});
+
 app.post("/buy", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
@@ -50,6 +68,7 @@ app.post("/buy", (req, res) => {
     shop: req.body.shop || "unknown",
     quantity: req.body.qty || 0,
     price: req.body.price || 0,
+    transaction: guid.raw(),
   });
   writeFileSync(
     join("data", "userdata.json"),

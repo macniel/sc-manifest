@@ -1,6 +1,6 @@
 @font-face {
   font-family: "krona";
-  src: url("./KronaOne-Regular.ttf");
+  src: url("./FiraCode-Regular.ttf");
 }
 
 :root {
@@ -17,21 +17,24 @@
 body {
   font-family: "Segoe UI";
   font-size: 18pt;
+  background-color: #e3e0e0;
 }
 
 header {
   display: block;
   background-color: rgba(0, 0, 0, 0.4);
   text-transform: uppercase;
+  min-height: 8px;
 }
 
 .four-section {
   display: flex;
   flex-flow: row wrap;
+  margin: 18px;
 }
 
 fieldset {
-  border: 1px solid orange;
+  border: 1px solid #ddb975;
   position: relative;
   padding-top: 20px;
   margin: 8px;
@@ -54,8 +57,14 @@ fieldset > legend {
   flex-grow: 1;
 }
 
-#four-section > fieldset {
-  padding: 24px 4px 4px 4px;
+.four-section > fieldset {
+  padding: 38px 4px 4px 4px;
+  box-shadow: 1px 2px 4px black;
+  background-color: #d1c689;
+}
+.four-section > fieldset > legend {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding-bottom: 10px;
 }
 
 .commodity.active {
@@ -166,7 +175,9 @@ fieldset > legend {
   flex-direction: column;
 }
 
-.touchnumberinput > * {
+.touchnumberinput .increase,
+.touchnumberinput .decrease {
+  padding-right: 80px;
 }
 
 .touchnumberinput > div:not(.inner) {
@@ -179,6 +190,7 @@ fieldset > legend {
 .touchnumberinput button {
   height: var(--button-size);
   width: var(--button-size);
+  margin-left: 2px;
 }
 
 .touchnumberinput .inner {
@@ -189,11 +201,17 @@ fieldset > legend {
 .touchnumberinput input {
   height: var(--button-size);
   font-family: "krona";
-  font-size: 40px;
+  font-size: 80px;
   text-align: right;
+  width: 400px;
 }
 .touchnumberinput label {
-  width: 80px;
+  display: inline-block;
+}
+
+.period-spacer {
+  height: 4px;
+  width: 36px;
   display: inline-block;
 }
 
@@ -212,6 +230,21 @@ fieldset > legend {
   background-color: rgba(0, 0, 0, 0.4);
   text-align: center;
   margin: 0 -2px;
+}
+
+input {
+  font-size: 40px;
+  font-family: "krona";
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#sourceStationName {
+  margin-top: 8px;
+  font-size: 40px;
+  font-family: "krona";
 }
 
 .shim:not([hidden]) {
@@ -278,6 +311,29 @@ fieldset > legend {
 .manifest-actions {
   display: flex;
   align-items: stretch;
+  margin: 28px;
+  border: 1px solid #ddb975;
+  background-color: #d1c689;
+  box-shadow: 1px 2px 4px black;
+  padding: 4px;
+}
+
+#tabBar {
+  display: inline-block;
+}
+#tabBar li {
+  display: inline-block;
+  margin: 4px 24px -2px 24px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding-top: 0;
+  padding: 0 24px 0 24px;
+}
+#tabBar li.active {
+  position: relative;
+  padding-top: 4px;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-bottom: 0;
 }
 
 .manifest-actions pre {
@@ -290,4 +346,18 @@ fieldset > legend {
 .manifest-actions .button-box button {
   height: var(--button-size);
   padding: 0 24px;
+}
+
+.manifest-items {
+  width: 100%;
+}
+
+.manifest-item-actions {
+  width: fit-content;
+}
+
+.manifest-item-action {
+  height: var(--button-size);
+  padding: 0 24px;
+  margin: 0 8px;
 }

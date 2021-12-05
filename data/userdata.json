@@ -1,1 +1,9 @@
-[{"commodity":"AGRI","shop":"NECRO","quantity":"13","price":"25.00"},{"commodity":"PRFO","shop":"MTPLA","quantity":"38","price":"0.44"}]
+[
+  {
+    "commodity": "DISP",
+    "shop": "BHHYD",
+    "quantity": "12000",
+    "price": "4.52",
+    "transaction": "0fe0aa9e-54a8-f501-10b2-b9d7119400dd"
+  }
+]

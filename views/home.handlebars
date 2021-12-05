@@ -1,5 +1,10 @@
+<ul id="tabBar">
+    <li onclick="switchToTab('entry')" id="tabHeader-entry" class="active">Add Manifest</li>
+    <li onclick="switchToTab('current')" id="tabHeader-current">Manifest (0/0)</li>
+    <li onclick="switchToTab('log')" id="tabHeader-log">Previous Manifests (0)</li>
+</ul>
 <section class="manifest manifest--entry">
-    <header>Add to Manifest</header>
+    <header></header>
     <div class="four-section">
     <fieldset id='commoditySelector'><legend>Commodity <label><input type="checkbox" onchange="toggleRaw('#commoditySelector')" checked> Unrefined</label></legend>
         {{#each commodities}}
@@ -13,17 +18,28 @@
     <div id='sourceSelectorBox'>
         <button class="source-selector source--star" onclick="showShopSelector(0)"><span class="source__label">ST</span></button>
     </div>
-    <input id='sourceStationName'>
+    <span id='sourceStationName'></span>
     </div>
     </fieldset>
     <fieldset id="quantityPanel"><legend>Quantity</legend>
         <div class="touchnumberinput">
             <div class="increase">
+                <button onclick="adjustQtyBy(10000000)" title='increase value by 1000000'>▲</button>
+                <button onclick="adjustQtyBy(1000000)" title='increase value by 100000'>▲</button>
+                <button onclick="adjustQtyBy(100000)" title='increase value by 10000'>▲</button>
+                <button onclick="adjustQtyBy(10000)" title='increase value by 1000'>▲</button>
+                <button onclick="adjustQtyBy(1000)" title='increase value by 1000'>▲</button>
                 <button onclick="adjustQtyBy(100)" title='increase value by 100'>▲</button>
             <button onclick="adjustQtyBy(10)" title='increase value by 10'>▲</button>
             <button onclick="adjustQtyBy(1)" title='increase value by 1'>▲</button></div>
-            <div class="inner"><input type="number" id="qty" onchange="setQtyTo(event.target.value)" pattern="[0-9]+([\.,][0-9]+)?" step="1"> SCU</div>
-            <div class="decrease"><button onclick="adjustQtyBy(-100)" title='decrease value by 100'>▼</button>
+            <div class="inner"><input type="number" id="qty" onchange="setQtyTo(event.target.value)" pattern="[0-9]+([\.,][0-9]+)?" step="1"> cSCU</div>
+            <div class="decrease">
+                    <button onclick="adjustQtyBy(-10000000)" title='decrease value by 10000000'>▼</button>
+                    <button onclick="adjustQtyBy(-1000000)" title='decrease value by 1000000'>▼</button>
+                    <button onclick="adjustQtyBy(-100000)" title='decrease value by 100000'>▼</button>
+            <button onclick="adjustQtyBy(-10000)" title='decrease value by 10000'>▼</button>
+                <button onclick="adjustQtyBy(-1000)" title='decrease value by 1000'>▼</button>
+            <button onclick="adjustQtyBy(-100)" title='decrease value by 100'>▼</button>
             
             <button onclick="adjustQtyBy(-10)" title='decrease value by 10'>▼</button>
             <button onclick="adjustQtyBy(-1)" title='decrease value by 1'>▼</button></div>
@@ -32,16 +48,23 @@
     <fieldset id="buyPanel"><legend>Buy Price</legend>
     <div class="touchnumberinput">
             <div class="increase">
-            
+            <button onclick="adjustPriceBy(10000)" title='increase value by 10000'>▲</button>
+            <button onclick="adjustPriceBy(1000)" title='increase value by 1000'>▲</button>
+            <button onclick="adjustPriceBy(100)" title='increase value by 100'>▲</button>
             <button onclick="adjustPriceBy(10)" title='increase value by 10'>▲</button>
             <button onclick="adjustPriceBy(1)" title='increase value by 1'>▲</button>
+            <div class="period-spacer"></div>
             <button onclick="adjustPriceBy(0.1)" title='increase value by a tenth'>▲</button>
             <button onclick="adjustPriceBy(0.01)" title='increase value by a hundreth'>▲</button>
             </div>
             <div class="inner"><input type="number" id="price" onchange="setQtyTo(event.target.value)" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"><label for="price">aUEC</label></div>
             <div class="decrease">
+            <button onclick="adjustPriceBy(-10000)" title='decrease value by 10000'>▼</button>    
+            <button onclick="adjustPriceBy(-1000)" title='decrease value by 1000'>▼</button>    
+            <button onclick="adjustPriceBy(-100)" title='decrease value by 100'>▼</button>    
             <button onclick="adjustPriceBy(-10)" title='decrease value by 10'>▼</button>    
             <button onclick="adjustPriceBy(-1)" title='decrease value by 1'>▼</button>    
+            <div class="period-spacer"></div>
             <button onclick="adjustPriceBy(-0.1)" title='decrease value by a tenth'>▼</button>
             
             <button onclick="adjustPriceBy(-0.01)" title='decrease value by a hundreth'>▼</button>
@@ -51,13 +74,13 @@
     <footer class="manifest-actions">
         <pre id="commandline" class="command">ACSU HURL1 43@1.35</pre>
         <div class="button-box">
-            <button onclick="processCommand('#commandline')">Add</button>
+            <button onclick="processCommand('#commandline')">Add to Manifest</button>
         </div>
     </footer>
 </section>
-<section class="manifest manifest--current">
-    <header>Current Manifest</header>
-    <table>
+<section class="manifest manifest--current" hidden>
+    <header></header>
+    <table class="manifest-items">
         <thead>
             <tr>
                 <th>Commodity</th>
@@ -71,14 +94,40 @@
                 
             </tbody>
     </table>
+    <footer class="manifest-actions">
+        <div class="button-box">
+            <button onclick="archiveManifest()">Archive Manifest</button>
+        </div>
+    </footer>
 </section>
-<section class="manifest manifest--log">
-    <header>Log</header>
+<section class="manifest manifest--log" hidden>
+    <header></header>
+    <table class="manifest-items">
+        <thead>
+            <tr>
+                <th>Manifest Id</th>
+                <th>Shipped</th>
+                <th>Stations</th>
+                <th>Volume</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>2951-07-31</td>
+                <td>BHHYD, CRUL5, CRUL5, CRUL5, CRUL5</td>
+                <td>12000 cSCU</td>
+                <td>8561.16 aUEC</td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 <script>
     window.stations = {{{stations}}}
     window.system = {{{systemmap}}}
+    window.commodities = {{{commodityListing}}}
 </script>
 
 <div class="shim" id="shim" hidden onclick="hidePopup(event)">
@@ -93,4 +142,4 @@
         <button onclick="hidePopup()">Cancel</button>
         </div>
     </div>
-    </div>
+</div>

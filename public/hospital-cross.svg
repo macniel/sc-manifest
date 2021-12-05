@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 512px; width: 512px;"><path d="M0 0h512v512H0z" fill="#000" fill-opacity="1"></path><g class="" transform="translate(0,0)" style=""><path d="M174.688 28.063v71.625h-80.75v81.374H22.313v160.094h71.625v80.72h80.75v71.655H334.75v-71.655h81.375v-80.72h71.656V181.063h-71.655V99.688H334.75V28.064H174.688zm18.687 18.687h122.688v153H469.093v122.72H316.062V474.843H193.375V322.47H41V199.75h152.375v-153z" fill="#fff" fill-opacity="1"></path></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <path d="M174.688,28.063L174.688,99.688L93.938,99.688L93.938,181.062L22.313,181.062L22.313,341.156L93.938,341.156L93.938,421.876L174.688,421.876L174.688,493.531L334.75,493.531L334.75,421.876L416.125,421.876L416.125,341.156L487.781,341.156L487.781,181.063L416.126,181.063L416.126,99.688L334.75,99.688L334.75,28.064L174.688,28.064L174.688,28.063ZM193.375,46.75L316.063,46.75L316.063,199.75L469.093,199.75L469.093,322.47L316.062,322.47L316.062,474.843L193.375,474.843L193.375,322.47L41,322.47L41,199.75L193.375,199.75L193.375,46.75Z" style="fill:white;fill-rule:nonzero;"/>
+    </g>
+</svg>
