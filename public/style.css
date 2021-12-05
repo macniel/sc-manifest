@@ -1,0 +1,293 @@
+@font-face {
+  font-family: "krona";
+  src: url("./KronaOne-Regular.ttf");
+}
+
+:root {
+  --button-size: 64px;
+  --margin: 8px -2px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+body {
+  font-family: "Segoe UI";
+  font-size: 18pt;
+}
+
+header {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
+}
+
+.four-section {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+fieldset {
+  border: 1px solid orange;
+  position: relative;
+  padding-top: 20px;
+  margin: 8px;
+}
+fieldset > legend {
+  position: absolute;
+  height: 20px;
+  left: 0;
+  top: 0;
+  right: 0;
+}
+
+#commoditySelector {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
+
+#sourceStation {
+  flex-grow: 1;
+}
+
+#four-section > fieldset {
+  padding: 24px 4px 4px 4px;
+}
+
+.commodity.active {
+  background-color: blue;
+}
+
+.commodity {
+  border: 2px solid #303030;
+  background-color: black;
+  position: relative;
+  width: var(--button-size);
+  height: var(--button-size);
+  margin: var(--margin);
+  background-size: var(--button-size);
+}
+
+.commodity--metal--is-raw {
+  background-image: url("./ore.svg");
+}
+
+.commodity--metal {
+  background-image: url("./metal.svg");
+}
+
+.commodity--gas,
+.commodity--halogen {
+  background-image: url("./foam.svg");
+}
+
+.commodity--mineral--is-raw {
+  background-image: url("./minerals.svg");
+}
+.commodity--mineral {
+  background-image: url("./gems.svg");
+}
+.commodity--drug,
+.commodity--vice {
+  background-image: url("./medicines.svg");
+}
+.commodity--medical {
+  background-image: url("./hospital-cross.svg");
+}
+.commodity--food {
+  background-image: url("./knife-fork.svg");
+}
+.commodity--agricultural {
+  background-image: url("./wheat.svg");
+}
+
+.commodity--natural {
+  background-image: url("./three-leaves.svg");
+}
+.commodity--waste {
+  background-image: url("waste.svg");
+}
+.commodity--junk,
+.commodity--scrap,
+.commodity--temporary {
+  background-image: url("./recycle.svg");
+}
+.commodity__label {
+  position: absolute;
+  left: 0;
+  bottom: -16px;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  margin: 0 -2px;
+}
+.source-selector--outer {
+  display: flex;
+  flex-direction: column;
+}
+.source-selector--outer > * {
+  flex-grow: 1;
+}
+.source-selector {
+  margin-bottom: 8px;
+}
+
+.source--city {
+  background-image: url("./location-city.svg");
+}
+
+.source--system {
+  background-image: url("./location-star.svg");
+}
+
+.source--planet {
+  background-image: url("./location-planet.svg");
+}
+
+.source--station {
+  background-image: url("./location-orbital-station.svg");
+}
+
+.source--shop,
+.source--outpost {
+  background-image: url("./location-shop.svg");
+}
+
+.source--satellite {
+  background-image: url("./location-moon.svg");
+}
+
+.touchnumberinput {
+  display: flex;
+  flex-direction: column;
+}
+
+.touchnumberinput > * {
+}
+
+.touchnumberinput > div:not(.inner) {
+  text-align: right;
+}
+.touchnumberinput > div:not(.inner) button {
+  width: 40px;
+}
+
+.touchnumberinput button {
+  height: var(--button-size);
+  width: var(--button-size);
+}
+
+.touchnumberinput .inner {
+  height: var(--button-size);
+  display: block;
+}
+
+.touchnumberinput input {
+  height: var(--button-size);
+  font-family: "krona";
+  font-size: 40px;
+  text-align: right;
+}
+.touchnumberinput label {
+  width: 80px;
+  display: inline-block;
+}
+
+.source-selector {
+  width: var(--button-size);
+  height: var(--button-size);
+  white-space: nowrap;
+  position: relative;
+}
+
+.source-selector .source__label {
+  position: absolute;
+  left: 0;
+  bottom: -16px;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  margin: 0 -2px;
+}
+
+.shim:not([hidden]) {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  width: 512px;
+  height: 640px;
+  background-color: #efefef;
+  position: relative;
+  padding: 0 16px 16px 16px;
+  pointer-events: all;
+}
+
+.popup header {
+  margin: 0 -16px;
+}
+
+.popup-actions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
+
+.popup-actions button {
+  height: var(--button-size);
+  padding: 0 calc(var(--button-size) / 2);
+}
+
+.popup #currentPath {
+  display: block;
+  text-indent: 0;
+}
+.popup #currentPath li {
+  text-indent: 0;
+  display: inline-block;
+  margin: 0 4px;
+}
+.popup #currentPath li:not(.current) {
+  text-decoration: underline;
+}
+.popup #currentPath li::before {
+  content: "/";
+  text-decoration: none;
+}
+
+.popup #shopChildren li {
+  height: 24px;
+  display: block;
+  font-size: 32px;
+  margin: 4px;
+  padding-bottom: 8px;
+}
+
+.manifest-actions {
+  display: flex;
+  align-items: stretch;
+}
+
+.manifest-actions pre {
+  flex-grow: 1;
+}
+
+.manifest-actions .button-box {
+  flex-shrink: 1;
+}
+.manifest-actions .button-box button {
+  height: var(--button-size);
+  padding: 0 24px;
+}

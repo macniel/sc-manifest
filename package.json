@@ -1,0 +1,28 @@
+{
+  "name": "sc-manifest",
+  "version": "1.0.0",
+  "description": "A manifest manager for Star Citizen Traders",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node -r dotenv/config index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macniel/sc-manifest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/macniel/sc-manifest/issues"
+  },
+  "homepage": "https://github.com/macniel/sc-manifest#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^6.0.2",
+    "node-fetch": "^3.1.0"
+  }
+}

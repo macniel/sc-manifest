@@ -1,0 +1,96 @@
+<section class="manifest manifest--entry">
+    <header>Add to Manifest</header>
+    <div class="four-section">
+    <fieldset id='commoditySelector'><legend>Commodity <label><input type="checkbox" onchange="toggleRaw('#commoditySelector')" checked> Unrefined</label></legend>
+        {{#each commodities}}
+        <button data-raw="{{this.unrefined}}" onclick="setCommodity(event, '{{this.symbol}}')" class="commodity commodity--{{this.className}}" title="{{this.name}}">
+            <span class="commodity__label">{{this.symbol}}</span>
+        </button>
+        {{/each}}
+    </fieldset>
+    <fieldset id="sourceStation"><legend>Source Station (Optional)</legend>
+    <div class="source-selector--outer">
+    <div id='sourceSelectorBox'>
+        <button class="source-selector source--star" onclick="showShopSelector(0)"><span class="source__label">ST</span></button>
+    </div>
+    <input id='sourceStationName'>
+    </div>
+    </fieldset>
+    <fieldset id="quantityPanel"><legend>Quantity</legend>
+        <div class="touchnumberinput">
+            <div class="increase">
+                <button onclick="adjustQtyBy(100)" title='increase value by 100'>▲</button>
+            <button onclick="adjustQtyBy(10)" title='increase value by 10'>▲</button>
+            <button onclick="adjustQtyBy(1)" title='increase value by 1'>▲</button></div>
+            <div class="inner"><input type="number" id="qty" onchange="setQtyTo(event.target.value)" pattern="[0-9]+([\.,][0-9]+)?" step="1"> SCU</div>
+            <div class="decrease"><button onclick="adjustQtyBy(-100)" title='decrease value by 100'>▼</button>
+            
+            <button onclick="adjustQtyBy(-10)" title='decrease value by 10'>▼</button>
+            <button onclick="adjustQtyBy(-1)" title='decrease value by 1'>▼</button></div>
+        </div>
+    </fieldset>
+    <fieldset id="buyPanel"><legend>Buy Price</legend>
+    <div class="touchnumberinput">
+            <div class="increase">
+            
+            <button onclick="adjustPriceBy(10)" title='increase value by 10'>▲</button>
+            <button onclick="adjustPriceBy(1)" title='increase value by 1'>▲</button>
+            <button onclick="adjustPriceBy(0.1)" title='increase value by a tenth'>▲</button>
+            <button onclick="adjustPriceBy(0.01)" title='increase value by a hundreth'>▲</button>
+            </div>
+            <div class="inner"><input type="number" id="price" onchange="setQtyTo(event.target.value)" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"><label for="price">aUEC</label></div>
+            <div class="decrease">
+            <button onclick="adjustPriceBy(-10)" title='decrease value by 10'>▼</button>    
+            <button onclick="adjustPriceBy(-1)" title='decrease value by 1'>▼</button>    
+            <button onclick="adjustPriceBy(-0.1)" title='decrease value by a tenth'>▼</button>
+            
+            <button onclick="adjustPriceBy(-0.01)" title='decrease value by a hundreth'>▼</button>
+            </div>
+        </div></fieldset>
+    </div>
+    <footer class="manifest-actions">
+        <pre id="commandline" class="command">ACSU HURL1 43@1.35</pre>
+        <div class="button-box">
+            <button onclick="processCommand('#commandline')">Add</button>
+        </div>
+    </footer>
+</section>
+<section class="manifest manifest--current">
+    <header>Current Manifest</header>
+    <table>
+        <thead>
+            <tr>
+                <th>Commodity</th>
+                <th>Source</th>
+                <th>Quantity</th>
+                <th>Buy</th>
+                <th>Sell</th>
+            </tr>
+            </thead>
+            <tbody id="manifest">
+                
+            </tbody>
+    </table>
+</section>
+<section class="manifest manifest--log">
+    <header>Log</header>
+</section>
+
+<script>
+    window.stations = {{{stations}}}
+    window.system = {{{systemmap}}}
+</script>
+
+<div class="shim" id="shim" hidden onclick="hidePopup(event)">
+    <div class="popup" id='shopPopup' hidden>
+        <header>Refine Source</header>
+        <ul id="currentPath"><li>ST</li></ul>
+        <ul id="shopChildren">
+        </ul>
+        <div class="popup-actions">
+        <button onclick="selectShop()">Accept</button>
+        <button onclick="revertShop()">Revert</button>
+        <button onclick="hidePopup()">Cancel</button>
+        </div>
+    </div>
+    </div>

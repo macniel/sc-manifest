@@ -1,0 +1,137 @@
+[
+  {
+    "code": "ST",
+    "type": "system",
+    "name": "Stanton",
+    "children": [
+      {
+        "code": "HUR",
+        "type": "planet",
+        "name": "Hurston",
+        "children": [
+          {
+            "code": "LOR",
+            "type": "city",
+            "name": "Lorville"
+          },
+          {
+            "code": "ABER",
+            "type": "satellite",
+            "name": "Aberdeen"
+          },
+          {
+            "code": "ARIA",
+            "type": "satellite",
+            "name": "Arial"
+          },
+          {
+            "code": "EVERU",
+            "type": "station",
+            "name": "Everus Harbor"
+          },
+          {
+            "code": "MAGD",
+            "type": "satellite",
+            "name": "Magda"
+          },
+          {
+            "code": "ITAA",
+            "type": "satellite",
+            "name": "Ita"
+          }
+        ]
+      },
+      {
+        "code": "CRU",
+        "type": "planet",
+        "name": "Crusader",
+        "children": [
+          {
+            "code": "ORI",
+            "type": "city",
+            "name": "Orison"
+          },
+          {
+            "code": "POLIS",
+            "type": "station",
+            "name": "Port Olisar"
+          },
+          {
+            "code": "YELA",
+            "type": "satellite",
+            "name": "Yela"
+          },
+          {
+            "code": "DAYM",
+            "type": "satellite",
+            "name": "Daymar"
+          },
+          {
+            "code": "CELL",
+            "type": "satellite",
+            "name": "Cellin"
+          }
+        ]
+      },
+      {
+        "code": "ARC",
+        "type": "planet",
+        "name": "ArcCorp",
+        "children": [
+          {
+            "code": "A18",
+            "type": "city",
+            "name": "Area18"
+          },
+          {
+            "code": "BAIJI",
+            "type": "station",
+            "name": "Baijini Point"
+          },
+          {
+            "code": "LYRI",
+            "type": "satellite",
+            "name": "Lyria"
+          },
+          {
+            "code": "WALA",
+            "type": "satellite",
+            "name": "Wala"
+          }
+        ]
+      },
+      {
+        "code": "MIC",
+        "type": "planet",
+        "name": "Microtech",
+        "children": [
+          {
+            "code": "NBB",
+            "type": "city",
+            "name": "New Babbage"
+          },
+          {
+            "code": "TRESS",
+            "type": "station",
+            "name": "Port Tressler"
+          },
+          {
+            "code": "CLIO",
+            "type": "satellite",
+            "name": "Clio"
+          },
+          {
+            "code": "CALL",
+            "type": "satellite",
+            "name": "Calliope"
+          },
+          {
+            "code": "EUTE",
+            "type": "satellite",
+            "name": "Euterpe"
+          }
+        ]
+      }
+    ]
+  }
+]
