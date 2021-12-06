@@ -30,31 +30,35 @@ window.setCommodity = function (event, symbol) {
   updateCommand();
 };
 
-window.adjustQtyBy = function (amount) {
-  window.quantity = parseInt(window.quantity) + amount;
-  document.getElementById("qty").value = window.quantity;
+window.adjustQtyBy = function (amount, isDestination) {
+  window[isDestination ? "destQuantity" : "quantity"] =
+    parseInt(window[isDestination ? "destQuantity" : "quantity"] || 0) + amount;
+  document.getElementById([isDestination ? "destQty" : "qty"]).value =
+    window[isDestination ? "destQuantity" : "quantity"];
   updateCommand();
 };
 
-window.setQtyTo = function (amount) {
-  window.quantity = parseInt(amount);
+window.setQtyTo = function (amount, isDestination) {
+  window[isDestination ? "destQuantity" : "quantity"] = parseInt(amount) || 0;
   updateCommand();
 };
 
-window.adjustPriceBy = function (amount) {
-  window.price = parseFloat(window.price) + amount;
-  document.getElementById("price").value = window.price.toFixed(2);
+window.adjustPriceBy = function (amount, isDestination) {
+  window[isDestination ? "destPrice" : "price"] =
+    parseFloat(window[isDestination ? "destPrice" : "price"] || 0) + amount;
+  document.getElementById([isDestination ? "destPrice" : "price"]).value =
+    window[isDestination ? "destPrice" : "price"].toFixed(2);
   updateCommand();
 };
 
 window.setPriceTo = function (amount) {
-  window.price = parseFloat(amount);
+  window[isDestination ? "destPrice" : "price"] = parseFloat(amount || 0);
   updateCommand();
 };
 
 window.updateCommand = function () {
   document.getElementById("commandline").textContent = `${window.commodity} ${
-    window.station
+    window.sourceStation
   } ${window.quantity.toFixed(0)}@${window.price.toFixed(2)}`;
   window.command = document.getElementById("commandline").textContent;
   localStorage.setItem("command", window.command);
@@ -82,10 +86,17 @@ window.processCommand = async function (commandSelector) {
   renderManifest(response);
 };
 
-window.shopPath = ["ST"];
-window.showShopSelector = function (resetToSegment) {
+window.sourcePath = ["ST"];
+window.destPath = ["ST"];
+window.popupMode = "shop";
+window.showShopSelector = function (resetToSegment, isDestination) {
   const shim = document.getElementById("shim");
   const popup = document.getElementById("shopPopup");
+  if (isDestination) {
+    window.popupMode = "dest";
+  } else {
+    window.popupMode = "source";
+  }
   shim.hidden = false;
   shim.forPopup = "shopPopup";
   popup.hidden = false;
@@ -97,7 +108,10 @@ window.showShopSelector = function (resetToSegment) {
 };
 
 window.resetShopSelectorTo = function (position) {
-  window.shopPath = window.shopPath.splice(0, position);
+  window[window.popupMode + "Path"] = window[window.popupMode + "Path"].splice(
+    0,
+    position
+  );
   window.updateShopSelector();
 };
 
@@ -107,9 +121,8 @@ window.updateShopSelector = function () {
   let page = { name: "universe", symbol: "UNIV", children: window.system };
   let crumbsHtml = "";
   let idx = 0;
-  for (idx in window.shopPath) {
-    const pathSegment = window.shopPath[idx];
-    console.log(window.shopPath);
+  for (idx in window[window.popupMode + "Path"]) {
+    const pathSegment = window[window.popupMode + "Path"][idx];
     if (page.children) {
       crumbsHtml += `<li onclick="resetShopSelectorTo('${idx})">${pathSegment}</li>`;
       page = page.children.find((child) => child.code == pathSegment);
@@ -142,8 +155,8 @@ window.selectShop = function () {
   let page = { name: "universe", symbol: "UNIV", children: window.system };
   let classifications = [];
   let idx = 0;
-  for (idx in window.shopPath) {
-    const pathSegment = window.shopPath[idx];
+  for (idx in window[window.popupMode + "Path"]) {
+    const pathSegment = window[window.popupMode + "Path"][idx];
     const syntheticType =
       page.type ||
       (page.satellite && page.trade == "1"
@@ -172,20 +185,25 @@ window.selectShop = function () {
     { code: page.code, type: syntheticType },
   ];
   console.log(classifications);
-  window.station = page.code;
+  window[window.popupMode + "Station"] = page.code;
   let buttonBoxHtml = "";
-  const buttonBox = document.getElementById("sourceSelectorBox");
+  const buttonBox = document.getElementById(window.popupMode + "SelectorBox");
   classifications.forEach((classification, index) => {
-    buttonBoxHtml += `<button class="source-selector source--${classification.type}" onclick="showShopSelector(${index})"><span class="source__label">${classification.code}</span></button>`;
+    buttonBoxHtml += `<button class="source-selector source--${
+      classification.type
+    }" click="showShopSelector(${index}${
+      window.popupMode == "dest" ? "', 'destination'" : ""
+    })"><span class="source__label">${classification.code}</span></button>`;
   });
-  document.getElementById("sourceStationName").textContent = page.name;
+  document.getElementById(window.popupMode + "StationName").textContent =
+    page.name;
   buttonBox.innerHTML = buttonBoxHtml;
   document.getElementById("shim").click();
   window.updateCommand();
 };
 
 window.moveShopSelectorDown = function (symbol) {
-  window.shopPath.push(symbol);
+  window[window.popupMode + "Path"].push(symbol);
   console.log(symbol);
   window.updateShopSelector();
 };
@@ -227,6 +245,26 @@ window.renderManifest = function (data) {
   targetTable.innerHTML = "";
   let markup = "";
   data.forEach((set) => {
+    let soldGoods = 0;
+    let historyMarkup = "";
+    if (set.history) {
+      set.history.forEach((historyline) => {
+        const shopDetails = window.stations.find(
+          (shop) =>
+            shop.code == historyline.destination ||
+            shop.symbol == historyline.destination
+        );
+        soldGoods += historyline.quantity;
+        historyMarkup += `<tr><td></td><td>${
+          shopDetails ? shopDetails.name : historyline.destination
+        }</td><td class='as-number'>${
+          historyline.quantity
+        } cSCU</td><td class='as-number'>${historyline.price.toFixed(
+          2
+        )} aUEC</td></tr>`;
+      });
+    }
+
     const commodityDetails = window.commodities.find(
       (commodity) => commodity.code == set.commodity
     );
@@ -235,15 +273,18 @@ window.renderManifest = function (data) {
     );
     markup += `<tr data-transaction="${set.transaction}"><td>${
       commodityDetails.name
-    }</td><td>${shopDetails ? shopDetails.name : set.shop}</td><td>${
+    }</td><td>${
+      shopDetails ? shopDetails.name : set.shop
+    }</td><td class='as-number'>${set.quantity - soldGoods}/${
       set.quantity
-    } cSCU</td><td>${
+    } cSCU</td><td class='as-number'>${
       set.price
     } aUEC</td><td class="manifest-item-actions"><button class="manifest-item-action action--harmful" ondblclick="dump('${
       set.transaction
-    }')">dump</button><button class="manifest-item-action action" onclick="sell('${
-      set.transaction
-    }')">sell</button></td></tr>`;
+    }')">dump</button><button class="manifest-item-action action ${
+      set.quantity - soldGoods == 0 ? "action-disabled" : ""
+    }" onclick="sell('${set.transaction}')">sell</button></td></tr>`;
+    markup += historyMarkup;
   });
   document.getElementById(
     "tabHeader-current"
@@ -274,8 +315,77 @@ window.sell = function (transaction) {
   }
   transactionItem.insertAdjacentHTML(
     "afterend",
-    "<tr class='sellline'><td></td><td>Set Destination</td><td><input type='number' max='12000' min='0'></td><td><input/></td><td/></tr>"
+    `<tr class='sellline'>
+        <td></td>
+        <td><div class="source-selector--outer">
+        <div id='destSelectorBox'>
+            <button class="source-selector source--star" onclick="showShopSelector(0, 'destination')"><span class="source__label">ST</span></button>
+        </div>
+        <span id='destStationName'></span></td>
+        <td><div class="touchnumberinput">
+        <div class="increase">
+            <button onclick="adjustQtyBy(10000000, 'destination')" title='increase value by 1000000'>▲</button>
+            <button onclick="adjustQtyBy(1000000, 'destination')" title='increase value by 100000'>▲</button>
+            <button onclick="adjustQtyBy(100000, 'destination')" title='increase value by 10000'>▲</button>
+            <button onclick="adjustQtyBy(10000, 'destination')" title='increase value by 1000'>▲</button>
+            <button onclick="adjustQtyBy(1000, 'destination')" title='increase value by 1000'>▲</button>
+            <button onclick="adjustQtyBy(100, 'destination')" title='increase value by 100'>▲</button>
+        <button onclick="adjustQtyBy(10, 'destination')" title='increase value by 10'>▲</button>
+        <button onclick="adjustQtyBy(1, 'destination')" title='increase value by 1'>▲</button></div>
+        <div class="inner"><input type="number" id="destQty" onchange="setQtyTo(event.target.value, 'destination')" pattern="[0-9]+([\.,][0-9]+)?" step="1"> cSCU</div>
+        <div class="decrease">
+                <button onclick="adjustQtyBy(-10000000, 'destination')" title='decrease value by 10000000'>▼</button>
+                <button onclick="adjustQtyBy(-1000000, 'destination')" title='decrease value by 1000000'>▼</button>
+                <button onclick="adjustQtyBy(-100000, 'destination')" title='decrease value by 100000'>▼</button>
+        <button onclick="adjustQtyBy(-10000, 'destination')" title='decrease value by 10000'>▼</button>
+            <button onclick="adjustQtyBy(-1000, 'destination')" title='decrease value by 1000'>▼</button>
+        <button onclick="adjustQtyBy(-100, 'destination')" title='decrease value by 100'>▼</button>
+        
+        <button onclick="adjustQtyBy(-10, 'destination')" title='decrease value by 10'>▼</button>
+        <button onclick="adjustQtyBy(-1, 'destination')" title='decrease value by 1'>▼</button></div>
+    </div></td>
+        <td><div class="touchnumberinput">
+        <div class="increase">
+        <button onclick="adjustPriceBy(10000, 'destination')" title='increase value by 10000'>▲</button>
+        <button onclick="adjustPriceBy(1000, 'destination')" title='increase value by 1000'>▲</button>
+        <button onclick="adjustPriceBy(100, 'destination')" title='increase value by 100'>▲</button>
+        <button onclick="adjustPriceBy(10, 'destination')" title='increase value by 10'>▲</button>
+        <button onclick="adjustPriceBy(1, 'destination')" title='increase value by 1'>▲</button>
+        <div class="period-spacer"></div>
+        <button onclick="adjustPriceBy(0.1, 'destination')" title='increase value by a tenth'>▲</button>
+        <button onclick="adjustPriceBy(0.01, 'destination')" title='increase value by a hundreth'>▲</button>
+        </div>
+        <div class="inner"><input type="number" id="destPrice" onchange="setQtyTo(event.target.value, 'destination')" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"><label for="price">aUEC</label></div>
+        <div class="decrease">
+        <button onclick="adjustPriceBy(-10000, 'destination')" title='decrease value by 10000'>▼</button>    
+        <button onclick="adjustPriceBy(-1000, 'destination')" title='decrease value by 1000'>▼</button>    
+        <button onclick="adjustPriceBy(-100, 'destination')" title='decrease value by 100'>▼</button>    
+        <button onclick="adjustPriceBy(-10, 'destination')" title='decrease value by 10'>▼</button>    
+        <button onclick="adjustPriceBy(-1, 'destination')" title='decrease value by 1'>▼</button>    
+        <div class="period-spacer"></div>
+        <button onclick="adjustPriceBy(-0.1, 'destination')" title='decrease value by a tenth'>▼</button>
+        
+        <button onclick="adjustPriceBy(-0.01, 'destination')" title='decrease value by a hundreth'>▼</button>
+        </div>
+    </div></td>
+        <td><button onclick="sellCommodityFromTransaction('${transaction}')">Confirm</button></td></tr>`
   );
+};
+
+window.sellCommodityFromTransaction = function (transaction) {
+  const payload = {
+    transaction,
+    shop: window.destStation,
+    price: window.destPrice,
+    quantity: window.destQuantity,
+  };
+  fetch("/sell", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+    .then((response) => response.json())
+    .then((data) => renderManifest(data));
 };
 
 window.switchToTab = function (tabName) {

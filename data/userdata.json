@@ -4,6 +4,12 @@
     "shop": "BHHYD",
     "quantity": "12000",
     "price": "4.52",
-    "transaction": "0fe0aa9e-54a8-f501-10b2-b9d7119400dd"
+    "transaction": "0fe0aa9e-54a8-f501-10b2-b9d7119400dd",
+    "history": [
+      { "destination": "CRUL5", "quantity": 3584, "price": 5.289999999999997 },
+      { "destination": "CRUL5", "quantity": 4385, "price": 5.219999999999999 },
+      { "destination": "CRUL5", "quantity": 1735, "price": 5.209999999999999 },
+      { "destination": "CRUL5", "quantity": 2296, "price": 5.189999999999998 }
+    ]
   }
 ]

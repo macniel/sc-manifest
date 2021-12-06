@@ -356,8 +356,17 @@ input {
   width: fit-content;
 }
 
+.action-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .manifest-item-action {
   height: var(--button-size);
   padding: 0 24px;
   margin: 0 8px;
+}
+
+.as-number {
+  text-align: right;
 }

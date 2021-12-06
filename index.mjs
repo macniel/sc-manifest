@@ -58,6 +58,35 @@ app.delete("/dump", (req, res) => {
   res.send(JSON.stringify(userData));
 });
 
+app.post("/sell", (req, res) => {
+  console.log(req.body);
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  const envelope = req.body;
+  const transactionItem = userData.find(
+    (manifestItem) => manifestItem.transaction == envelope.transaction
+  );
+  console.log(transactionItem);
+  if (transactionItem) {
+    if (!transactionItem.history) {
+      transactionItem.history = [];
+    }
+    transactionItem.history.push({
+      destination: envelope.shop,
+      quantity: envelope.quantity,
+      price: envelope.price,
+    });
+  }
+  console.log(userData);
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(userData));
+});
+
 app.post("/buy", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
