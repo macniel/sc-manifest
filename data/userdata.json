@@ -1,15 +1,485 @@
-[
-  {
-    "commodity": "DISP",
-    "shop": "BHHYD",
-    "quantity": "12000",
-    "price": "4.52",
-    "transaction": "0fe0aa9e-54a8-f501-10b2-b9d7119400dd",
-    "history": [
-      { "destination": "CRUL5", "quantity": 3584, "price": 5.289999999999997 },
-      { "destination": "CRUL5", "quantity": 4385, "price": 5.219999999999999 },
-      { "destination": "CRUL5", "quantity": 1735, "price": 5.209999999999999 },
-      { "destination": "CRUL5", "quantity": 2296, "price": 5.189999999999998 }
-    ]
-  }
-]
+{
+  "transactions": [
+    {
+      "source": "",
+      "commodity": "SCRA",
+      "quantity": 2200,
+      "transaction": "206334e7-a9b4-4eac-adff-9c03261ef049",
+      "price": 2222,
+      "history": [{ "destination": "RDORI", "quantity": 2200, "price": 34.25 }],
+      "isArchived": true,
+      "stops": "undefined TO RDORI",
+      "profit": -4813050
+    },
+    {
+      "source": "",
+      "commodity": "STIM",
+      "quantity": 200,
+      "transaction": "b67fcd56-909b-224e-d0ee-44dab0c07aeb",
+      "price": 2802,
+      "history": [{ "destination": "RDORI", "quantity": 200, "price": 354.25 }],
+      "isArchived": true,
+      "stops": "undefined TO RDORI",
+      "profit": -489550
+    }
+  ],
+  "manifests": [
+    {
+      "manifest": "eba51775-08c9-48bb-8d99-8f8f6bdf09dc",
+      "transactions": [
+        {
+          "commodity": "MEDS",
+          "shop": "DEAKI",
+          "quantity": "1625",
+          "price": "24.42",
+          "transaction": "a6343a68-abde-231e-9031-4283ea4c0781",
+          "history": [
+            { "destination": "POLIS", "quantity": 1625, "price": 35 }
+          ],
+          "isArchived": true,
+          "stops": "DEAKI TO POLIS",
+          "profit": 17192.5
+        }
+      ],
+      "volume": 1625,
+      "profit": 39682.5,
+      "commodities": [{ "code": "MEDS", "volume": "1625" }],
+      "timestamp": 1638784185673
+    },
+    {
+      "manifest": "3546a0b4-cd2b-e9ac-6288-d9fb33f6ffe4",
+      "transactions": [
+        {
+          "commodity": "HEPH",
+          "shop": "unknown",
+          "quantity": "200",
+          "price": "120.00",
+          "transaction": "3c9fe00d-c9b5-9383-f597-4d2492b09c3c",
+          "history": [
+            {
+              "destination": "NECRO",
+              "quantity": 200,
+              "price": 215.13999999999996
+            }
+          ],
+          "isArchived": true,
+          "stops": "unknown TO NECRO",
+          "profit": 19027.999999999993
+        },
+        {
+          "commodity": "TUNG",
+          "shop": "POLIS",
+          "quantity": "210",
+          "price": "122.00",
+          "transaction": "e3f60fe5-8c6b-5adc-9bed-04e6afc733af",
+          "history": [{ "quantity": 210, "price": 210 }],
+          "isArchived": true,
+          "stops": "POLIS TO ",
+          "profit": 18480
+        }
+      ],
+      "volume": 410,
+      "profit": 49620,
+      "commodities": [
+        { "code": "HEPH", "volume": "200" },
+        { "code": "TUNG", "volume": "210" }
+      ],
+      "timestamp": 1638784880184
+    },
+    {
+      "manifest": "ae348005-9aba-6804-d641-94fe64c42462",
+      "transactions": [
+        {
+          "commodity": "GOLD",
+          "shop": "unknown",
+          "quantity": "2134",
+          "price": "0.00",
+          "transaction": "d555b418-06bc-6539-ca7b-7f8dae809f75",
+          "history": [
+            {
+              "destination": "MICTD",
+              "quantity": 2134,
+              "price": 6.399999999999999
+            }
+          ],
+          "isArchived": true,
+          "stops": "unknown TO MICTD",
+          "profit": 13657.599999999997
+        }
+      ],
+      "volume": 2134,
+      "profit": 0,
+      "commodities": [{ "code": "GOLD", "volume": "2134" }],
+      "timestamp": 1638785671548
+    },
+    {
+      "manifest": "02916308-bebe-5649-f43a-ced5ff314f0b",
+      "transactions": [
+        {
+          "commodity": "LARA",
+          "shop": "CRUL5",
+          "quantity": "1034",
+          "price": "0.00",
+          "transaction": "ac814198-7a55-0276-6945-664f9f25d087",
+          "history": [
+            {
+              "destination": "MICTD",
+              "quantity": 1034,
+              "price": 31.040000000000006
+            }
+          ],
+          "isArchived": true,
+          "stops": "CRUL5 TO MICTD",
+          "profit": 32095.360000000008
+        }
+      ],
+      "volume": 1034,
+      "profit": 0,
+      "commodities": [{ "code": "LARA", "volume": "1034" }],
+      "timestamp": 1638785745417
+    },
+    {
+      "manifest": "932d76c3-e5e5-b883-90b5-bdfde8dc16c3",
+      "transactions": [
+        {
+          "commodity": "HADA",
+          "shop": "YELA",
+          "quantity": "134",
+          "price": "33.00",
+          "transaction": "18774183-dd0b-4b93-d707-c6e9e27f11d3",
+          "history": [
+            {
+              "destination": "MICTD",
+              "quantity": 134,
+              "price": 236.24999999999994
+            }
+          ],
+          "isArchived": true,
+          "stops": "YELA TO MICTD",
+          "profit": 27235.499999999993
+        }
+      ],
+      "volume": 134,
+      "profit": 4422,
+      "commodities": [{ "code": "HADA", "volume": "134" }],
+      "timestamp": 1638787611290
+    },
+    {
+      "manifest": "fba5afda-53f7-1bca-939f-5e194610c16e",
+      "transactions": [
+        {
+          "commodity": "MEDS",
+          "shop": "unknown",
+          "quantity": "100",
+          "price": "0.00",
+          "transaction": "dd7cca9b-d1b6-41dc-b619-efb56624836e",
+          "history": [
+            { "destination": "TRESS", "quantity": 100, "price": 35.42 }
+          ],
+          "isArchived": true,
+          "stops": "unknown TO TRESS",
+          "profit": 3542
+        },
+        {
+          "commodity": "TITA",
+          "shop": "unknown",
+          "quantity": "1368",
+          "price": "5.24",
+          "transaction": "8a50a0b0-d91e-f642-cbd9-36173ea3fcd1",
+          "history": [
+            {
+              "destination": "RAVEN",
+              "quantity": 220,
+              "price": 7.620000000000001
+            },
+            {
+              "destination": "MTPLA",
+              "quantity": 1148,
+              "price": 9.620000000000001
+            }
+          ],
+          "isArchived": true,
+          "stops": "unknown TO RAVEN, MTPLA",
+          "profit": 5551.840000000002
+        },
+        {
+          "commodity": "TUNG",
+          "shop": "unknown",
+          "quantity": "268",
+          "price": "3.62",
+          "transaction": "e71d5a8b-40dd-e7db-a276-72290db466fb",
+          "history": [
+            {
+              "destination": "MTPLA",
+              "quantity": 268,
+              "price": 4.420000000000002
+            }
+          ],
+          "isArchived": true,
+          "stops": "unknown TO MTPLA",
+          "profit": 214.40000000000032
+        }
+      ],
+      "volume": 1736,
+      "profit": 8138.4800000000005,
+      "commodities": [
+        { "code": "MEDS", "volume": "100" },
+        { "code": "TITA", "volume": "1368" },
+        { "code": "TUNG", "volume": "268" }
+      ],
+      "timestamp": 1638789185830
+    },
+    {
+      "manifest": "97b606d9-96f8-7af8-b0de-398a5004be3f",
+      "transactions": [
+        {
+          "source": "",
+          "commodity": "TITA",
+          "quantity": 1540,
+          "transaction": "d1864757-15f9-e6af-f164-ddf71a97fd3b",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 1540,
+              "price": 8.899999999999997
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 13705.999999999995
+        },
+        {
+          "source": "",
+          "commodity": "BEXA",
+          "quantity": 123,
+          "transaction": "a7b392e4-45b2-62a0-2dcd-4839d92411f7",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 123,
+              "price": 44.00000000000002
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 5412.000000000003
+        },
+        {
+          "source": "",
+          "commodity": "DIAM",
+          "quantity": 1138,
+          "transaction": "4b9c520c-7d15-9aca-c5da-a014afd031c8",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 1138,
+              "price": 7.350000000000019
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 8364.300000000021
+        },
+        {
+          "source": "",
+          "commodity": "LARA",
+          "quantity": 113,
+          "transaction": "d259491c-20ee-9a22-57ba-81431ca6da77",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 113,
+              "price": 30.10000000000001
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 3401.300000000001
+        },
+        {
+          "source": "",
+          "commodity": "HEPH",
+          "quantity": 43,
+          "transaction": "8f9c9647-bf0f-912d-40c0-5aace0f2cda4",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 43,
+              "price": 15.850000000000005
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 681.5500000000002
+        },
+        {
+          "source": "",
+          "commodity": "QUAN",
+          "quantity": 1760,
+          "transaction": "7b161a78-f2c8-635c-60ab-12bc194f2ddd",
+          "price": 0,
+          "history": [
+            { "destination": "LOCBD", "quantity": 1760, "price": 87.94 }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 154774.4
+        },
+        {
+          "source": "",
+          "commodity": "QUAR",
+          "quantity": 961,
+          "transaction": "a9b228d9-2945-60e3-3cad-9d206b85d391",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 961,
+              "price": 1.5499999999999974
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 1489.5499999999975
+        },
+        {
+          "source": "",
+          "commodity": "GOLD",
+          "quantity": 42,
+          "transaction": "5d51244b-7ec2-718e-0ab8-c60a7b04db8e",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 42,
+              "price": 6.409999999999998
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 269.2199999999999
+        },
+        {
+          "source": "",
+          "commodity": "BERY",
+          "quantity": 709,
+          "transaction": "0914ab32-a4e2-8d2b-1c3d-4172780f67b4",
+          "price": 0,
+          "history": [
+            {
+              "destination": "LOCBD",
+              "quantity": 709,
+              "price": 4.349999999999998
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO LOCBD",
+          "profit": 3084.1499999999983
+        }
+      ],
+      "volume": 6429,
+      "profit": 0,
+      "commodities": [
+        { "code": "TITA", "volume": 1540 },
+        { "code": "BEXA", "volume": 123 },
+        { "code": "DIAM", "volume": 1138 },
+        { "code": "LARA", "volume": 113 },
+        { "code": "HEPH", "volume": 43 },
+        { "code": "QUAN", "volume": 1760 },
+        { "code": "QUAR", "volume": 961 },
+        { "code": "GOLD", "volume": 42 },
+        { "code": "BERY", "volume": 709 }
+      ],
+      "timestamp": 1638799874423
+    },
+    {
+      "manifest": "d8b49262-2123-2704-2361-435d300671a0",
+      "transactions": [
+        {
+          "source": "",
+          "commodity": "WAST",
+          "quantity": 12000,
+          "transaction": "9fbcb387-0314-6a11-88e2-a0882295d525",
+          "price": 9960,
+          "history": [
+            {
+              "destination": "RDORI",
+              "quantity": 12000,
+              "price": 4.249999999999998
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO RDORI",
+          "profit": -119469000
+        },
+        {
+          "source": "",
+          "commodity": "SCRA",
+          "quantity": 2200,
+          "transaction": "b5282227-907a-da94-f916-ab516b3d76f4",
+          "price": 2222,
+          "history": [
+            {
+              "destination": "RDORI",
+              "quantity": 2200,
+              "price": 2.0100000000000002
+            }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO RDORI",
+          "profit": -4883978
+        }
+      ],
+      "volume": 14200,
+      "profit": 124408400,
+      "commodities": [
+        { "code": "WAST", "volume": 12000 },
+        { "code": "SCRA", "volume": 2200 }
+      ],
+      "timestamp": 1638800102116
+    },
+    {
+      "manifest": "a4c25d01-ed9c-60c2-51bd-7a484304d04d",
+      "transactions": [
+        {
+          "source": "",
+          "commodity": "SCRA",
+          "quantity": 2200,
+          "transaction": "206334e7-a9b4-4eac-adff-9c03261ef049",
+          "price": 2222,
+          "history": [
+            { "destination": "RDORI", "quantity": 2200, "price": 34.25 }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO RDORI",
+          "profit": -4813050
+        },
+        {
+          "source": "",
+          "commodity": "STIM",
+          "quantity": 200,
+          "transaction": "b67fcd56-909b-224e-d0ee-44dab0c07aeb",
+          "price": 2802,
+          "history": [
+            { "destination": "RDORI", "quantity": 200, "price": 354.25 }
+          ],
+          "isArchived": true,
+          "stops": "undefined TO RDORI",
+          "profit": -489550
+        }
+      ],
+      "volume": 2400,
+      "profit": 5448800,
+      "commodities": [
+        { "code": "SCRA", "volume": 2200 },
+        { "code": "STIM", "volume": 200 }
+      ],
+      "timestamp": 1638800172389
+    }
+  ]
+}

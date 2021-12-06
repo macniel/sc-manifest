@@ -47,7 +47,7 @@ app.delete("/dump", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
-  userData = userData.filter(
+  userData.transactions = userData.transactions.filter(
     (manifestItem) => manifestItem.transaction != req.body.transaction
   );
   writeFileSync(
@@ -55,7 +55,111 @@ app.delete("/dump", (req, res) => {
     JSON.stringify(userData),
     "utf-8"
   );
-  res.send(JSON.stringify(userData));
+  res.send(JSON.stringify(userData.transactions));
+});
+
+app.post("/seal-manifest", (req, res) => {
+  console.log(req.body);
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+
+  const envelope = req.body;
+  const transactionItems = userData.transactions.filter(
+    (manifestItem) => !manifestItem.isArchived
+  );
+  const sealedManifest = [];
+  transactionItems.forEach((tx) => {
+    const smtx = sealedManifest.find((smtx) => smtx.commodity == tx.commodity);
+    if (smtx) {
+      smtx.source = "";
+      smtx.quantity += parseInt(tx.quantity);
+      smtx.transaction = guid.raw();
+      smtx.price += parseFloat(tx.quantity) * parseFloat(tx.price);
+      smtx.profit += tx.profit;
+    } else {
+      sealedManifest.push({
+        source: "",
+        commodity: tx.commodity,
+        quantity: parseInt(tx.quantity),
+        transaction: guid.raw(),
+        price: parseFloat(tx.quantity) * parseFloat(tx.price),
+        profit: tx.profit,
+      });
+    }
+  });
+  userData.transactions = sealedManifest;
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(userData.transactions));
+});
+
+app.post("/archive", (req, res) => {
+  console.log(req.body);
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+
+  const envelope = req.body;
+  const transactionItems = userData.transactions.filter(
+    (manifestItem) => !manifestItem.isArchived
+  );
+  const newManifest = {
+    manifest: guid.raw(),
+    transactions: [],
+    volume: 0,
+    profit: 0,
+    commodities: [],
+  };
+  if (transactionItems) {
+    transactionItems.forEach((transactionItem) => {
+      transactionItem.isArchived = true;
+
+      newManifest.commodities.push({
+        code: transactionItem.commodity,
+        volume: transactionItem.quantity,
+      });
+      newManifest.volume += parseInt(transactionItem.quantity);
+
+      const stops =
+        transactionItem.shop +
+        " TO " +
+        transactionItem.history
+          .map((historyline) => historyline.destination)
+          .join(", ");
+      transactionItem.stops = stops;
+
+      if (transactionItem.profit) {
+        newManifest.profit += parseFloat(transactionItem.profit);
+      } else {
+        const buy =
+          parseFloat(transactionItem.quantity) *
+          parseFloat(transactionItem.price);
+        transactionItem.profit = -buy;
+        transactionItem.history.forEach((historyline) => {
+          transactionItem.profit +=
+            parseFloat(historyline.quantity) * parseFloat(historyline.price);
+        });
+        newManifest.profit += parseFloat(buy);
+      }
+      newManifest.timestamp = Date.now();
+      newManifest.transactions.push(transactionItem);
+    });
+    if (!userData.manifests) {
+      userData.manifests = [];
+    }
+    userData.manifests.push(newManifest);
+    console.log(userData);
+    writeFileSync(
+      join("data", "userdata.json"),
+      JSON.stringify(userData),
+      "utf-8"
+    );
+    res.send(JSON.stringify(userData));
+  }
 });
 
 app.post("/sell", (req, res) => {
@@ -64,7 +168,7 @@ app.post("/sell", (req, res) => {
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
   const envelope = req.body;
-  const transactionItem = userData.find(
+  const transactionItem = userData.transactions.find(
     (manifestItem) => manifestItem.transaction == envelope.transaction
   );
   console.log(transactionItem);
@@ -92,7 +196,13 @@ app.post("/buy", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
-  userData.push({
+  if (!userData) {
+    userData = {};
+  }
+  if (!userData.transactions) {
+    userData.transactions = [];
+  }
+  userData.transactions.push({
     commodity: req.body.commodity,
     shop: req.body.shop || "unknown",
     quantity: req.body.qty || 0,
@@ -104,7 +214,7 @@ app.post("/buy", (req, res) => {
     JSON.stringify(userData),
     "utf-8"
   );
-  res.send(JSON.stringify(userData));
+  res.send(JSON.stringify(userData.transactions));
 });
 
 app.use(express.static("public"));

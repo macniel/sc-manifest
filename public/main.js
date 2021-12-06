@@ -78,12 +78,12 @@ window.processCommand = async function (commandSelector) {
     body: JSON.stringify({
       timestamp: Date.now,
       commodity: window.commodity,
-      shop: window.station,
+      shop: window.sourceStation,
       qty: window.quantity.toFixed(0),
       price: window.price.toFixed(2),
     }),
   }).then((response) => response.json());
-  renderManifest(response);
+  renderManifest(response.filter((tx) => !tx.isArchived));
 };
 
 window.sourcePath = ["ST"];
@@ -97,10 +97,11 @@ window.showShopSelector = function (resetToSegment, isDestination) {
   } else {
     window.popupMode = "source";
   }
+  console.log(isDestination, window.popupMode);
   shim.hidden = false;
   shim.forPopup = "shopPopup";
   popup.hidden = false;
-  if (resetToSegment) {
+  if (resetToSegment != undefined) {
     window.resetShopSelectorTo(resetToSegment);
   } else {
     window.updateShopSelector();
@@ -108,10 +109,13 @@ window.showShopSelector = function (resetToSegment, isDestination) {
 };
 
 window.resetShopSelectorTo = function (position) {
-  window[window.popupMode + "Path"] = window[window.popupMode + "Path"].splice(
-    0,
-    position
-  );
+  if (position == 0) {
+    window[window.popupMode + "Path"] = ["ST"];
+  } else {
+    window[window.popupMode + "Path"] = window[
+      window.popupMode + "Path"
+    ].splice(0, position);
+  }
   window.updateShopSelector();
 };
 
@@ -191,7 +195,7 @@ window.selectShop = function () {
   classifications.forEach((classification, index) => {
     buttonBoxHtml += `<button class="source-selector source--${
       classification.type
-    }" click="showShopSelector(${index}${
+    }" onclick="showShopSelector(${index}${
       window.popupMode == "dest" ? "', 'destination'" : ""
     })"><span class="source__label">${classification.code}</span></button>`;
   });
@@ -237,13 +241,19 @@ window.hidePopup = function (evt) {
 (() => {
   fetch("/manifest")
     .then((response) => response.json())
-    .then((data) => renderManifest(data));
+    .then((data) => {
+      renderManifest(
+        data.transactions.filter((transaction) => !transaction.isArchived)
+      );
+      renderLog(data.manifests);
+    });
 })();
 
 window.renderManifest = function (data) {
   const targetTable = document.getElementById("manifest");
   targetTable.innerHTML = "";
   let markup = "";
+  console.log(data);
   data.forEach((set) => {
     let soldGoods = 0;
     let historyMarkup = "";
@@ -279,11 +289,11 @@ window.renderManifest = function (data) {
       set.quantity
     } cSCU</td><td class='as-number'>${
       set.price
-    } aUEC</td><td class="manifest-item-actions"><button class="manifest-item-action action--harmful" ondblclick="dump('${
+    } aUEC</td><td class="manifest-item-actions"><button class="manifest-item-action action--harmful action-drop" ondblclick="dump('${
       set.transaction
-    }')">dump</button><button class="manifest-item-action action ${
+    }')"></button><button class="manifest-item-action action action-sell ${
       set.quantity - soldGoods == 0 ? "action-disabled" : ""
-    }" onclick="sell('${set.transaction}')">sell</button></td></tr>`;
+    }" onclick="sell('${set.transaction}')"></button></td></tr>`;
     markup += historyMarkup;
   });
   document.getElementById(
@@ -299,7 +309,15 @@ window.dump = async function (transaction) {
     body: JSON.stringify({ transaction }),
   })
     .then((response) => response.json())
-    .then((data) => renderManifest(data));
+    .then((data) => renderManifest(data.filter((tx) => !tx.isArchived)));
+};
+
+window.sealManifest = async function () {
+  fetch("seal-manifest", {
+    method: "POST",
+  })
+    .then((response) => response.json())
+    .then((data) => renderManifest(data.filter((tx) => !tx.isArchived)));
 };
 
 window.sell = function (transaction) {
@@ -385,7 +403,39 @@ window.sellCommodityFromTransaction = function (transaction) {
     body: JSON.stringify(payload),
   })
     .then((response) => response.json())
-    .then((data) => renderManifest(data));
+    .then((data) =>
+      renderManifest(data.transactions.filter((tx) => !tx.isArchived))
+    );
+};
+
+window.renderLog = function (data) {
+  const table = document.querySelector("#manifestList");
+  let tableMarkup = "";
+
+  data.forEach((manifest) => {
+    tableMarkup += `<tr><td>${manifest.manifest}</td><td>${
+      manifest.timestamp
+    }</td><td>${manifest.commodities
+      .map((commodity) => commodity.volume + "cSCU " + commodity.code)
+      .join(" ")}</td><td class="as-number">${
+      manifest.volume
+    } cSCU</td><td class="as-number">${manifest.profit.toFixed(
+      2
+    )} aUEC</td></tr>`;
+  });
+  table.innerHTML = tableMarkup;
+  document.querySelector("#tabHeader-log").textContent =
+    "Previous Manifest (" + data.length + ")";
+  console.log(data);
+};
+
+window.archiveManifest = function () {
+  fetch("/archive", { method: "POST" })
+    .then((response) => response.json())
+    .then((data) => {
+      renderManifest(data.transactions.filter((tx) => !tx.isArchived));
+      renderLog(data.manifests);
+    });
 };
 
 window.switchToTab = function (tabName) {

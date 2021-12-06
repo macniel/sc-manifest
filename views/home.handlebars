@@ -16,7 +16,7 @@
     <fieldset id="sourceStation"><legend>Source Station (Optional)</legend>
     <div class="source-selector--outer">
     <div id='sourceSelectorBox'>
-        <button class="source-selector source--star" onclick="showShopSelector(0)"><span class="source__label">ST</span></button>
+        <button class="source-selector source--system" onclick="showShopSelector(0)"><span class="source__label">ST</span></button>
     </div>
     <span id='sourceStationName'></span>
     </div>
@@ -80,48 +80,49 @@
 </section>
 <section class="manifest manifest--current" hidden>
     <header></header>
+    <fieldset class="standalone">
+        <legend>Current Manifest</legend>
     <table class="manifest-items">
         <thead>
             <tr>
-                <th>Commodity</th>
-                <th>Source</th>
+                <th width="200px">Commodity</th>
+                <th width="400px">Source</th>
                 <th width="463px">Quantity</th>
                 <th width="463px">Buy</th>
-                <th>Sell</th>
+                <th width="124px">Sell</th>
             </tr>
             </thead>
             <tbody id="manifest">
                 
             </tbody>
     </table>
+    </fieldset>
     <footer class="manifest-actions">
+        <pre></pre>
         <div class="button-box">
+            <button onclick="sealManifest()">Seal Manifest</button>
             <button onclick="archiveManifest()">Archive Manifest</button>
         </div>
     </footer>
 </section>
 <section class="manifest manifest--log" hidden>
     <header></header>
+    <fieldset class="standalone">
+        <legend>Previous Manifests</legend>
     <table class="manifest-items">
         <thead>
             <tr>
                 <th>Manifest Id</th>
                 <th>Shipped</th>
-                <th>Stations</th>
+                <th>Commodities</th>
                 <th>Volume</th>
                 <th>Profit</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>0</td>
-                <td>2951-07-31</td>
-                <td>BHHYD, CRUL5, CRUL5, CRUL5, CRUL5</td>
-                <td>12000 cSCU</td>
-                <td>8561.16 aUEC</td>
-            </tr>
+        <tbody id="manifestList">
         </tbody>
     </table>
+    </fieldset>
 </section>
 
 <script>
