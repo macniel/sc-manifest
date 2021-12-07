@@ -7,7 +7,7 @@ const fetch = require("node-fetch");
 const guid = require("guid");
 
 const app = express();
-const PORT = 80;
+const PORT = process.env.PORT;
 const publicData = {};
 
 app.use(bodyParser.urlencoded({ extended: false }));
