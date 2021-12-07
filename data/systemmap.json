@@ -59,7 +59,14 @@
           {
             "code": "YELA",
             "type": "satellite",
-            "name": "Yela"
+            "name": "Yela",
+            "children": [
+              {
+                "code": "GRIHX",
+                "type": "station",
+                "name": "Grimhex"
+              }
+            ]
           },
           {
             "code": "DAYM",

@@ -51,7 +51,7 @@ window.adjustPriceBy = function (amount, isDestination) {
   updateCommand();
 };
 
-window.setPriceTo = function (amount) {
+window.setPriceTo = function (amount, isDestination) {
   window[isDestination ? "destPrice" : "price"] = parseFloat(amount || 0);
   updateCommand();
 };
@@ -340,7 +340,8 @@ window.sell = function (transaction) {
             <button class="source-selector source--star" onclick="showShopSelector(0, 'destination')"><span class="source__label">ST</span></button>
         </div>
         <span id='destStationName'></span></td>
-        <td><div class="touchnumberinput">
+        <td>
+        <div class="touchnumberinput">
         <div class="increase">
             <button onclick="adjustQtyBy(10000000, 'destination')" title='increase value by 1000000'>▲</button>
             <button onclick="adjustQtyBy(1000000, 'destination')" title='increase value by 100000'>▲</button>
@@ -362,7 +363,8 @@ window.sell = function (transaction) {
         <button onclick="adjustQtyBy(-10, 'destination')" title='decrease value by 10'>▼</button>
         <button onclick="adjustQtyBy(-1, 'destination')" title='decrease value by 1'>▼</button></div>
     </div></td>
-        <td><div class="touchnumberinput">
+        <td>       
+        <div class="touchnumberinput">
         <div class="increase">
         <button onclick="adjustPriceBy(10000, 'destination')" title='increase value by 10000'>▲</button>
         <button onclick="adjustPriceBy(1000, 'destination')" title='increase value by 1000'>▲</button>

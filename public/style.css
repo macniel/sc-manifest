@@ -12,10 +12,10 @@
   margin: 0;
   padding: 0;
   line-height: 1;
+  font-family: "krona";
 }
 
 body {
-  font-family: "Segoe UI";
   font-size: 18pt;
   background-color: #e3e0e0;
 }
@@ -209,6 +209,8 @@ fieldset > legend {
 }
 .touchnumberinput > div:not(.inner) button {
   width: 40px;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .touchnumberinput button {
