@@ -32,7 +32,6 @@ class CommodityButton extends HTMLButtonElement {
   }
 
   set commodity(newValue) {
-    console.log("set");
     this._commodity = newValue;
     this.render();
   }

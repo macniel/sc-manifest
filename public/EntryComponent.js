@@ -1,9 +1,14 @@
 import NumberInput from "./NumberInput.js";
 import CommoditySelector from "./CommoditySelector.js";
+import Webservices from "./webservices.js";
 
 class EntryComponent extends HTMLElement {
   constructor() {
     super();
+    this.reset();
+    Webservices.instance.addEventListener("manifest", (data) => {
+      console.log("updated Manifest to", data);
+    });
     this.render();
   }
 
@@ -34,6 +39,11 @@ class EntryComponent extends HTMLElement {
     return this._commodity;
   }
 
+  set sourceStation(newValue) {
+    window.sourceStation = newValue;
+    this.render();
+  }
+
   get sourceStation() {
     return window.sourceStation;
   }
@@ -46,6 +56,13 @@ class EntryComponent extends HTMLElement {
 
   connectedCallback() {
     this.render(true);
+  }
+
+  reset() {
+    this.commodity = null;
+    this.price = 0;
+    this.quantity = 0;
+    this.sourceStation = ["ST"];
   }
 
   render(fullRefresh = false) {
@@ -118,6 +135,12 @@ class EntryComponent extends HTMLElement {
 
     const addToManifest = document.createElement("button");
     addToManifest.addEventListener("click", () => {
+      Webservices.instance.wsAddToManifest("", {
+        commodity: this.commodity,
+        shop: this.sourceStation,
+        quantity: this.quantity,
+        price: this.price,
+      });
       window.sourceStation = "";
       this.price = 0;
       this.quantity = 0;

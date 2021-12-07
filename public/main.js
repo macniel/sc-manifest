@@ -3,72 +3,7 @@ window.station = "";
 window.quantity = 0;
 window.price = 0.0;
 
-window.toggleRaw = function (fieldsetId) {
-  document
-    .querySelector(fieldsetId)
-    .querySelectorAll("button")
-    .forEach((button) => {
-      console.log(button.dataset);
-      if (button.dataset.raw === "true") {
-        button.hidden = !button.hidden;
-      }
-    });
-};
-
-window.setCommodity = function (event, symbol) {
-  window.commodity = symbol;
-  document
-    .getElementById("commoditySelector")
-    .querySelectorAll("button")
-    .forEach((button) => {
-      if (button == event.srcElement) {
-        button.classList.add("active");
-      } else {
-        button.classList.remove("active");
-      }
-    });
-  updateCommand();
-};
-
-window.adjustQtyBy = function (amount, isDestination) {
-  window[isDestination ? "destQuantity" : "quantity"] =
-    parseInt(window[isDestination ? "destQuantity" : "quantity"] || 0) + amount;
-  document.getElementById([isDestination ? "destQty" : "qty"]).value =
-    window[isDestination ? "destQuantity" : "quantity"];
-  updateCommand();
-};
-
-window.setQtyTo = function (amount, isDestination) {
-  window[isDestination ? "destQuantity" : "quantity"] = parseInt(amount) || 0;
-  updateCommand();
-};
-
-window.adjustPriceBy = function (amount, isDestination) {
-  window[isDestination ? "destPrice" : "price"] =
-    parseFloat(window[isDestination ? "destPrice" : "price"] || 0) + amount;
-  document.getElementById([isDestination ? "destPrice" : "price"]).value =
-    window[isDestination ? "destPrice" : "price"].toFixed(2);
-  updateCommand();
-};
-
-window.setPriceTo = function (amount, isDestination) {
-  window[isDestination ? "destPrice" : "price"] = parseFloat(amount || 0);
-  updateCommand();
-};
-
-window.updateCommand = function () {
-  document.getElementById("commandline").textContent = `${window.commodity} ${
-    window.sourceStation
-  } ${window.quantity.toFixed(0)}@${window.price.toFixed(2)}`;
-  window.command = document.getElementById("commandline").textContent;
-  localStorage.setItem("command", window.command);
-};
-
 window.processCommand = async function (commandSelector) {
-  console.log(
-    "sending command to trade central",
-    document.querySelector(commandSelector).textContent
-  );
   const response = await fetch("/buy", {
     method: "POST",
     headers: {
@@ -203,7 +138,6 @@ window.selectShop = function () {
     page.name;
   buttonBox.innerHTML = buttonBoxHtml;
   document.getElementById("shim").click();
-  window.updateCommand();
 };
 
 window.moveShopSelectorDown = function (symbol) {
@@ -222,32 +156,6 @@ window.hidePopup = function (evt) {
     shim.hidden = true;
   }
 };
-
-((command) => {
-  const splitted = command.split(" ");
-  if (splitted.length == 3) {
-    window.commodity = splitted[0];
-    window.station = splitted[1];
-    [window.quantity, window.price] = splitted[2].split("@");
-  } else if (splitted.length == 2) {
-    window.commodity = splitted[0];
-    [window.quantity, window.price] = splitted[1].split("@");
-  }
-  window.quantity = parseInt(window.quantity);
-  window.price = parseFloat(window.price);
-  updateCommand();
-})(localStorage.getItem("command"));
-
-(() => {
-  fetch("/manifest")
-    .then((response) => response.json())
-    .then((data) => {
-      renderManifest(
-        data.transactions.filter((transaction) => !transaction.isArchived)
-      );
-      renderLog(data.manifests);
-    });
-})();
 
 window.renderManifest = function (data) {
   const targetTable = document.getElementById("manifest");

@@ -74,7 +74,6 @@ class NumberInput extends HTMLElement {
       this._max = parseFloat(newValue);
     }
     if (name === "onchange") {
-      console.log(newValue, window[newValue]);
       if (typeof window[newValue] === "function") {
         this._callback = window[newValue];
       }
@@ -83,7 +82,6 @@ class NumberInput extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log("connected");
     this.render();
   }
 
