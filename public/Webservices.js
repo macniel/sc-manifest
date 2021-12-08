@@ -58,7 +58,7 @@ class Webservices {
       body: JSON.stringify({
         timestamp: Date.now,
         commodity: commodity.code,
-        shop: shop.code,
+        shop: shop,
         qty: quantity.toFixed(0),
         price: price.toFixed(2),
       }),

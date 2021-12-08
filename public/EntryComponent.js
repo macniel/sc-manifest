@@ -161,7 +161,7 @@ class EntryComponent extends HTMLElement {
     quantityFieldsetLegend.textContent = "Quantity";
     const quantityInputNumber = new NumberInput();
     quantityInputNumber.size = 7;
-    quantityInputNumber.label = "Unit";
+    quantityInputNumber.label = "Units";
     quantityInputNumber.min = 0;
     quantityInputNumber.value = this.quantity;
     quantityInputNumber.onChange = (newQuantity) => {
@@ -172,7 +172,7 @@ class EntryComponent extends HTMLElement {
 
     const priceFieldset = document.createElement("fieldset");
     const priceFieldsetLegend = document.createElement("legend");
-    priceFieldsetLegend.textContent = "Quantity";
+    priceFieldsetLegend.textContent = "Price";
     const priceInputNumber = new NumberInput();
     priceInputNumber.size = 6;
     priceInputNumber.label = "aUEC";
@@ -201,10 +201,7 @@ class EntryComponent extends HTMLElement {
         quantity: this.quantity,
         price: this.price,
       });
-      window.sourceStation = "";
-      this.price = 0;
-      this.quantity = 0;
-      this.commodity = null;
+      this.reset();
       this.render();
     });
     addToManifest.textContent = "Add Commodity";

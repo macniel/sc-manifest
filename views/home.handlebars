@@ -1,11 +1,21 @@
 <ul id="tabBar">
-    <li onclick="switchToTab('entry')" id="tabHeader-entry" class="active">Add Commodity</li>
-    <li onclick="switchToTab('log')" id="tabHeader-log">Log</li>
 </ul>
+<section id="welcome" class="welcome">
+    <div style="display: flex; align-items: center; justify-items: center; flex-orientation: rows">
+    <div>
+        <img src="./logo.svg"/>
+        <h1>Shipping Solutions Ltd.</h1>
+    </div>        
+    <div>
+    <p>Never misplace a Shipping Manifest</p>
+    <p>Touch screen to start</p>
+    </div>
+    </div>
+</section>
 <section id="fleet" class="fleet fleet--entry" hidden>
     <fleet-component></fleet-component>
 </section>
-<section id="entry" class="manifest manifest--entry">
+<section id="entry" class="manifest manifest--entry" hidden>
     <entry-component></entry-component>
 </section>
 <section id="current" class="manifest manifest--current" hidden>

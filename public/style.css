@@ -400,11 +400,16 @@ button {
 }
 #tabBar li {
   display: inline-block;
-  margin: 4px 24px -2px 24px;
+  margin: 4px 2px -2px 2px;
   background-color: var(--panel-background);
   color: var(--panel-text);
   padding-top: 0;
   padding: 0 24px 0 24px;
+  border-left: 4px solid transparent;
+}
+
+#tabBar li.to {
+  border-left: 4px solid teal;
 }
 
 #tabBar li#tabHeader-log {

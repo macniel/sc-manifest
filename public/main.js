@@ -376,9 +376,11 @@ window.switchToTab = function (tabName, manifest) {
         if (tab.dataset.manifest === manifest) {
           window.selectedManifest = manifest;
           tab.classList.add("active");
+          tab.classList.add("to");
           Webservices.instance.wsGetManifest(manifest);
         } else {
           tab.classList.remove("active");
+          tab.classList.remove("to");
         }
       } else {
         tab.classList.add("active");
