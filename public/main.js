@@ -128,22 +128,20 @@ window.selectShop = function () {
 
   classifications = [
     ...classifications.splice(1),
-    { code: page.code, type: syntheticType },
+    { code: page.code, type: syntheticType, name: page.name },
   ];
-  console.log(classifications);
   window[window.popupMode + "Station"] = page.code;
-  let buttonBoxHtml = "";
-  const buttonBox = document.getElementById(window.popupMode + "SelectorBox");
-  classifications.forEach((classification, index) => {
-    buttonBoxHtml += `<button class="source-selector source--${
-      classification.type
-    }" onclick="showShopSelector(${index}${
-      window.popupMode == "dest" ? "', 'destination'" : ""
-    })"><span class="source__label">${classification.code}</span></button>`;
-  });
-  document.getElementById(window.popupMode + "StationName").textContent =
-    page.name;
-  buttonBox.innerHTML = buttonBoxHtml;
+  console.log(window.popupAcceptCallback);
+  if (
+    window.popupAcceptCallback &&
+    typeof window.popupAcceptCallback == "function"
+  ) {
+    window.popupAcceptCallback({
+      path: classifications,
+      code: page.code,
+    });
+  }
+
   document.getElementById("shim").click();
 };
 

@@ -17,6 +17,15 @@ class EntryComponent extends HTMLElement {
     this.render();
   }
 
+  get path() {
+    return this._path;
+  }
+
+  set path(newValue) {
+    this._path = newValue;
+    this.render();
+  }
+
   get quantity() {
     return this._quantity;
   }
@@ -63,6 +72,12 @@ class EntryComponent extends HTMLElement {
     this.price = 0;
     this.quantity = 0;
     this.sourceStation = ["ST"];
+    this.path = [
+      {
+        code: "ST",
+        type: "system",
+      },
+    ];
   }
 
   render(fullRefresh = false) {
@@ -87,29 +102,54 @@ class EntryComponent extends HTMLElement {
 
     const sourceSelectorFieldset = document.createElement("fieldset");
     const sourceSelectorFieldsetLegend = document.createElement("legend");
-    sourceSelectorFieldsetLegend.textContent = "Source Station (Optional";
+    sourceSelectorFieldsetLegend.textContent = "Source Station (Optional)";
     const outer = document.createElement("div");
     outer.className = "source-selector--outer";
 
     const sourceSelectorBox = document.createElement("div");
     sourceSelectorBox.id = "sourceSelectorBox";
 
-    const soleButton = document.createElement("button");
-    soleButton.className = "source-selector source--system";
-    soleButton.addEventListener("click", () => {
-      showShopSelector(0);
-    });
+    /**
+     * let buttonBoxHtml = "";
+  const buttonBox = document.getElementById(window.popupMode + "SelectorBox");
+  classifications.forEach((classification, index) => {
+    buttonBoxHtml += `<button class="source-selector source--${
+      classification.type
+    }" onclick="showShopSelector(${index}${
+      window.popupMode == "dest" ? "', 'destination'" : ""
+    })"><span class="source__label">${classification.code}</span></button>`;
+  });
+     */
 
-    const soleButtonLabel = document.createElement("span");
-    soleButtonLabel.className = "source__label";
-    soleButtonLabel.textContent = "ST";
-
-    soleButton.appendChild(soleButtonLabel);
-
-    sourceSelectorBox.appendChild(soleButton);
-
+    window.popupAcceptCallback = (newPath) => {
+      const { code, path } = newPath;
+      this.sourceStation = code;
+      this.path = path;
+    };
+    window.popupCancelCallback = () => {};
     const stationName = document.createElement("span");
     stationName.id = "sourceStationName";
+
+    if (this.path) {
+      this.path.forEach((pathSegment, index) => {
+        const soleButton = document.createElement("button");
+        soleButton.className = "source-selector source--" + pathSegment.type;
+        soleButton.addEventListener("click", () => {
+          showShopSelector(
+            index,
+            this.path.map((ps) => ps.code)
+          );
+        });
+
+        const soleButtonLabel = document.createElement("span");
+        soleButtonLabel.className = "source__label";
+        soleButtonLabel.textContent = pathSegment.code;
+        soleButton.appendChild(soleButtonLabel);
+        sourceSelectorBox.appendChild(soleButton);
+      });
+
+      stationName.textContent = this.path[this.path.length - 1].name;
+    }
 
     sourceSelectorFieldset.appendChild(sourceSelectorFieldsetLegend);
     sourceSelectorFieldset.appendChild(sourceSelectorBox);
@@ -121,7 +161,7 @@ class EntryComponent extends HTMLElement {
     quantityFieldsetLegend.textContent = "Quantity";
     const quantityInputNumber = new NumberInput();
     quantityInputNumber.size = 7;
-    quantityInputNumber.label = "cSCU";
+    quantityInputNumber.label = "Unit";
     quantityInputNumber.min = 0;
     quantityInputNumber.value = this.quantity;
     quantityInputNumber.onChange = (newQuantity) => {

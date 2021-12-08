@@ -6,8 +6,9 @@
 :root {
   --button-size: 64px;
   --margin: 8px -2px;
-  --primary-button-color: silver;
+  --primary-button-color: #939598;
   --primary-button-text: black;
+  --primary-button-border: #fad41b;
   --dangerous-button-color: red;
   --dangerous-button-text: white;
   --button-border: rgba(255, 255, 255, 0.6);
@@ -15,18 +16,20 @@
   --button-text: white;
   --button-label-color: rgba(0, 0, 0, 0.5);
   --button-label-text: white;
-  --selection-color: blue;
-  --panel-background: rgba(0, 0, 0, 0.4);
-  --workspace-color: #c2f1ea;
+  --selection-color: #fad41b;
+  --selection-text: #faf8eb;
+  --workspace-color: #54565b;
   --text-color: black;
-  --panel-border: 1px solid grey;
-  --panel-background: silver;
+  --panel-border: 1px solid #fad41b;
+  --panel-background: #76777b;
   --panel-titlebar-text: black;
-  --panel-titlebar-color: silver;
-  --panel-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
-  --button-shadow: 1px 2px 4px black;
-  --push-button-color: silver;
-  --push-button-text: black;
+  --panel-titlebar-color: #939598;
+  --panel-selected-color: #939598;
+  --panel-selected-text: #faf8eb;
+  --panel-shadow: 0px 2px 2px black;
+  --button-shadow: 0 2px 2px black;
+  --push-button-color: #76777b;
+  --push-button-text: #faf8eb;
   --shim-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -34,7 +37,7 @@
   margin: 0;
   padding: 0;
   line-height: 1;
-  font-family: "krona";
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -44,7 +47,7 @@ body {
 
 header {
   display: block;
-  background-color: var(--panel-background);
+  background-color: var(--panel-selected-color);
   text-transform: uppercase;
   min-height: 8px;
 }
@@ -219,6 +222,11 @@ commodity-selector {
 .touchnumberinput {
   display: flex;
   flex-direction: column;
+  margin-bottom: 4px;
+}
+
+.touchnumberinput > * {
+  font-family: "krona";
 }
 
 .touchnumberinput .increase,
@@ -227,7 +235,7 @@ commodity-selector {
 }
 
 .touchnumberinput input + span {
-  width: 80px;
+  width: 64px;
   display: inline-block;
 }
 
@@ -455,4 +463,46 @@ button {
 
 .as-number {
   text-align: right;
+}
+
+.ship-list {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.ship {
+  width: 300px;
+  border: 1px solid var(--primary-button-border);
+  box-shadow: var(--button-shadow);
+  height: 200px;
+  display: inline-block;
+  position: relative;
+  margin: 4px;
+}
+
+.ship span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.fill-meter {
+  overflow: hidden;
+  height: 24px;
+  background-color: var(--primary-button-color);
+  border: 1px solid var(--primary-button-border);
+}
+
+.fill-meter > div {
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--panel-background);
+  text-overflow: clip;
+  display: inline-block;
+  font-size: 18px;
+  height: 20px;
+  border-left: 0;
 }
