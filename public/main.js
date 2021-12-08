@@ -1,75 +1,13 @@
+import Webservices from "./Webservices.js";
+
 window.commodity = "";
 window.station = "";
 window.quantity = 0;
 window.price = 0.0;
 
-window.toggleRaw = function (fieldsetId) {
-  document
-    .querySelector(fieldsetId)
-    .querySelectorAll("button")
-    .forEach((button) => {
-      console.log(button.dataset);
-      if (button.dataset.raw === "true") {
-        button.hidden = !button.hidden;
-      }
-    });
-};
-
-window.setCommodity = function (event, symbol) {
-  window.commodity = symbol;
-  document
-    .getElementById("commoditySelector")
-    .querySelectorAll("button")
-    .forEach((button) => {
-      if (button == event.srcElement) {
-        button.classList.add("active");
-      } else {
-        button.classList.remove("active");
-      }
-    });
-  updateCommand();
-};
-
-window.adjustQtyBy = function (amount, isDestination) {
-  window[isDestination ? "destQuantity" : "quantity"] =
-    parseInt(window[isDestination ? "destQuantity" : "quantity"] || 0) + amount;
-  document.getElementById([isDestination ? "destQty" : "qty"]).value =
-    window[isDestination ? "destQuantity" : "quantity"];
-  updateCommand();
-};
-
-window.setQtyTo = function (amount, isDestination) {
-  window[isDestination ? "destQuantity" : "quantity"] = parseInt(amount) || 0;
-  updateCommand();
-};
-
-window.adjustPriceBy = function (amount, isDestination) {
-  window[isDestination ? "destPrice" : "price"] =
-    parseFloat(window[isDestination ? "destPrice" : "price"] || 0) + amount;
-  document.getElementById([isDestination ? "destPrice" : "price"]).value =
-    window[isDestination ? "destPrice" : "price"].toFixed(2);
-  updateCommand();
-};
-
-window.setPriceTo = function (amount) {
-  window[isDestination ? "destPrice" : "price"] = parseFloat(amount || 0);
-  updateCommand();
-};
-
-window.updateCommand = function () {
-  document.getElementById("commandline").textContent = `${window.commodity} ${
-    window.sourceStation
-  } ${window.quantity.toFixed(0)}@${window.price.toFixed(2)}`;
-  window.command = document.getElementById("commandline").textContent;
-  localStorage.setItem("command", window.command);
-};
-
 window.processCommand = async function (commandSelector) {
-  console.log(
-    "sending command to trade central",
-    document.querySelector(commandSelector).textContent
-  );
-  const response = await fetch("/buy", {
+  console.log("richtig?");
+  const response = await fetch(`/buy/${window.selectedManifest}`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -83,7 +21,7 @@ window.processCommand = async function (commandSelector) {
       price: window.price.toFixed(2),
     }),
   }).then((response) => response.json());
-  renderManifest(response.filter((tx) => !tx.isArchived));
+  renderManifest(response);
 };
 
 window.sourcePath = ["ST"];
@@ -125,8 +63,10 @@ window.updateShopSelector = function () {
   let page = { name: "universe", symbol: "UNIV", children: window.system };
   let crumbsHtml = "";
   let idx = 0;
+  console.log(page, window.popupMode);
   for (idx in window[window.popupMode + "Path"]) {
     const pathSegment = window[window.popupMode + "Path"][idx];
+    console.log(pathSegment, page);
     if (page.children) {
       crumbsHtml += `<li onclick="resetShopSelectorTo('${idx})">${pathSegment}</li>`;
       page = page.children.find((child) => child.code == pathSegment);
@@ -135,6 +75,7 @@ window.updateShopSelector = function () {
       break;
     }
   }
+  console.log(page);
 
   breadcrumbs.innerHTML = crumbsHtml;
   const list = shopSelector.querySelector("#shopChildren");
@@ -151,6 +92,7 @@ window.updateShopSelector = function () {
       }')"><i class='${child.type}'></i>${child.name}</li>`;
     });
   }
+  console.log(listHtml);
   list.innerHTML = listHtml;
 };
 
@@ -186,24 +128,21 @@ window.selectShop = function () {
 
   classifications = [
     ...classifications.splice(1),
-    { code: page.code, type: syntheticType },
+    { code: page.code, type: syntheticType, name: page.name },
   ];
-  console.log(classifications);
   window[window.popupMode + "Station"] = page.code;
-  let buttonBoxHtml = "";
-  const buttonBox = document.getElementById(window.popupMode + "SelectorBox");
-  classifications.forEach((classification, index) => {
-    buttonBoxHtml += `<button class="source-selector source--${
-      classification.type
-    }" onclick="showShopSelector(${index}${
-      window.popupMode == "dest" ? "', 'destination'" : ""
-    })"><span class="source__label">${classification.code}</span></button>`;
-  });
-  document.getElementById(window.popupMode + "StationName").textContent =
-    page.name;
-  buttonBox.innerHTML = buttonBoxHtml;
+  console.log(window.popupAcceptCallback);
+  if (
+    window.popupAcceptCallback &&
+    typeof window.popupAcceptCallback == "function"
+  ) {
+    window.popupAcceptCallback({
+      path: classifications,
+      code: page.code,
+    });
+  }
+
   document.getElementById("shim").click();
-  window.updateCommand();
 };
 
 window.moveShopSelectorDown = function (symbol) {
@@ -223,38 +162,12 @@ window.hidePopup = function (evt) {
   }
 };
 
-((command) => {
-  const splitted = command.split(" ");
-  if (splitted.length == 3) {
-    window.commodity = splitted[0];
-    window.station = splitted[1];
-    [window.quantity, window.price] = splitted[2].split("@");
-  } else if (splitted.length == 2) {
-    window.commodity = splitted[0];
-    [window.quantity, window.price] = splitted[1].split("@");
-  }
-  window.quantity = parseInt(window.quantity);
-  window.price = parseFloat(window.price);
-  updateCommand();
-})(localStorage.getItem("command"));
-
-(() => {
-  fetch("/manifest")
-    .then((response) => response.json())
-    .then((data) => {
-      renderManifest(
-        data.transactions.filter((transaction) => !transaction.isArchived)
-      );
-      renderLog(data.manifests);
-    });
-})();
-
 window.renderManifest = function (data) {
   const targetTable = document.getElementById("manifest");
   targetTable.innerHTML = "";
   let markup = "";
-  console.log(data);
-  data.forEach((set) => {
+  let filledUp = 0;
+  data.transactions.forEach((set) => {
     let soldGoods = 0;
     let historyMarkup = "";
     if (set.history) {
@@ -274,6 +187,8 @@ window.renderManifest = function (data) {
         )} aUEC</td></tr>`;
       });
     }
+
+    filledUp += Math.ceil(set.quantity / 100);
 
     const commodityDetails = window.commodities.find(
       (commodity) => commodity.code == set.commodity
@@ -296,10 +211,15 @@ window.renderManifest = function (data) {
     }" onclick="sell('${set.transaction}')"></button></td></tr>`;
     markup += historyMarkup;
   });
-  document.getElementById(
-    "tabHeader-current"
-  ).textContent = `Manifest (${data.length}/0)`;
+  const ship = window.ships.find((ship) => ship.code === data.ship);
+  ship.scu;
+  document.querySelector(
+    `[data-manifest="${data.manifest}"]`
+  ).textContent = `${ship.name}(${filledUp}/${ship.scu})`;
   targetTable.innerHTML = markup;
+
+  const infoPre = document.getElementById("manifest-info");
+  infoPre.textContent = `${data.manifest}\n${ship.name}\n${filledUp}/${ship.scu}`;
 };
 
 window.dump = async function (transaction) {
@@ -340,7 +260,8 @@ window.sell = function (transaction) {
             <button class="source-selector source--star" onclick="showShopSelector(0, 'destination')"><span class="source__label">ST</span></button>
         </div>
         <span id='destStationName'></span></td>
-        <td><div class="touchnumberinput">
+        <td>
+        <div class="touchnumberinput">
         <div class="increase">
             <button onclick="adjustQtyBy(10000000, 'destination')" title='increase value by 1000000'>▲</button>
             <button onclick="adjustQtyBy(1000000, 'destination')" title='increase value by 100000'>▲</button>
@@ -362,7 +283,8 @@ window.sell = function (transaction) {
         <button onclick="adjustQtyBy(-10, 'destination')" title='decrease value by 10'>▼</button>
         <button onclick="adjustQtyBy(-1, 'destination')" title='decrease value by 1'>▼</button></div>
     </div></td>
-        <td><div class="touchnumberinput">
+        <td>       
+        <div class="touchnumberinput">
         <div class="increase">
         <button onclick="adjustPriceBy(10000, 'destination')" title='increase value by 10000'>▲</button>
         <button onclick="adjustPriceBy(1000, 'destination')" title='increase value by 1000'>▲</button>
@@ -404,6 +326,7 @@ window.sellCommodityFromTransaction = function (transaction) {
   })
     .then((response) => response.json())
     .then((data) =>
+      // TODO: needs to be fixed
       renderManifest(data.transactions.filter((tx) => !tx.isArchived))
     );
 };
@@ -438,10 +361,10 @@ window.archiveManifest = function () {
     });
 };
 
-window.switchToTab = function (tabName) {
+window.switchToTab = function (tabName, manifest) {
   document.querySelectorAll("#tabBar li").forEach((tab) => {
-    document.querySelectorAll("section.manifest").forEach((section) => {
-      if (section.classList.contains("manifest--" + tabName)) {
+    document.querySelectorAll("section").forEach((section) => {
+      if (section.id == tabName) {
         section.hidden = false;
       } else {
         section.hidden = true;
@@ -449,9 +372,96 @@ window.switchToTab = function (tabName) {
     });
 
     if (tab.id.indexOf("tabHeader-" + tabName) != -1) {
-      tab.classList.add("active");
+      if (tabName === "current") {
+        if (tab.dataset.manifest === manifest) {
+          window.selectedManifest = manifest;
+          tab.classList.add("active");
+          tab.classList.add("to");
+          Webservices.instance.wsGetManifest(manifest);
+        } else {
+          tab.classList.remove("active");
+          tab.classList.remove("to");
+        }
+      } else {
+        tab.classList.add("active");
+      }
     } else {
       tab.classList.remove("active");
     }
   });
 };
+
+Webservices.instance.addEventListener("manifest", (manifestData) => {
+  if (manifestData.transactions) {
+    createTab(manifestData.manifest);
+    renderManifest(manifestData);
+  }
+});
+
+Webservices.instance.addEventListener("manifest", (manifestData) => {
+  if (manifestData && manifestData.manifest) {
+    let holdManifests = [];
+    if (localStorage.getItem("manifests")) {
+      holdManifests = JSON.parse(localStorage.getItem("manifests"));
+    }
+    if (!holdManifests.find((manifest) => manifestData.manifest === manifest)) {
+      holdManifests.push(manifestData.manifest);
+      console.log(holdManifests);
+      localStorage.setItem("manifests", JSON.stringify(holdManifests));
+    }
+  }
+});
+
+window.createTab = (manifest) => {
+  if (!tabBar.querySelector(`[data-manifest="${manifest}"]`)) {
+    const tabBar = document.querySelector("#tabBar");
+    const tab = document.createElement("li");
+    tab.addEventListener("click", () => {
+      switchToTab("current", manifest);
+    });
+    tab.dataset.manifest = manifest;
+    tab.id = "tabHeader-current";
+    tab.textContent = "";
+    console.log(tab);
+    tabBar
+      .querySelector("li:nth-child(2)")
+      .insertAdjacentElement("afterend", tab);
+  }
+};
+
+(() => {
+  const tabBar = document.querySelector("#tabBar");
+  tabBar.innerHTML = "";
+
+  const fleetTab = document.createElement("li");
+  fleetTab.addEventListener("click", () => {
+    switchToTab("fleet");
+  });
+  fleetTab.id = "tabHeader-fleet";
+  fleetTab.textContent = "Fleet";
+  tabBar.appendChild(fleetTab);
+  console.log("fleetTab added", fleetTab);
+
+  const entryTab = document.createElement("li");
+  entryTab.addEventListener("click", () => {
+    switchToTab("entry");
+  });
+  entryTab.id = "tabHeader-entry";
+  entryTab.textContent = "Add Commodity";
+  tabBar.appendChild(entryTab);
+
+  const historyTab = document.createElement("li");
+  historyTab.addEventListener("click", () => {
+    switchToTab("log");
+  });
+  historyTab.id = "tabHeader-log";
+  historyTab.textContent = "Log";
+  tabBar.appendChild(historyTab);
+  if (localStorage.getItem("manifests")) {
+    const holdManifests = JSON.parse(localStorage.getItem("manifests"));
+    holdManifests.forEach((manifest) => {
+      createTab(manifest);
+      Webservices.instance.wsGetManifest(manifest);
+    });
+  }
+})();

@@ -32,17 +32,21 @@ app.get("/", (req, res) => {
     commodityListing: JSON.stringify(publicData.commodities),
     stations: JSON.stringify(publicData.tradeports),
     systemmap: JSON.stringify(publicData.systems),
+    ships: JSON.stringify(publicData.ships),
   });
 });
 
-app.get("/manifest", (req, res) => {
+app.get("/manifest/:manifestId", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
-  res.send(JSON.stringify(userData));
+  const m = userData.manifests.find(
+    (manifest) => manifest.manifest === req.params.manifestId
+  );
+  res.send(JSON.stringify(m));
 });
 
-app.delete("/dump", (req, res) => {
+app.delete("/dump/:manifestId", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -58,7 +62,7 @@ app.delete("/dump", (req, res) => {
   res.send(JSON.stringify(userData.transactions));
 });
 
-app.post("/seal-manifest", (req, res) => {
+app.post("/seal-manifest/:manifestId", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -97,7 +101,7 @@ app.post("/seal-manifest", (req, res) => {
   res.send(JSON.stringify(userData.transactions));
 });
 
-app.post("/archive", (req, res) => {
+app.post("/archive/:manifest", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -162,7 +166,7 @@ app.post("/archive", (req, res) => {
   }
 });
 
-app.post("/sell", (req, res) => {
+app.post("/sell/:manifest", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -192,7 +196,7 @@ app.post("/sell", (req, res) => {
 });
 
 app.post("/buy", (req, res) => {
-  console.log(req.body);
+  console.log("buy on empty manifest");
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
@@ -202,7 +206,19 @@ app.post("/buy", (req, res) => {
   if (!userData.transactions) {
     userData.transactions = [];
   }
-  userData.transactions.push({
+
+  if (!userData.manifests) {
+    userData.manifests = [];
+  }
+
+  let manifest = {
+    manifest: guid.raw(),
+    transactions: [],
+    ship: "AVTITA",
+  };
+  userData.manifests.push(manifest);
+
+  manifest.transactions.push({
     commodity: req.body.commodity,
     shop: req.body.shop || "unknown",
     quantity: req.body.qty || 0,
@@ -214,45 +230,130 @@ app.post("/buy", (req, res) => {
     JSON.stringify(userData),
     "utf-8"
   );
-  res.send(JSON.stringify(userData.transactions));
+  res.send(JSON.stringify(manifest));
+});
+
+app.get("/ships", (req, res) => {
+  res.send(JSON.stringify(publicData.ships));
+});
+
+app.post("/create", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  if (!userData) {
+    userData = {};
+  }
+  if (!userData.transactions) {
+    userData.transactions = [];
+  }
+
+  if (!userData.manifests) {
+    userData.manifests = [];
+  }
+
+  let manifest = {
+    manifest: guid.raw(),
+    transactions: [],
+    ship: req.body.code,
+  };
+  userData.manifests.push(manifest);
+
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(manifest));
+});
+
+app.post("/buy/:manifest", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  if (!userData) {
+    userData = {};
+  }
+  if (!userData.transactions) {
+    userData.transactions = [];
+  }
+
+  if (!userData.manifests) {
+    userData.manifests = [];
+  }
+
+  let manifest = userData.manifests.find(
+    (manifest) => manifest.manifest === req.params.manifest
+  );
+  if (!manifest) {
+    res.sendStatus(404);
+    return;
+  }
+
+  manifest.transactions.push({
+    commodity: req.body.commodity,
+    shop: req.body.shop || "unknown",
+    quantity: req.body.qty || 0,
+    price: req.body.price || 0,
+    transaction: guid.raw(),
+  });
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(manifest));
 });
 
 app.use(express.static("public"));
 
-app.listen(PORT, async () => {
-  console.log("sc-manifest started on Port", PORT);
-  if (process.env.UEX_APIKEY) {
-    console.log("UEXcorp APIKEY set");
-  } else {
-    console.error("apikey not found");
-  }
-  if (process.env.UEX_ENDPOINT) {
-    console.log("UEXcorp endpoint set");
-  } else {
-    console.error("endpoint not found");
-  }
+async function fetchShips() {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
     const UEX_APIKEY = process.env.UEX_APIKEY;
     const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
-    console.log("establishing UEXcorp link");
-    const tradeports = await fetch(UEX_ENDPOINT + "tradeports", {
+    let ships = await fetch(UEX_ENDPOINT + "ships", {
       headers: { api_key: UEX_APIKEY },
     }).then((response) => response.json());
-    console.log(`uplink to ${tradeports.data.length} tradeports established`);
-    publicData.tradeports = tradeports.data;
-    console.log("requesting commodity listing");
+    ships = ships.data
+      .filter((shipData) => shipData.scu > 0 && shipData.implemented == "1")
+      .map((shipData) => {
+        return {
+          manufacturer: shipData.manufacturer,
+          series: shipData.series,
+          code: shipData.code,
+          scu: shipData.scu,
+          name: shipData.name,
+        };
+      });
+    return ships;
+  }
+}
+
+async function fetchCommodities() {
+  if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
+    const UEX_APIKEY = process.env.UEX_APIKEY;
+    const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
     const commodities = await fetch(UEX_ENDPOINT + "commodities", {
       headers: { api_key: UEX_APIKEY },
     }).then((response) => response.json());
-    console.log(
-      `recieved ${commodities.data.length} commodities on publicData trading channels`
-    );
-    publicData.commodities = commodities.data;
-    const systemmap = JSON.parse(
+    return commodities.data;
+  }
+}
+
+async function fetchTradeports(systems) {
+  if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
+    const UEX_APIKEY = process.env.UEX_APIKEY;
+    const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
+    const publicData = {};
+    publicData.systems = JSON.parse(
       readFileSync(join("data", "systemmap.json"), "utf-8")
     );
-    console.log("Preparing System Map for ST");
-    publicData.systems = systemmap;
+
+    const tradeports = await fetch(UEX_ENDPOINT + "tradeports", {
+      headers: { api_key: UEX_APIKEY },
+    }).then((response) => response.json());
+
+    publicData.tradeports = tradeports.data;
 
     const fn = (tradeport) => {
       // tradeport system, planet, satellite, city
@@ -260,7 +361,6 @@ app.listen(PORT, async () => {
         (c) => c.code == tradeport.system && c.trade != "1"
       );
       if (starsystem) {
-        console.log(starsystem);
         const planet = starsystem.children.find(
           (c) => c.code == tradeport.planet && c.trade != "1"
         );
@@ -288,7 +388,28 @@ app.listen(PORT, async () => {
       }
     };
     publicData.tradeports.forEach((tradeport) => fn(tradeport));
-    writeFileSync("publicdata.json", JSON.stringify(publicData), "utf-8");
-    console.log("everything is up and running");
+    return publicData;
   }
+}
+
+app.listen(PORT, async () => {
+  console.log("sc-manifest started on Port", PORT);
+  if (process.env.UEX_APIKEY) {
+    console.log("UEXcorp APIKEY set");
+  } else {
+    console.error("apikey not found");
+  }
+  if (process.env.UEX_ENDPOINT) {
+    console.log("UEXcorp endpoint set");
+  } else {
+    console.error("endpoint not found");
+  }
+  publicData.commodities = await fetchCommodities();
+  publicData.ships = await fetchShips();
+
+  const d = await fetchTradeports();
+  publicData.tradeports = d.tradeports;
+  publicData.systems = d.systems;
+  writeFileSync("publicdata.json", JSON.stringify(publicData), "utf-8");
+  console.log("everything is up and running");
 });

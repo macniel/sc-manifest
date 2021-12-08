@@ -6,76 +6,92 @@
 :root {
   --button-size: 64px;
   --margin: 8px -2px;
+  --primary-button-color: #939598;
+  --primary-button-text: black;
+  --primary-button-border: #fad41b;
+  --dangerous-button-color: red;
+  --dangerous-button-text: white;
+  --button-border: rgba(255, 255, 255, 0.6);
+  --button-background: black;
+  --button-text: white;
+  --button-label-color: rgba(0, 0, 0, 0.5);
+  --button-label-text: white;
+  --selection-color: #fad41b;
+  --selection-text: #faf8eb;
+  --workspace-color: #54565b;
+  --text-color: black;
+  --panel-border: 1px solid #fad41b;
+  --panel-background: #76777b;
+  --panel-titlebar-text: black;
+  --panel-titlebar-color: #939598;
+  --panel-selected-color: #939598;
+  --panel-selected-text: #faf8eb;
+  --panel-shadow: 0px 2px 2px black;
+  --button-shadow: 0 2px 2px black;
+  --push-button-color: #76777b;
+  --push-button-text: #faf8eb;
+  --shim-color: rgba(0, 0, 0, 0.8);
 }
 
 * {
   margin: 0;
   padding: 0;
   line-height: 1;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  font-family: "Segoe UI";
   font-size: 18pt;
-  background-color: #e3e0e0;
+  background-color: var(--workspace-color);
 }
 
 header {
   display: block;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--panel-selected-color);
   text-transform: uppercase;
   min-height: 8px;
 }
 
 .four-section {
-  display: flex;
-  flex-flow: row wrap;
-  margin: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
 }
 
 fieldset {
-  border: 1px solid #ddb975;
-  position: relative;
-  padding-top: 20px;
-  margin: 8px;
-  background-color: #d1c689;
-}
-
-fieldset.standalone {
-  box-shadow: 1px 2px 4px black;
-  margin-left: 28px;
-  margin-right: 28px;
+  border: 1px solid var(--panel-border);
+  background-color: var(--panel-background);
+  box-shadow: var(--panel-shadow);
+  margin: 4px;
+  padding: 4px 0 0 0;
 }
 
 fieldset > legend {
-  position: absolute;
-  height: 20px;
-  left: 0;
-  top: 0;
-  right: 0;
+  margin: 0;
+  padding: 0;
+  float: none;
+  background-color: var(--panel-titlebar-color);
+  color: var(--panel-titlebar-text);
+  width: 100%;
 }
 
-#commoditySelector {
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: auto;
+.four-section fieldset:nth-child(1) {
+  grid-area: 1 / 1 / 4 / 2;
 }
-
-#sourceStation {
-  flex-grow: 1;
+.four-section fieldset:nth-child(2) {
+  grid-area: 1 / 2 / 2 / 3;
 }
-
-.four-section > fieldset {
-  padding: 38px 4px 4px 4px;
-  box-shadow: 1px 2px 4px black;
+.four-section fieldset:nth-child(3) {
+  grid-area: 2 / 2 / 3 / 3;
 }
-fieldset > legend {
-  background-color: rgba(0, 0, 0, 0.2);
-  padding-bottom: 10px;
+.four-section fieldset:nth-child(4) {
+  grid-area: 3 / 2 / 4 / 3;
 }
 
 .commodity.active {
-  background-color: blue;
+  background-color: var(--selection-color);
 }
 
 .manifest-item-action.action-drop {
@@ -94,13 +110,20 @@ fieldset > legend {
   margin: 0;
 }
 
+commodity-selector {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .commodity {
-  border: 2px solid #303030;
-  background-color: black;
+  border: 2px solid var(--button-border);
+  background-color: var(--button-background);
   position: relative;
   width: var(--button-size);
   height: var(--button-size);
-  margin: var(--margin);
+  margin: 2px 2px;
   background-size: var(--button-size);
 }
 
@@ -151,10 +174,12 @@ fieldset > legend {
 .commodity__label {
   position: absolute;
   left: 0;
-  bottom: -16px;
+  bottom: 0px;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  height: 10px;
+  background-color: var(--button-label-color);
   text-align: center;
+  color: var(--button-text);
   margin: 0 -2px;
 }
 .source-selector--outer {
@@ -166,7 +191,7 @@ fieldset > legend {
 }
 .source-selector {
   margin-bottom: 8px;
-  background-color: black;
+  background-color: var(--button-background);
 }
 
 .source--city {
@@ -197,6 +222,11 @@ fieldset > legend {
 .touchnumberinput {
   display: flex;
   flex-direction: column;
+  margin-bottom: 4px;
+}
+
+.touchnumberinput > * {
+  font-family: "krona";
 }
 
 .touchnumberinput .increase,
@@ -204,11 +234,20 @@ fieldset > legend {
   padding-right: 80px;
 }
 
+.touchnumberinput input + span {
+  width: 64px;
+  display: inline-block;
+}
+
 .touchnumberinput > div:not(.inner) {
   text-align: right;
 }
 .touchnumberinput > div:not(.inner) button {
   width: 40px;
+  margin-left: 4px;
+  margin-right: 4px;
+  background-color: var(--push-button-color);
+  color: var(--push-button-text);
 }
 
 .touchnumberinput button {
@@ -220,6 +259,7 @@ fieldset > legend {
 .touchnumberinput .inner {
   height: var(--button-size);
   display: block;
+  text-align: right;
 }
 
 .touchnumberinput input {
@@ -235,7 +275,7 @@ fieldset > legend {
 
 .period-spacer {
   height: 4px;
-  width: 36px;
+  width: 44px;
   display: inline-block;
 }
 
@@ -251,7 +291,8 @@ fieldset > legend {
   left: 0;
   bottom: -16px;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--button-label-color);
+  color: var(--button-text);
   text-align: center;
   margin: 0 -2px;
 }
@@ -262,14 +303,15 @@ input {
   border: 0;
   padding: 0;
   margin: 0;
-  background: rgba(255, 255, 255, 0.2);
+  background-color: var(--input-color);
+  color: var(--input-text);
 }
 
 button {
-  border: 1px solid rgb(40, 160, 50);
-  background-color: rgb(0, 128, 0);
-  color: white;
-  box-shadow: 1px 2px 4px black;
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--primary-button-color);
+  color: var(--button-text);
+  box-shadow: var(--button-shadow);
 }
 
 #sourceStationName {
@@ -285,7 +327,7 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--shim-color);
   align-items: center;
   justify-content: center;
 }
@@ -293,7 +335,7 @@ button {
 .popup {
   width: 512px;
   height: 640px;
-  background-color: #efefef;
+  background-color: var(--panel-background);
   position: relative;
   padding: 0 16px 16px 16px;
   pointer-events: all;
@@ -301,6 +343,8 @@ button {
 
 .popup header {
   margin: 0 -16px;
+  color: var(--panel-titlebar-text);
+  background-color: var(--panel-titlebar-color);
 }
 
 .popup-actions {
@@ -342,28 +386,52 @@ button {
 .manifest-actions {
   display: flex;
   align-items: stretch;
-  margin: 28px;
-  border: 1px solid #ddb975;
-  background-color: #d1c689;
-  box-shadow: 1px 2px 4px black;
+  margin: 4px;
+  border: 1px solid var(--panel-border);
+  background-color: var(--panel-background);
+  box-shadow: var(--panel-shadow);
   padding: 4px;
 }
 
 #tabBar {
-  display: inline-block;
+  display: block;
+  position: relative;
+  height: 38px;
 }
 #tabBar li {
   display: inline-block;
-  margin: 4px 24px -2px 24px;
-  background-color: rgba(0, 0, 0, 0.2);
+  margin: 4px 2px -2px 2px;
+  background-color: var(--panel-background);
+  color: var(--panel-text);
   padding-top: 0;
   padding: 0 24px 0 24px;
+  border-left: 4px solid transparent;
 }
+
+#tabBar li.to {
+  border-left: 4px solid teal;
+}
+
+#tabBar li#tabHeader-log {
+  position: absolute;
+  background-color: transparent;
+  border: 0;
+  right: 0;
+  top: 10px;
+  margin-top: 0;
+  padding-top: 0;
+}
+#tabBar li.active#tabHeader-log {
+  padding-top: 0;
+  top: 6px;
+}
+
 #tabBar li.active {
   position: relative;
   padding-top: 4px;
   margin-top: 10px;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--panel-selected-color);
+  color: var(--panel-selected-text);
   border-bottom: 0;
 }
 
@@ -400,4 +468,46 @@ button {
 
 .as-number {
   text-align: right;
+}
+
+.ship-list {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.ship {
+  width: 300px;
+  border: 1px solid var(--primary-button-border);
+  box-shadow: var(--button-shadow);
+  height: 200px;
+  display: inline-block;
+  position: relative;
+  margin: 4px;
+}
+
+.ship span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.fill-meter {
+  overflow: hidden;
+  height: 24px;
+  background-color: var(--primary-button-color);
+  border: 1px solid var(--primary-button-border);
+}
+
+.fill-meter > div {
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--panel-background);
+  text-overflow: clip;
+  display: inline-block;
+  font-size: 18px;
+  height: 20px;
+  border-left: 0;
 }
