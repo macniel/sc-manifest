@@ -47,6 +47,24 @@ class Webservices {
     }
   }
 
+  wsSellFromManifest(manifest, { transaction, price, quantity, shop }) {
+    const payload = {
+      transaction,
+      shop,
+      price,
+      quantity,
+    };
+    fetch(`/sell/${manifest}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) =>
+        this.eventListeners["manifest"].forEach((listener) => listener(data))
+      );
+  }
+
   wsAddToManifest(manifestId, { commodity, shop, quantity, price }) {
     console.log(this.eventListeners);
     fetch(`/buy/${manifestId}`, {

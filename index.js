@@ -8,7 +8,7 @@ const guid = require("guid");
 
 const app = express();
 const PORT = process.env.PORT;
-const publicData = {};
+let publicData = {};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -172,7 +172,10 @@ app.post("/sell/:manifest", (req, res) => {
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
   const envelope = req.body;
-  const transactionItem = userData.transactions.find(
+  const manifest = userData.manifests.find(
+    (manifest) => manifest.manifest == req.params.manifest
+  );
+  const transactionItem = manifest.transactions.find(
     (manifestItem) => manifestItem.transaction == envelope.transaction
   );
   console.log(transactionItem);
@@ -192,7 +195,7 @@ app.post("/sell/:manifest", (req, res) => {
     JSON.stringify(userData),
     "utf-8"
   );
-  res.send(JSON.stringify(userData));
+  res.send(JSON.stringify(manifest));
 });
 
 app.post("/buy", (req, res) => {
@@ -313,7 +316,10 @@ async function fetchShips() {
     const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
     let ships = await fetch(UEX_ENDPOINT + "ships", {
       headers: { api_key: UEX_APIKEY },
-    }).then((response) => response.json());
+    })
+      .then((response) => response.json())
+      .catch((error) => console.error(error));
+    console.log(ships);
     ships = ships.data
       .filter((shipData) => shipData.scu > 0 && shipData.implemented == "1")
       .map((shipData) => {
@@ -325,6 +331,7 @@ async function fetchShips() {
           name: shipData.name,
         };
       });
+
     return ships;
   }
 }
@@ -394,22 +401,27 @@ async function fetchTradeports(systems) {
 
 app.listen(PORT, async () => {
   console.log("sc-manifest started on Port", PORT);
-  if (process.env.UEX_APIKEY) {
-    console.log("UEXcorp APIKEY set");
-  } else {
-    console.error("apikey not found");
-  }
-  if (process.env.UEX_ENDPOINT) {
-    console.log("UEXcorp endpoint set");
-  } else {
-    console.error("endpoint not found");
-  }
-  publicData.commodities = await fetchCommodities();
-  publicData.ships = await fetchShips();
+  if (process.env.refreshData) {
+    if (process.env.UEX_APIKEY) {
+      console.log("UEXcorp APIKEY set");
+    } else {
+      console.error("apikey not found");
+    }
+    if (process.env.UEX_ENDPOINT) {
+      console.log("UEXcorp endpoint set");
+    } else {
+      console.error("endpoint not found");
+    }
+    publicData.commodities = await fetchCommodities();
+    publicData.ships = await fetchShips();
 
-  const d = await fetchTradeports();
-  publicData.tradeports = d.tradeports;
-  publicData.systems = d.systems;
-  writeFileSync("publicdata.json", JSON.stringify(publicData), "utf-8");
+    const d = await fetchTradeports();
+    publicData.tradeports = d.tradeports;
+    publicData.systems = d.systems;
+    writeFileSync("publicdata.json", JSON.stringify(publicData), "utf-8");
+  } else {
+    console.log("no refresh issued, taking data from storage");
+    publicData = JSON.parse(readFileSync("publicdata.json", "utf-8"));
+  }
   console.log("everything is up and running");
 });

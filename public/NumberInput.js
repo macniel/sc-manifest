@@ -24,6 +24,10 @@ class NumberInput extends HTMLElement {
     this.render();
   }
 
+  get value() {
+    return this._value;
+  }
+
   set size(newValue) {
     this._size = newValue;
     this.render();

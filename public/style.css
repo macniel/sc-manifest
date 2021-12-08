@@ -409,7 +409,7 @@ button {
 }
 
 #tabBar li.to {
-  border-left: 4px solid teal;
+  border-left: 4px solid var(--primary-button-border);
 }
 
 #tabBar li#tabHeader-log {

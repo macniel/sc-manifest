@@ -1,3 +1,4 @@
+import NumberInput from "./NumberInput.js";
 import Webservices from "./Webservices.js";
 
 window.commodity = "";
@@ -196,37 +197,70 @@ window.renderManifest = function (data) {
     const shopDetails = window.stations.find(
       (shop) => shop.code == set.shop || shop.symbol == set.shop
     );
-    markup += `<tr data-transaction="${set.transaction}"><td>${
-      commodityDetails.name
-    }</td><td>${
-      shopDetails ? shopDetails.name : set.shop
-    }</td><td class='as-number'>${set.quantity - soldGoods}/${
-      set.quantity
-    } cSCU</td><td class='as-number'>${
-      set.price
-    } aUEC</td><td class="manifest-item-actions"><button class="manifest-item-action action--harmful action-drop" ondblclick="dump('${
-      set.transaction
-    }')"></button><button class="manifest-item-action action action-sell ${
-      set.quantity - soldGoods == 0 ? "action-disabled" : ""
-    }" onclick="sell('${set.transaction}')"></button></td></tr>`;
-    markup += historyMarkup;
+
+    const tr = document.createElement("tr");
+    tr.transaction = set.transaction;
+    tr.dataset.transaction = set.transaction;
+
+    const nameCell = document.createElement("td");
+    nameCell.textContent = commodityDetails.name;
+    tr.appendChild(nameCell);
+
+    const shopCell = document.createElement("td");
+    shopCell.textContent = shopDetails ? shopDetails.name : set.shop;
+    tr.appendChild(shopCell);
+
+    const quantityCell = document.createElement("td");
+    quantityCell.className = "as-number";
+    quantityCell.textContent =
+      set.quantity - soldGoods + "/" + set.quantity + " cSCU";
+    tr.appendChild(quantityCell);
+
+    const priceCell = document.createElement("td");
+    priceCell.className = "as-number";
+    priceCell.textContent = set.price + " aUEC";
+    tr.appendChild(priceCell);
+
+    const actions = document.createElement("td");
+    actions.className = "manifest-item-actions";
+
+    const dumpButton = document.createElement("button");
+    dumpButton.className = "manifest-item-action action--harmful action-drop";
+    dumpButton.addEventListener("dblclick", () => {
+      dump(data.manifest, set.transaction);
+    });
+
+    const sellButton = document.createElement("button");
+    sellButton.className = "manifest-item-action action action-sell";
+    if (set.quantity - soldGoods == 0) {
+      sellButton.classList.add("action-disabled");
+    }
+    sellButton.addEventListener("click", () => {
+      sell(set);
+    });
+    actions.appendChild(dumpButton);
+    actions.appendChild(sellButton);
+
+    tr.appendChild(actions);
+    targetTable.appendChild(tr);
+    tr.insertAdjacentHTML("afterend", historyMarkup);
   });
+  console.log(data, window.ships, data.ship);
   const ship = window.ships.find((ship) => ship.code === data.ship);
   ship.scu;
   document.querySelector(
     `[data-manifest="${data.manifest}"]`
   ).textContent = `${ship.name}(${filledUp}/${ship.scu})`;
-  targetTable.innerHTML = markup;
 
   const infoPre = document.getElementById("manifest-info");
   infoPre.textContent = `${data.manifest}\n${ship.name}\n${filledUp}/${ship.scu}`;
 };
 
-window.dump = async function (transaction) {
-  await fetch("/dump", {
+window.dump = async function (manifest, transaction) {
+  await fetch(`/dump/${manifest}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ transaction }),
+    body: JSON.stringify({ transaction: transaction.transaction }),
   })
     .then((response) => response.json())
     .then((data) => renderManifest(data.filter((tx) => !tx.isArchived)));
@@ -241,9 +275,8 @@ window.sealManifest = async function () {
 };
 
 window.sell = function (transaction) {
-  // TODO: show popup for sell information
   const transactionItem = document.querySelector(
-    `[data-transaction="${transaction}"]`
+    `[data-transaction="${transaction.transaction}"]`
   );
   console.log(transactionItem);
   if (transactionItem.parentNode.querySelector(".sellline")) {
@@ -251,6 +284,20 @@ window.sell = function (transaction) {
       transactionItem.parentNode.querySelector(".sellline")
     );
   }
+
+  console.log(transaction);
+  const quantity = new NumberInput();
+  quantity.value = parseInt(transaction.quantity);
+  quantity.max = parseInt(transaction.quantity);
+  quantity.label = "cSCU";
+  quantity.size = 8;
+
+  const price = new NumberInput();
+  price.value = parseFloat(transaction.price);
+  price.label = "aUEC";
+  price.size = 6;
+  price.fraction = 2;
+
   transactionItem.insertAdjacentHTML(
     "afterend",
     `<tr class='sellline'>
@@ -260,75 +307,24 @@ window.sell = function (transaction) {
             <button class="source-selector source--star" onclick="showShopSelector(0, 'destination')"><span class="source__label">ST</span></button>
         </div>
         <span id='destStationName'></span></td>
-        <td>
-        <div class="touchnumberinput">
-        <div class="increase">
-            <button onclick="adjustQtyBy(10000000, 'destination')" title='increase value by 1000000'>▲</button>
-            <button onclick="adjustQtyBy(1000000, 'destination')" title='increase value by 100000'>▲</button>
-            <button onclick="adjustQtyBy(100000, 'destination')" title='increase value by 10000'>▲</button>
-            <button onclick="adjustQtyBy(10000, 'destination')" title='increase value by 1000'>▲</button>
-            <button onclick="adjustQtyBy(1000, 'destination')" title='increase value by 1000'>▲</button>
-            <button onclick="adjustQtyBy(100, 'destination')" title='increase value by 100'>▲</button>
-        <button onclick="adjustQtyBy(10, 'destination')" title='increase value by 10'>▲</button>
-        <button onclick="adjustQtyBy(1, 'destination')" title='increase value by 1'>▲</button></div>
-        <div class="inner"><input type="number" id="destQty" onchange="setQtyTo(event.target.value, 'destination')" pattern="[0-9]+([\.,][0-9]+)?" step="1"> cSCU</div>
-        <div class="decrease">
-                <button onclick="adjustQtyBy(-10000000, 'destination')" title='decrease value by 10000000'>▼</button>
-                <button onclick="adjustQtyBy(-1000000, 'destination')" title='decrease value by 1000000'>▼</button>
-                <button onclick="adjustQtyBy(-100000, 'destination')" title='decrease value by 100000'>▼</button>
-        <button onclick="adjustQtyBy(-10000, 'destination')" title='decrease value by 10000'>▼</button>
-            <button onclick="adjustQtyBy(-1000, 'destination')" title='decrease value by 1000'>▼</button>
-        <button onclick="adjustQtyBy(-100, 'destination')" title='decrease value by 100'>▼</button>
-        
-        <button onclick="adjustQtyBy(-10, 'destination')" title='decrease value by 10'>▼</button>
-        <button onclick="adjustQtyBy(-1, 'destination')" title='decrease value by 1'>▼</button></div>
-    </div></td>
-        <td>       
-        <div class="touchnumberinput">
-        <div class="increase">
-        <button onclick="adjustPriceBy(10000, 'destination')" title='increase value by 10000'>▲</button>
-        <button onclick="adjustPriceBy(1000, 'destination')" title='increase value by 1000'>▲</button>
-        <button onclick="adjustPriceBy(100, 'destination')" title='increase value by 100'>▲</button>
-        <button onclick="adjustPriceBy(10, 'destination')" title='increase value by 10'>▲</button>
-        <button onclick="adjustPriceBy(1, 'destination')" title='increase value by 1'>▲</button>
-        <div class="period-spacer"></div>
-        <button onclick="adjustPriceBy(0.1, 'destination')" title='increase value by a tenth'>▲</button>
-        <button onclick="adjustPriceBy(0.01, 'destination')" title='increase value by a hundreth'>▲</button>
-        </div>
-        <div class="inner"><input type="number" id="destPrice" onchange="setQtyTo(event.target.value, 'destination')" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"><label for="price">aUEC</label></div>
-        <div class="decrease">
-        <button onclick="adjustPriceBy(-10000, 'destination')" title='decrease value by 10000'>▼</button>    
-        <button onclick="adjustPriceBy(-1000, 'destination')" title='decrease value by 1000'>▼</button>    
-        <button onclick="adjustPriceBy(-100, 'destination')" title='decrease value by 100'>▼</button>    
-        <button onclick="adjustPriceBy(-10, 'destination')" title='decrease value by 10'>▼</button>    
-        <button onclick="adjustPriceBy(-1, 'destination')" title='decrease value by 1'>▼</button>    
-        <div class="period-spacer"></div>
-        <button onclick="adjustPriceBy(-0.1, 'destination')" title='decrease value by a tenth'>▼</button>
-        
-        <button onclick="adjustPriceBy(-0.01, 'destination')" title='decrease value by a hundreth'>▼</button>
-        </div>
-    </div></td>
-        <td><button onclick="sellCommodityFromTransaction('${transaction}')">Confirm</button></td></tr>`
+        <td id='quantity'>
+        </td>
+        <td id='price'>       
+        </td>
+        <td><button id='confirmsell'>Confirm</button></td></tr>`
   );
-};
-
-window.sellCommodityFromTransaction = function (transaction) {
-  const payload = {
-    transaction,
-    shop: window.destStation,
-    price: window.destPrice,
-    quantity: window.destQuantity,
-  };
-  fetch("/sell", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  })
-    .then((response) => response.json())
-    .then((data) =>
-      // TODO: needs to be fixed
-      renderManifest(data.transactions.filter((tx) => !tx.isArchived))
-    );
+  document.querySelector(".sellline #quantity").appendChild(quantity);
+  document.querySelector(`.sellline #price`).appendChild(price);
+  document
+    .querySelector(".sellline #confirmsell")
+    .addEventListener("click", () => {
+      Webservices.instance.wsSellFromManifest(window.selectedManifest, {
+        transaction: transaction.transaction,
+        price: price.value,
+        quantity: quantity.value,
+        shop: "MICTD",
+      });
+    });
 };
 
 window.renderLog = function (data) {
