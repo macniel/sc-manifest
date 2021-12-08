@@ -253,7 +253,7 @@ window.renderManifest = function (data) {
   ).textContent = `${ship.name}(${filledUp}/${ship.scu})`;
 
   const infoPre = document.getElementById("manifest-info");
-  infoPre.textContent = `${data.manifest}\n${ship.name}\n${filledUp}/${ship.scu}`;
+  infoPre.textContent = `ManifestId: ${data.manifest}\nShip: ${ship.manufacturer} ${ship.name}\nCargo: ${filledUp}/${ship.scu} SCU`;
 };
 
 window.dump = async function (manifest, transaction) {
@@ -327,32 +327,36 @@ window.sell = function (transaction) {
     });
 };
 
-window.renderLog = function (data) {
+window.renderLog = function (manifest) {
   const table = document.querySelector("#manifestList");
   let tableMarkup = "";
+  console.log(manifest);
 
-  data.forEach((manifest) => {
-    tableMarkup += `<tr><td>${manifest.manifest}</td><td>${
-      manifest.timestamp
-    }</td><td>${manifest.commodities
-      .map((commodity) => commodity.volume + "cSCU " + commodity.code)
-      .join(" ")}</td><td class="as-number">${
-      manifest.volume
-    } cSCU</td><td class="as-number">${manifest.profit.toFixed(
-      2
-    )} aUEC</td></tr>`;
+  const graph = manifest.commodities.map((commodity) => {
+    return `<div title="${commodity.code}" class="${
+      commodity.code
+    }" style="width: ${(commodity.volume / manifest.volume) * 100}%">${
+      commodity.code
+    }</div>`;
   });
+
+  tableMarkup += `<tr><td>${manifest.manifest}</td><td>${
+    window.ships.find((ship) => ship.code === manifest.ship).name
+  }</td><td><div class="fill-meter">${graph.join(
+    ""
+  )}</div></td><td class="as-number">${
+    manifest.volume
+  } cSCU</td><td class="as-number">${manifest.profit.toFixed(
+    2
+  )} aUEC</td></tr>`;
+
   table.innerHTML = tableMarkup;
-  document.querySelector("#tabHeader-log").textContent =
-    "Previous Manifest (" + data.length + ")";
-  console.log(data);
 };
 
 window.archiveManifest = function () {
-  fetch("/archive", { method: "POST" })
+  fetch(`/archive/${window.selectedManifest}`, { method: "POST" })
     .then((response) => response.json())
     .then((data) => {
-      renderManifest(data.transactions.filter((tx) => !tx.isArchived));
       renderLog(data.manifests);
     });
 };
@@ -388,9 +392,11 @@ window.switchToTab = function (tabName, manifest) {
 };
 
 Webservices.instance.addEventListener("manifest", (manifestData) => {
-  if (manifestData.transactions) {
+  if (manifestData.transactions && !manifestData.isArchived) {
     createTab(manifestData.manifest);
     renderManifest(manifestData);
+  } else if (manifestData.isArchived) {
+    renderLog(manifestData);
   }
 });
 
@@ -405,6 +411,20 @@ Webservices.instance.addEventListener("manifest", (manifestData) => {
       console.log(holdManifests);
       localStorage.setItem("manifests", JSON.stringify(holdManifests));
     }
+  }
+});
+
+Webservices.instance.addEventListener("log", (data) => {
+  let holdManifests = [];
+  if (localStorage.getItem("manifests")) {
+    holdManifests = JSON.parse(localStorage.getItem("manifests"));
+  }
+  if (!holdManifests.find((manifest) => data.archivedManifest === manifest)) {
+    holdManifests = holdManifests.filter(
+      (manifest) => data.archivedManifest !== manifest
+    );
+    holdManifests.push(data.log);
+    localStorage.setItem("manifests", JSON.stringify(holdManifests));
   }
 });
 

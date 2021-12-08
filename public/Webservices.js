@@ -3,6 +3,7 @@ class Webservices {
     this.eventListeners = {
       manifest: [],
       ships: [],
+      log: [],
     };
   }
 
@@ -45,6 +46,16 @@ class Webservices {
           this.eventListeners["manifest"].forEach((listener) => listener(data));
         });
     }
+  }
+
+  wsArchiveManifest(manifest) {
+    fetch(`/archive/${manifest}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          this.eventListeners["log"].forEach((listener) => listener(data));
+        }
+      });
   }
 
   wsSellFromManifest(manifest, { transaction, price, quantity, shop }) {

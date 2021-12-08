@@ -21,7 +21,7 @@ class FleetComponent extends HTMLElement {
   render() {
     this.innerHTML = "";
     const header = document.createElement("header");
-
+    /*
     const fieldsetManifest = document.createElement("fieldset");
     const fieldsetManifestLegend = document.createElement("legend");
     fieldsetManifestLegend.textContent = "Take Manifest with Id";
@@ -37,7 +37,7 @@ class FleetComponent extends HTMLElement {
     fieldsetManifest.appendChild(fieldsetManifestLegend);
     fieldsetManifest.appendChild(input);
     fieldsetManifest.appendChild(confirm);
-
+*/
     const fieldset = document.createElement("fieldset");
     const fieldsetLegend = document.createElement("legend");
     fieldsetLegend.textContent = "Add new Ship to your Shipping Fleet";
@@ -60,7 +60,7 @@ class FleetComponent extends HTMLElement {
     this.appendChild(header);
     fieldset.appendChild(fieldsetLegend);
     fieldset.appendChild(list);
-    this.appendChild(fieldsetManifest);
+    //this.appendChild(fieldsetManifest);
     this.appendChild(fieldset);
   }
 }

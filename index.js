@@ -108,8 +108,8 @@ app.post("/archive/:manifest", (req, res) => {
   );
 
   const envelope = req.body;
-  const transactionItems = userData.transactions.filter(
-    (manifestItem) => !manifestItem.isArchived
+  const manifest = userData.manifests.find(
+    (manifestItem) => manifestItem.manifest === req.params.manifest
   );
   const newManifest = {
     manifest: guid.raw(),
@@ -117,24 +117,26 @@ app.post("/archive/:manifest", (req, res) => {
     volume: 0,
     profit: 0,
     commodities: [],
+    isArchived: true,
+    ship: manifest.ship,
   };
-  if (transactionItems) {
-    transactionItems.forEach((transactionItem) => {
-      transactionItem.isArchived = true;
-
+  if (manifest) {
+    console.log(manifest);
+    manifest.transactions.forEach((transactionItem) => {
       newManifest.commodities.push({
         code: transactionItem.commodity,
         volume: transactionItem.quantity,
       });
       newManifest.volume += parseInt(transactionItem.quantity);
-
-      const stops =
-        transactionItem.shop +
-        " TO " +
-        transactionItem.history
-          .map((historyline) => historyline.destination)
-          .join(", ");
-      transactionItem.stops = stops;
+      if (transactionItem.history) {
+        const stops =
+          transactionItem.shop +
+          " TO " +
+          transactionItem.history
+            .map((historyline) => historyline.destination)
+            .join(", ");
+        transactionItem.stops = stops;
+      }
 
       if (transactionItem.profit) {
         newManifest.profit += parseFloat(transactionItem.profit);
@@ -155,6 +157,9 @@ app.post("/archive/:manifest", (req, res) => {
     if (!userData.manifests) {
       userData.manifests = [];
     }
+    userData.manifests = userData.manifests.filter(
+      (manifest) => manifest.manifest !== req.params.manifest
+    );
     userData.manifests.push(newManifest);
     console.log(userData);
     writeFileSync(
@@ -162,7 +167,12 @@ app.post("/archive/:manifest", (req, res) => {
       JSON.stringify(userData),
       "utf-8"
     );
-    res.send(JSON.stringify(userData));
+    res.send(
+      JSON.stringify({
+        archivedManifest: req.params.manifest,
+        log: newManifest.manifest,
+      })
+    );
   }
 });
 
