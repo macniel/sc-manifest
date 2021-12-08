@@ -1,6 +1,6 @@
 import NumberInput from "./NumberInput.js";
 import CommoditySelector from "./CommoditySelector.js";
-import Webservices from "./webservices.js";
+import Webservices from "./Webservices.js";
 
 class EntryComponent extends HTMLElement {
   constructor() {
@@ -86,15 +86,35 @@ class EntryComponent extends HTMLElement {
     commoditySelectorFieldset.appendChild(commoditySelector);
 
     const sourceSelectorFieldset = document.createElement("fieldset");
-    sourceSelectorFieldset.innerHTML = `
-        <legend>Source Station (Optional)</legend>
-    <div class="source-selector--outer">
-    <div id='sourceSelectorBox'>
-        <button class="source-selector source--system" onclick="showShopSelector(0)"><span class="source__label">ST</span></button>
-    </div>
-    <span id='sourceStationName'></span>
-    </div>
-        `;
+    const sourceSelectorFieldsetLegend = document.createElement("legend");
+    sourceSelectorFieldsetLegend.textContent = "Source Station (Optional";
+    const outer = document.createElement("div");
+    outer.className = "source-selector--outer";
+
+    const sourceSelectorBox = document.createElement("div");
+    sourceSelectorBox.id = "sourceSelectorBox";
+
+    const soleButton = document.createElement("button");
+    soleButton.className = "source-selector source--system";
+    soleButton.addEventListener("click", () => {
+      showShopSelector(0);
+    });
+
+    const soleButtonLabel = document.createElement("span");
+    soleButtonLabel.className = "source__label";
+    soleButtonLabel.textContent = "ST";
+
+    soleButton.appendChild(soleButtonLabel);
+
+    sourceSelectorBox.appendChild(soleButton);
+
+    const stationName = document.createElement("span");
+    stationName.id = "sourceStationName";
+
+    sourceSelectorFieldset.appendChild(sourceSelectorFieldsetLegend);
+    sourceSelectorFieldset.appendChild(sourceSelectorBox);
+    sourceSelectorBox.appendChild(outer);
+    sourceSelectorFieldset.appendChild(stationName);
 
     const quantityFieldset = document.createElement("fieldset");
     const quantityFieldsetLegend = document.createElement("legend");
@@ -135,7 +155,7 @@ class EntryComponent extends HTMLElement {
 
     const addToManifest = document.createElement("button");
     addToManifest.addEventListener("click", () => {
-      Webservices.instance.wsAddToManifest("", {
+      Webservices.instance.wsAddToManifest(window.selectedManifest, {
         commodity: this.commodity,
         shop: this.sourceStation,
         quantity: this.quantity,
@@ -147,6 +167,7 @@ class EntryComponent extends HTMLElement {
       this.commodity = null;
       this.render();
     });
+    addToManifest.textContent = "Add Commodity";
     buttonBox.appendChild(addToManifest);
 
     footer.appendChild(cmdLine);

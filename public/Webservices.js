@@ -2,7 +2,49 @@ class Webservices {
   constructor() {
     this.eventListeners = {
       manifest: [],
+      ships: [],
     };
+  }
+
+  wsGetManifest(manifestId) {
+    fetch(`/manifest/${manifestId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        this.eventListeners["manifest"].forEach((listener) => listener(data));
+      });
+  }
+
+  wsListShips() {
+    fetch("/ships")
+      .then((response) => response.json())
+      .then((ships) => {
+        this.eventListeners["ships"].forEach((listener) => listener(ships));
+      });
+  }
+
+  wsCreateManifest(forShip) {
+    const shipDetail = window.ships.find((ship) => ship.code === forShip);
+    if (shipDetail) {
+      fetch(`/create`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: forShip }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("create manifest");
+          this.eventListeners["manifest"].forEach((listener) => listener(data));
+        });
+    }
   }
 
   wsAddToManifest(manifestId, { commodity, shop, quantity, price }) {

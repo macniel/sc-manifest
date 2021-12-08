@@ -1,12 +1,14 @@
 <ul id="tabBar">
-    <li onclick="switchToTab('entry')" id="tabHeader-entry" class="active">Add Manifest</li>
-    <li onclick="switchToTab('current')" id="tabHeader-current">Manifest (0/0)</li>
-    <li onclick="switchToTab('log')" id="tabHeader-log">Previous Manifests (0)</li>
+    <li onclick="switchToTab('entry')" id="tabHeader-entry" class="active">Add Commodity</li>
+    <li onclick="switchToTab('log')" id="tabHeader-log">Log</li>
 </ul>
-<section class="manifest manifest--entry">
+<section id="fleet" class="fleet fleet--entry" hidden>
+    <fleet-component></fleet-component>
+</section>
+<section id="entry" class="manifest manifest--entry">
     <entry-component></entry-component>
 </section>
-<section class="manifest manifest--current" hidden>
+<section id="current" class="manifest manifest--current" hidden>
     <header></header>
     <fieldset class="standalone">
         <legend>Current Manifest</legend>
@@ -26,14 +28,15 @@
     </table>
     </fieldset>
     <footer class="manifest-actions">
-        <pre></pre>
+        <pre id="manifest-info">
+</pre>
         <div class="button-box">
             <button onclick="sealManifest()">Seal Manifest</button>
             <button onclick="archiveManifest()">Archive Manifest</button>
         </div>
     </footer>
 </section>
-<section class="manifest manifest--log" hidden>
+<section id="log" class="manifest manifest--log" hidden>
     <header></header>
     <fieldset class="standalone">
         <legend>Previous Manifests</legend>
@@ -57,7 +60,10 @@
     window.stations = {{{stations}}}
     window.system = {{{systemmap}}}
     window.commodities = {{{commodityListing}}}
+    window.ships = {{{ships}}}
 </script>
+
+
 
 <div class="shim" id="shim" hidden onclick="hidePopup(event)">
     <div class="popup" id='shopPopup' hidden>

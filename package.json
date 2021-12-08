@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "A manifest manager for Star Citizen Traders",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "node -r dotenv/config index.mjs",
+    "start": "node -r dotenv/config index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

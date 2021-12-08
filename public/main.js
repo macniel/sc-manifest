@@ -1,10 +1,13 @@
+import Webservices from "./Webservices.js";
+
 window.commodity = "";
 window.station = "";
 window.quantity = 0;
 window.price = 0.0;
 
 window.processCommand = async function (commandSelector) {
-  const response = await fetch("/buy", {
+  console.log("richtig?");
+  const response = await fetch(`/buy/${window.selectedManifest}`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -18,7 +21,7 @@ window.processCommand = async function (commandSelector) {
       price: window.price.toFixed(2),
     }),
   }).then((response) => response.json());
-  renderManifest(response.filter((tx) => !tx.isArchived));
+  renderManifest(response);
 };
 
 window.sourcePath = ["ST"];
@@ -60,8 +63,10 @@ window.updateShopSelector = function () {
   let page = { name: "universe", symbol: "UNIV", children: window.system };
   let crumbsHtml = "";
   let idx = 0;
+  console.log(page, window.popupMode);
   for (idx in window[window.popupMode + "Path"]) {
     const pathSegment = window[window.popupMode + "Path"][idx];
+    console.log(pathSegment, page);
     if (page.children) {
       crumbsHtml += `<li onclick="resetShopSelectorTo('${idx})">${pathSegment}</li>`;
       page = page.children.find((child) => child.code == pathSegment);
@@ -70,6 +75,7 @@ window.updateShopSelector = function () {
       break;
     }
   }
+  console.log(page);
 
   breadcrumbs.innerHTML = crumbsHtml;
   const list = shopSelector.querySelector("#shopChildren");
@@ -86,6 +92,7 @@ window.updateShopSelector = function () {
       }')"><i class='${child.type}'></i>${child.name}</li>`;
     });
   }
+  console.log(listHtml);
   list.innerHTML = listHtml;
 };
 
@@ -161,8 +168,8 @@ window.renderManifest = function (data) {
   const targetTable = document.getElementById("manifest");
   targetTable.innerHTML = "";
   let markup = "";
-  console.log(data);
-  data.forEach((set) => {
+  let filledUp = 0;
+  data.transactions.forEach((set) => {
     let soldGoods = 0;
     let historyMarkup = "";
     if (set.history) {
@@ -182,6 +189,8 @@ window.renderManifest = function (data) {
         )} aUEC</td></tr>`;
       });
     }
+
+    filledUp += Math.ceil(set.quantity / 100);
 
     const commodityDetails = window.commodities.find(
       (commodity) => commodity.code == set.commodity
@@ -204,10 +213,15 @@ window.renderManifest = function (data) {
     }" onclick="sell('${set.transaction}')"></button></td></tr>`;
     markup += historyMarkup;
   });
-  document.getElementById(
-    "tabHeader-current"
-  ).textContent = `Manifest (${data.length}/0)`;
+  const ship = window.ships.find((ship) => ship.code === data.ship);
+  ship.scu;
+  document.querySelector(
+    `[data-manifest="${data.manifest}"]`
+  ).textContent = `${ship.name}(${filledUp}/${ship.scu})`;
   targetTable.innerHTML = markup;
+
+  const infoPre = document.getElementById("manifest-info");
+  infoPre.textContent = `${data.manifest}\n${ship.name}\n${filledUp}/${ship.scu}`;
 };
 
 window.dump = async function (transaction) {
@@ -314,6 +328,7 @@ window.sellCommodityFromTransaction = function (transaction) {
   })
     .then((response) => response.json())
     .then((data) =>
+      // TODO: needs to be fixed
       renderManifest(data.transactions.filter((tx) => !tx.isArchived))
     );
 };
@@ -348,10 +363,10 @@ window.archiveManifest = function () {
     });
 };
 
-window.switchToTab = function (tabName) {
+window.switchToTab = function (tabName, manifest) {
   document.querySelectorAll("#tabBar li").forEach((tab) => {
-    document.querySelectorAll("section.manifest").forEach((section) => {
-      if (section.classList.contains("manifest--" + tabName)) {
+    document.querySelectorAll("section").forEach((section) => {
+      if (section.id == tabName) {
         section.hidden = false;
       } else {
         section.hidden = true;
@@ -359,9 +374,94 @@ window.switchToTab = function (tabName) {
     });
 
     if (tab.id.indexOf("tabHeader-" + tabName) != -1) {
-      tab.classList.add("active");
+      if (tabName === "current") {
+        if (tab.dataset.manifest === manifest) {
+          window.selectedManifest = manifest;
+          tab.classList.add("active");
+          Webservices.instance.wsGetManifest(manifest);
+        } else {
+          tab.classList.remove("active");
+        }
+      } else {
+        tab.classList.add("active");
+      }
     } else {
       tab.classList.remove("active");
     }
   });
 };
+
+Webservices.instance.addEventListener("manifest", (manifestData) => {
+  if (manifestData.transactions) {
+    createTab(manifestData.manifest);
+    renderManifest(manifestData);
+  }
+});
+
+Webservices.instance.addEventListener("manifest", (manifestData) => {
+  if (manifestData && manifestData.manifest) {
+    let holdManifests = [];
+    if (localStorage.getItem("manifests")) {
+      holdManifests = JSON.parse(localStorage.getItem("manifests"));
+    }
+    if (!holdManifests.find((manifest) => manifestData.manifest === manifest)) {
+      holdManifests.push(manifestData.manifest);
+      console.log(holdManifests);
+      localStorage.setItem("manifests", JSON.stringify(holdManifests));
+    }
+  }
+});
+
+window.createTab = (manifest) => {
+  if (!tabBar.querySelector(`[data-manifest="${manifest}"]`)) {
+    const tabBar = document.querySelector("#tabBar");
+    const tab = document.createElement("li");
+    tab.addEventListener("click", () => {
+      switchToTab("current", manifest);
+    });
+    tab.dataset.manifest = manifest;
+    tab.id = "tabHeader-current";
+    tab.textContent = "";
+    console.log(tab);
+    tabBar
+      .querySelector("li:nth-child(2)")
+      .insertAdjacentElement("afterend", tab);
+  }
+};
+
+(() => {
+  const tabBar = document.querySelector("#tabBar");
+  tabBar.innerHTML = "";
+
+  const fleetTab = document.createElement("li");
+  fleetTab.addEventListener("click", () => {
+    switchToTab("fleet");
+  });
+  fleetTab.id = "tabHeader-fleet";
+  fleetTab.textContent = "Fleet";
+  tabBar.appendChild(fleetTab);
+  console.log("fleetTab added", fleetTab);
+
+  const entryTab = document.createElement("li");
+  entryTab.addEventListener("click", () => {
+    switchToTab("entry");
+  });
+  entryTab.id = "tabHeader-entry";
+  entryTab.textContent = "Add Commodity";
+  tabBar.appendChild(entryTab);
+
+  const historyTab = document.createElement("li");
+  historyTab.addEventListener("click", () => {
+    switchToTab("log");
+  });
+  historyTab.id = "tabHeader-log";
+  historyTab.textContent = "Log";
+  tabBar.appendChild(historyTab);
+  if (localStorage.getItem("manifests")) {
+    const holdManifests = JSON.parse(localStorage.getItem("manifests"));
+    holdManifests.forEach((manifest) => {
+      createTab(manifest);
+      Webservices.instance.wsGetManifest(manifest);
+    });
+  }
+})();
