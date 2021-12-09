@@ -328,11 +328,11 @@ window.renderLog = function (manifest) {
   const table = document.querySelector("#manifestList");
   let tableMarkup = table.innerHTML;
   const graph = manifest.commodities.map((commodity) => {
-    return `<div title="${commodity.code}" class="${
-      commodity.code
-    }" style="width: ${(commodity.volume / manifest.volume) * 100}%">${
-      commodity.code
-    }</div>`;
+    return `<div title="${
+      window.commodities.find((c) => c.code === commodity.code).name
+    }" class="${commodity.code}" style="width: ${
+      (commodity.volume / manifest.volume) * 100
+    }%">${commodity.code}</div>`;
   });
 
   tableMarkup += `<tr><td>${manifest.manifest}</td><td>${
@@ -430,6 +430,9 @@ Webservices.instance.addEventListener("archived", (data) => {
     holdLogs.forEach((log) => {
       Webservices.instance.wsGetLog(log);
     });
+    // update Tabs
+    updateTabs();
+    document.querySelector("#tabHeader-fleet").click();
   }
 });
 
@@ -449,7 +452,7 @@ window.createTab = (manifest) => {
   }
 };
 
-(() => {
+window.updateTabs = () => {
   const tabBar = document.querySelector("#tabBar");
   tabBar.innerHTML = "";
 
@@ -483,4 +486,8 @@ window.createTab = (manifest) => {
       Webservices.instance.wsGetManifest(manifest);
     });
   }
+};
+
+(() => {
+  updateTabs();
 })();
