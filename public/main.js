@@ -294,16 +294,16 @@ window.sell = function (transaction) {
     "afterend",
     `<tr class='sellline'>
         <td></td>
-        <td><div class="source-selector--outer">
+        <td><!--<div class="source-selector--outer">
         <div id='destSelectorBox'>
             <button class="source-selector source--star" onclick="showShopSelector(0, 'destination')"><span class="source__label">ST</span></button>
         </div>
-        <span id='destStationName'></span></td>
+        <span id='destStationName'></span>--></td>
         <td id='quantity'>
         </td>
         <td id='price'>       
         </td>
-        <td><button id='confirmsell'>Confirm</button></td></tr>`
+        <td><button class='manifest-item-action' id='confirmsell'>Confirm</button></td></tr>`
   );
   document.querySelector(".sellline #quantity").appendChild(quantity);
   document.querySelector(`.sellline #price`).appendChild(price);
