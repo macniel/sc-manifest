@@ -1,38 +1,90 @@
-.App {
+:root {
+  --button-size: 64px;
+  --margin: 8px -2px;
+  --primary-button-color: #939598;
+  --primary-button-text: black;
+  --primary-button-border: #fad41b;
+  --dangerous-button-color: red;
+  --dangerous-button-text: white;
+  --button-border: rgba(255, 255, 255, 0.6);
+  --button-background: black;
+  --button-text: white;
+  --button-label-color: rgba(0, 0, 0, 0.5);
+  --button-label-text: white;
+  --selection-color: #fad41b;
+  --selection-text: #faf8eb;
+  --workspace-color: #54565b;
+  --application-color: #36373a;
+  --text-color: black;
+  --panel-border: 1px solid #fad41b;
+  --panel-background: #76777b;
+  --panel-titlebar-text: black;
+  --panel-titlebar-color: #939598;
+  --panel-selected-color: #939598;
+  --panel-selected-text: #faf8eb;
+  --panel-shadow: 0px 2px 2px black;
+  --button-shadow: 0 2px 2px black;
+  --push-button-color: #76777b;
+  --push-button-text: #faf8eb;
+  --shim-color: rgba(0, 0, 0, 0.8);
+}
+
+body {
+  padding-top: 44px;
+  background-color: var(--workspace-color);
+}
+
+fieldset {
+  border: 1px solid var(--panel-border);
+  background-color: var(--panel-background);
+  box-shadow: var(--panel-shadow);
+  margin: 4px;
+  padding: 4px 0 0 0;
+}
+
+fieldset > legend {
+  margin: 0;
+  padding: 0;
+  float: none;
+  background-color: var(--panel-titlebar-color);
+  color: var(--panel-titlebar-text);
+  width: 100%;
+}
+.tab-bar {
+  position: absolute;
+}
+
+.tab-list {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: var(--application-color);
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  border-bottom: 4px solid var(--panel-background);
+}
+
+.tab-list li {
+  display: inline-block;
+  list-style-type: none;
+  min-width: 40px;
+  background-color: var(--workspace-color);
+  margin: 0 8px;
+  padding: 0 16px;
+  line-height: 40px;
+  vertical-align: middle;
+  padding-top: 0;
+  height: 35px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tab-list li.active {
+  color: var(--panel-text);
+  height: 40px;
+  padding-bottom: 4px;
+  background-color: var(--panel-background);
 }

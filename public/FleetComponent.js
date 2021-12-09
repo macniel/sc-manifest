@@ -43,7 +43,7 @@ class FleetComponent extends HTMLElement {
     fieldsetLegend.textContent = "Add new Ship to your Shipping Fleet";
 
     const list = document.createElement("ul");
-    list.className = "shiplist";
+    list.className = "ship-list";
     this.ships.forEach((shipDetail) => {
       const listItem = document.createElement("li");
       const name = document.createElement("span");

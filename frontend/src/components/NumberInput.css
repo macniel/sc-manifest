@@ -1,0 +1,29 @@
+.numberinput input {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.numberinput button {
+  min-width: var(--button-size);
+  width: 100%;
+  height: var(--button-size);
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--primary-button-color);
+  color: var(--primary-button-text);
+}
+
+.numberinput {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+}
+
+.numberinput input {
+  grid-column: 1 / span 3;
+}
+
+.numberinput button.confirm {
+  width: 100%;
+  grid-column: 1 / span 3;
+}

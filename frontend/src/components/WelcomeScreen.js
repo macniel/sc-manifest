@@ -1,4 +1,4 @@
-import { ReactComponent as Logo } from "./logo.svg";
+import { ReactComponent as Logo } from "../logo.svg";
 
 function WelcomeScreen() {
   const trelloBoard = "https://trello.com/b/jqy54pmb/sc-manifest";

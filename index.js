@@ -107,6 +107,12 @@ app.post("/seal-manifest/:manifestId", (req, res) => {
   res.send(JSON.stringify(userData.transactions));
 });
 
+app.get("/commodities", (req, res) => {
+  if (publicData.commodities) {
+    return res.send(publicData.commodities);
+  }
+});
+
 app.get("/log/:manifest", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")

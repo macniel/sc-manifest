@@ -1,36 +1,52 @@
 import "./App.css";
-import WelcomeScreen from "./WelcomeScreen";
+import WelcomeScreen from "./components/WelcomeScreen";
 import { useState, useEffect } from "react";
+import FleetManager from "./components/FleetManager";
+import CommodityEntry from "./components/CommodityEntry";
 
 function App() {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(-1);
   const [tabList, setTabList] = useState([
-    { name: "fleet", component: <WelcomeScreen /> },
-    { name: "commodity", component: <div>Hello Commodity</div> },
-    { name: "current", manifest: "0", component: <div>Manifest View</div> },
-    { name: "log", component: <div>Log</div> },
+    { position: 0, name: "fleet", component: <FleetManager /> },
+    { position: 1, name: "commodity", component: <CommodityEntry /> },
+    {
+      position: 2,
+      name: "current",
+      manifest: "0",
+      component: <div>Manifest View</div>,
+    },
+    { position: 3, name: "log", component: <div>Log</div> },
   ]);
-  console.log(tab, tabList);
 
   useEffect(() => {
-    localStorage.getItem("manifests");
-    fetch("/ships")
-      .then((response) => response.json())
-      .then(console.log);
+    function checkManifest() {
+      const item = localStorage.getItem("manifests");
+
+      if (item) {
+        console.log(item);
+        // get head from server
+      }
+    }
+
+    window.addEventListener("storage", checkManifest);
+
+    return () => {
+      window.removeEventListener("storage", checkManifest);
+    };
   }, []);
 
   return (
-    <div>
-      <ul>
-        {tabList.map((tabItem, index) => {
+    <div className="tab-bar">
+      <ul className="tab-list">
+        {tabList.map((tabItem) => {
           return (
             <li
               key={`${tabItem.name}${
                 tabItem.manifest ? "-" + tabItem.manifest : ""
               }`}
-              className={tab === index ? "active" : ""}
+              className={tab === tabItem.position ? "active" : ""}
               onClick={() => {
-                setTab(index);
+                setTab(tabItem.position);
               }}
             >
               {tabItem.name}
@@ -38,7 +54,7 @@ function App() {
           );
         })}
       </ul>
-      <WelcomeScreen />
+      {tab === -1 ? <WelcomeScreen /> : tabList[tab].component}
     </div>
   );
 }

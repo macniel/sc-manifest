@@ -1,0 +1,100 @@
+.spatial-layout {
+  display: grid;
+  grid-template-columns: auto 240px 240px;
+  grid-template-rows: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  grid-template-areas:
+    "commodity shop shop"
+    "commodity quantity price"
+    "cmdline cmdline cmdline";
+}
+
+.spatial-layout .cmdline {
+  grid-area: cmdline;
+}
+
+.spatial-layout .commodity-fieldset {
+  grid-area: commodity;
+}
+
+.spatial-layout .shop {
+  grid-area: shop;
+}
+
+.spatial-layout .quantity {
+  grid-area: quantity;
+}
+
+.spatial-layout .price {
+  grid-area: price;
+}
+
+.commodity.active {
+  background-color: var(--selection-color);
+}
+
+.commodity {
+  width: var(--button-size);
+  height: var(--button-size);
+  border: 1px solid var(--primary-button-border);
+  margin: 2px 2px;
+  background-size: var(--button-size);
+  position: relative;
+  background-color: var(--primary-button-color);
+}
+
+.commodity--metal--is-raw {
+  background-image: url("../assets/ore.svg");
+}
+
+.commodity--metal {
+  background-image: url("../assets/metal.svg");
+}
+
+.commodity--gas,
+.commodity--halogen {
+  background-image: url("../assets/foam.svg");
+}
+
+.commodity--mineral--is-raw {
+  background-image: url("../assets/minerals.svg");
+}
+.commodity--mineral {
+  background-image: url("../assets/gems.svg");
+}
+.commodity--drug,
+.commodity--vice {
+  background-image: url("../assets/medicines.svg");
+}
+.commodity--medical {
+  background-image: url("../assets/hospital-cross.svg");
+}
+.commodity--food {
+  background-image: url("../assets/knife-fork.svg");
+}
+.commodity--agricultural {
+  background-image: url("../assets/wheat.svg");
+}
+
+.commodity--natural {
+  background-image: url("../assets/three-leaves.svg");
+}
+.commodity--waste {
+  background-image: url("../assets/waste.svg");
+}
+.commodity--junk,
+.commodity--scrap,
+.commodity--temporary {
+  background-image: url("../assets/recycle.svg");
+}
+.commodity__label {
+  position: absolute;
+  left: 2px;
+  bottom: 1px;
+  right: 2px;
+  height: 10px;
+  background-color: var(--button-label-color);
+  text-align: center;
+  color: var(--button-text);
+  margin: 0 -2px;
+}
