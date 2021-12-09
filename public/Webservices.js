@@ -4,10 +4,12 @@ class Webservices {
       manifest: [],
       ships: [],
       log: [],
+      archived: [],
     };
   }
 
   wsGetManifest(manifestId) {
+    console.log(manifestId);
     fetch(`/manifest/${manifestId}`, {
       method: "GET",
       headers: {
@@ -18,6 +20,9 @@ class Webservices {
       .then((response) => response.json())
       .then((data) => {
         this.eventListeners["manifest"].forEach((listener) => listener(data));
+      })
+      .catch((error) => {
+        console.log(manifestId, "returned ", error);
       });
   }
 
@@ -49,7 +54,17 @@ class Webservices {
   }
 
   wsArchiveManifest(manifest) {
-    fetch(`/archive/${manifest}`)
+    fetch(`/archive/${manifest}`, { method: "POST" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          this.eventListeners["archived"].forEach((listener) => listener(data));
+        }
+      });
+  }
+
+  wsGetLog(manifest) {
+    fetch(`/log/${manifest}`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
         if (data) {

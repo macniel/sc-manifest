@@ -37,13 +37,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/manifest/:manifestId", (req, res) => {
+  console.log("GET MANIFEST " + req.params.manifestId);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
   const m = userData.manifests.find(
     (manifest) => manifest.manifest === req.params.manifestId
   );
-  res.send(JSON.stringify(m));
+  if (m) {
+    console.log(m);
+    res.send(JSON.stringify(m));
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 app.delete("/dump/:manifestId", (req, res) => {
@@ -101,6 +107,20 @@ app.post("/seal-manifest/:manifestId", (req, res) => {
   res.send(JSON.stringify(userData.transactions));
 });
 
+app.get("/log/:manifest", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  const manifest = userData.manifests.find(
+    (manifestItem) => manifestItem.manifest === req.params.manifest
+  );
+  if (manifest.isArchived) {
+    res.send(JSON.stringify(manifest));
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.post("/archive/:manifest", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
@@ -112,7 +132,7 @@ app.post("/archive/:manifest", (req, res) => {
     (manifestItem) => manifestItem.manifest === req.params.manifest
   );
   const newManifest = {
-    manifest: guid.raw(),
+    manifest: req.params.manifest,
     transactions: [],
     volume: 0,
     profit: 0,
@@ -167,12 +187,7 @@ app.post("/archive/:manifest", (req, res) => {
       JSON.stringify(userData),
       "utf-8"
     );
-    res.send(
-      JSON.stringify({
-        archivedManifest: req.params.manifest,
-        log: newManifest.manifest,
-      })
-    );
+    res.send(JSON.stringify(newManifest));
   }
 });
 

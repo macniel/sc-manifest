@@ -7,7 +7,6 @@ window.quantity = 0;
 window.price = 0.0;
 
 window.processCommand = async function (commandSelector) {
-  console.log("richtig?");
   const response = await fetch(`/buy/${window.selectedManifest}`, {
     method: "POST",
     headers: {
@@ -36,7 +35,7 @@ window.showShopSelector = function (resetToSegment, isDestination) {
   } else {
     window.popupMode = "source";
   }
-  console.log(isDestination, window.popupMode);
+
   shim.hidden = false;
   shim.forPopup = "shopPopup";
   popup.hidden = false;
@@ -64,10 +63,10 @@ window.updateShopSelector = function () {
   let page = { name: "universe", symbol: "UNIV", children: window.system };
   let crumbsHtml = "";
   let idx = 0;
-  console.log(page, window.popupMode);
+
   for (idx in window[window.popupMode + "Path"]) {
     const pathSegment = window[window.popupMode + "Path"][idx];
-    console.log(pathSegment, page);
+
     if (page.children) {
       crumbsHtml += `<li onclick="resetShopSelectorTo('${idx})">${pathSegment}</li>`;
       page = page.children.find((child) => child.code == pathSegment);
@@ -76,24 +75,20 @@ window.updateShopSelector = function () {
       break;
     }
   }
-  console.log(page);
 
   breadcrumbs.innerHTML = crumbsHtml;
   const list = shopSelector.querySelector("#shopChildren");
   let listHtml = "";
   if (idx > 0) {
-    console.log(idx);
     listHtml = `<li onclick="resetShopSelectorTo('${idx}');">Up</li>`;
   }
   if (page && page.children) {
     page.children.forEach((child) => {
-      console.log(child);
       listHtml += `<li onclick="moveShopSelectorDown('${
         child.code || child.code
       }')"><i class='${child.type}'></i>${child.name}</li>`;
     });
   }
-  console.log(listHtml);
   list.innerHTML = listHtml;
 };
 
@@ -132,7 +127,6 @@ window.selectShop = function () {
     { code: page.code, type: syntheticType, name: page.name },
   ];
   window[window.popupMode + "Station"] = page.code;
-  console.log(window.popupAcceptCallback);
   if (
     window.popupAcceptCallback &&
     typeof window.popupAcceptCallback == "function"
@@ -148,7 +142,6 @@ window.selectShop = function () {
 
 window.moveShopSelectorDown = function (symbol) {
   window[window.popupMode + "Path"].push(symbol);
-  console.log(symbol);
   window.updateShopSelector();
 };
 
@@ -164,6 +157,9 @@ window.hidePopup = function (evt) {
 };
 
 window.renderManifest = function (data) {
+  if (data.isArchived) {
+    return;
+  }
   const targetTable = document.getElementById("manifest");
   targetTable.innerHTML = "";
   let markup = "";
@@ -245,7 +241,6 @@ window.renderManifest = function (data) {
     targetTable.appendChild(tr);
     tr.insertAdjacentHTML("afterend", historyMarkup);
   });
-  console.log(data, window.ships, data.ship);
   const ship = window.ships.find((ship) => ship.code === data.ship);
   ship.scu;
   document.querySelector(
@@ -278,14 +273,11 @@ window.sell = function (transaction) {
   const transactionItem = document.querySelector(
     `[data-transaction="${transaction.transaction}"]`
   );
-  console.log(transactionItem);
   if (transactionItem.parentNode.querySelector(".sellline")) {
     transactionItem.parentNode.removeChild(
       transactionItem.parentNode.querySelector(".sellline")
     );
   }
-
-  console.log(transaction);
   const quantity = new NumberInput();
   quantity.value = parseInt(transaction.quantity);
   quantity.max = parseInt(transaction.quantity);
@@ -327,11 +319,14 @@ window.sell = function (transaction) {
     });
 };
 
+window.resetLog = function () {
+  const table = document.querySelector("#manifestList");
+  table.innerHTML = "";
+};
+
 window.renderLog = function (manifest) {
   const table = document.querySelector("#manifestList");
-  let tableMarkup = "";
-  console.log(manifest);
-
+  let tableMarkup = table.innerHTML;
   const graph = manifest.commodities.map((commodity) => {
     return `<div title="${commodity.code}" class="${
       commodity.code
@@ -354,11 +349,7 @@ window.renderLog = function (manifest) {
 };
 
 window.archiveManifest = function () {
-  fetch(`/archive/${window.selectedManifest}`, { method: "POST" })
-    .then((response) => response.json())
-    .then((data) => {
-      renderLog(data.manifests);
-    });
+  Webservices.instance.wsArchiveManifest(window.selectedManifest);
 };
 
 window.switchToTab = function (tabName, manifest) {
@@ -395,8 +386,6 @@ Webservices.instance.addEventListener("manifest", (manifestData) => {
   if (manifestData.transactions && !manifestData.isArchived) {
     createTab(manifestData.manifest);
     renderManifest(manifestData);
-  } else if (manifestData.isArchived) {
-    renderLog(manifestData);
   }
 });
 
@@ -408,23 +397,39 @@ Webservices.instance.addEventListener("manifest", (manifestData) => {
     }
     if (!holdManifests.find((manifest) => manifestData.manifest === manifest)) {
       holdManifests.push(manifestData.manifest);
-      console.log(holdManifests);
       localStorage.setItem("manifests", JSON.stringify(holdManifests));
     }
   }
 });
 
 Webservices.instance.addEventListener("log", (data) => {
-  let holdManifests = [];
-  if (localStorage.getItem("manifests")) {
-    holdManifests = JSON.parse(localStorage.getItem("manifests"));
+  if (data && data.manifest && data.isArchived) {
+    window.renderLog(data);
   }
-  if (!holdManifests.find((manifest) => data.archivedManifest === manifest)) {
-    holdManifests = holdManifests.filter(
-      (manifest) => data.archivedManifest !== manifest
-    );
-    holdManifests.push(data.log);
-    localStorage.setItem("manifests", JSON.stringify(holdManifests));
+});
+
+((log) => {
+  const logs = JSON.parse(log);
+  logs?.forEach((log) => {
+    Webservices.instance.wsGetLog(log);
+  });
+})(localStorage.getItem("logs"));
+
+Webservices.instance.addEventListener("archived", (data) => {
+  if (data && data.manifest) {
+    let holdLogs = [];
+    if (localStorage.getItem("logs")) {
+      holdLogs = JSON.parse(localStorage.getItem("logs"));
+    }
+    if (!holdLogs.find((manifest) => data.manifest === manifest)) {
+      holdLogs.push(data.manifest);
+      localStorage.setItem("logs", JSON.stringify(holdLogs));
+    }
+    window.resetLog();
+    // retrieve logs
+    holdLogs.forEach((log) => {
+      Webservices.instance.wsGetLog(log);
+    });
   }
 });
 
@@ -438,7 +443,6 @@ window.createTab = (manifest) => {
     tab.dataset.manifest = manifest;
     tab.id = "tabHeader-current";
     tab.textContent = "";
-    console.log(tab);
     tabBar
       .querySelector("li:nth-child(2)")
       .insertAdjacentElement("afterend", tab);
@@ -456,7 +460,6 @@ window.createTab = (manifest) => {
   fleetTab.id = "tabHeader-fleet";
   fleetTab.textContent = "Fleet";
   tabBar.appendChild(fleetTab);
-  console.log("fleetTab added", fleetTab);
 
   const entryTab = document.createElement("li");
   entryTab.addEventListener("click", () => {
