@@ -400,7 +400,7 @@ button {
 }
 #tabBar li {
   display: inline-block;
-  margin: 0 2px -2px 2px;
+  margin: 4px 2px -2px 2px;
   background-color: var(--panel-background);
   color: var(--panel-text);
   padding-top: 0;
@@ -517,4 +517,14 @@ button {
   font-size: 18px;
   height: 20px;
   border-left: 0;
+}
+
+li,
+button,
+.ship {
+  cursor: pointer;
+}
+
+.fill-meter > * {
+  cursor: default;
 }
