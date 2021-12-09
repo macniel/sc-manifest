@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "runtimeArgs": ["--require=dotenv/config"],
-            "program": "${workspaceFolder}\\index.mjs"
+            "program": "${workspaceFolder}\\index.js"
         }
     ]
 }
