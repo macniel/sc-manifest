@@ -49,7 +49,7 @@ class FleetComponent extends HTMLElement {
       const name = document.createElement("span");
 
       listItem.style.backgroundImage =
-        "url('./ships/" + shipDetail.code + ".jpg')";
+        "url('./ships/" + shipDetail.code.toLowerCase() + ".jpg')";
 
       name.textContent = shipDetail.name;
 
