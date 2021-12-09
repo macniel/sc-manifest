@@ -479,13 +479,14 @@ button {
 }
 
 .ship {
-  width: 300px;
+  width: 409px;
   border: 1px solid var(--primary-button-border);
   box-shadow: var(--button-shadow);
-  height: 200px;
+  height: 144px;
   display: inline-block;
   position: relative;
   margin: 4px;
+  background-size: cover;
 }
 
 .ship span {
@@ -493,6 +494,9 @@ button {
   bottom: 0;
   left: 0;
   right: 0;
+  color: var(--button-text);
+  background-color: var(--button-label-color);
+  padding: 4px;
 }
 
 .fill-meter {

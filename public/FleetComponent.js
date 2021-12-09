@@ -48,6 +48,9 @@ class FleetComponent extends HTMLElement {
       const listItem = document.createElement("li");
       const name = document.createElement("span");
 
+      listItem.style.backgroundImage =
+        "url('./ships/" + shipDetail.code + ".jpg')";
+
       name.textContent = shipDetail.name;
 
       listItem.className = "ship ship--" + shipDetail.manufacturer;
