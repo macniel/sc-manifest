@@ -324,6 +324,14 @@ window.resetLog = function () {
   table.innerHTML = "";
 };
 
+const dateTimeFormatter = Intl.DateTimeFormat(navigator.language, {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+});
+
 window.renderLog = function (manifest) {
   const table = document.querySelector("#manifestList");
   let tableMarkup = table.innerHTML;
@@ -335,7 +343,9 @@ window.renderLog = function (manifest) {
     }%">${commodity.code}</div>`;
   });
 
-  tableMarkup += `<tr><td>${manifest.manifest}</td><td>${
+  tableMarkup += `<tr><td>${dateTimeFormatter.format(
+    new Date(manifest.timestamp)
+  )}</td><td>${
     window.ships.find((ship) => ship.code === manifest.ship).name
   }</td><td><div class="fill-meter">${graph.join(
     ""

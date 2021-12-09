@@ -169,7 +169,7 @@ app.post("/archive/:manifest", (req, res) => {
           transactionItem.profit +=
             parseFloat(historyline.quantity) * parseFloat(historyline.price);
         });
-        newManifest.profit += parseFloat(buy);
+        newManifest.profit += parseFloat(transactionItem.profit);
       }
       newManifest.timestamp = Date.now();
       newManifest.transactions.push(transactionItem);
