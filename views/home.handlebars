@@ -1,6 +1,6 @@
 <ul id="tabBar">
 </ul>
-<section id="welcome" class="welcome" style="position: absolute; pointer-events: none; top: 28px; left: 0; right: 0; bottom: 0">
+<section id="welcome" class="welcome" style="position: absolute; top: 28px; left: 0; right: 0; bottom: 0">
     <header></header>
     <div style="display: flex; align-items: center; justify-items: center; flex-direction: column; text-align: center; padding: 200px">
     <div>
@@ -40,6 +40,18 @@
     </div>
     <div><h2>Stay informed</h2>
         <p>This Application is in active development, check out its progress on <a href="https://trello.com/b/jqy54pmb/sc-manifest">Trello</a></p>
+    </div>
+    <div>
+        <h2>Problems?</h2>
+        <p>Try deleting your localStorage</p>
+        <script type="text/javascript">
+            window.clearLocalStorage = function() {
+                 localStorage.removeItem('manifests'); 
+                 localStorage.removeItem('logs');
+                 location.reload();
+            }
+        </script>
+        <button onclick="clearLocalStorage()">Clear LocalStorage</button>
     </div>
     </div>
 </section>
