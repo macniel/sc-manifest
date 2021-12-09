@@ -204,7 +204,7 @@ class EntryComponent extends HTMLElement {
       this.reset();
       this.render();
     });
-    addToManifest.textContent = "Add Commodity";
+    addToManifest.textContent = "Freight";
     buttonBox.appendChild(addToManifest);
 
     footer.appendChild(cmdLine);

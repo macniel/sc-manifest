@@ -479,7 +479,7 @@ window.updateTabs = () => {
     switchToTab("entry");
   });
   entryTab.id = "tabHeader-entry";
-  entryTab.textContent = "Add Commodity";
+  entryTab.textContent = "Freight";
   tabBar.appendChild(entryTab);
 
   const historyTab = document.createElement("li");
