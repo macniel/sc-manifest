@@ -1,5 +1,14 @@
 .cargo-chart {
-  width: 100%;
+  padding: 8px;
+}
+
+.cargo-chart.active {
+  background-color: var(--selection-semi-color);
+  color: var(--selection-text);
+}
+
+.cargo-chart.active .meter {
+  background-color: black;
 }
 
 .cargo-chart .meter {
@@ -8,10 +17,11 @@
   border: var(--panel-border);
   background-color: var(--workspace);
   box-shadow: var(--panel-shadow);
-  margin: 4px 8px 4px 0;
+  margin-top: 4px;
 }
 
 .cargo-chart .meter .fill {
   background-color: var(--selection-color);
   height: 40px;
+  transition: width 1s ease-in;
 }

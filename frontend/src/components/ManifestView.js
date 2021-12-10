@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import NumberInput from "./NumberInput";
+import classNames from "classnames";
 import ShipSelector from "./ShipSelector";
 import "./ManifestView.css";
 
-function CargoChart({ cargo, onClick }) {
+function CargoChart({ cargo, onClick, isActive }) {
   return (
     <div
-      className="cargo-chart"
+      className={classNames("cargo-chart", {
+        active: isActive,
+      })}
       onClick={() => {
         console.log(cargo);
         onClick?.(cargo);
@@ -105,6 +108,7 @@ function ManifestView() {
         <legend>cargo</legend>
         {cargo.map((c, index) => (
           <CargoChart
+            isActive={index === selectedCargo}
             cargo={c}
             onClick={() => {
               setSelectedCargo(index);

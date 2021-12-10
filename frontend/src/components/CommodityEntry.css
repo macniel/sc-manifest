@@ -1,13 +1,18 @@
 .spatial-layout {
   display: grid;
   grid-template-columns: auto 240px 240px;
-  grid-template-rows: 140px auto auto 60px;
+  grid-template-rows: 140px auto 438px 60px;
   grid-auto-rows: minmax(100px, auto);
   grid-template-areas:
     "commodity shop shop"
     "commodity ship ship"
     "commodity quantity price"
     "cmdline cmdline cmdline";
+  position: fixed;
+  top: 48px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
 }
 
 .spatial-layout .shipEntry {
