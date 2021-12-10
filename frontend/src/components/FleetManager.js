@@ -6,6 +6,27 @@ function FleetManager() {
 
   const addShip = (ship) => {
     console.log(ship);
+    fetch("/ship", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        shipName: "",
+        code: ship.code,
+      }),
+    })
+      .then((response) => response.json())
+      .then((newShip) => {
+        let shipList = localStorage.getItem("ships");
+
+        if (!shipList) {
+          shipList = "[]";
+        }
+        const l = JSON.parse(shipList);
+        l.push(newShip.ship);
+        localStorage.setItem("ships", JSON.stringify(l));
+      });
   };
 
   useEffect(() => {

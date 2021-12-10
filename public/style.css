@@ -60,22 +60,6 @@ header {
   grid-row-gap: 0px;
 }
 
-fieldset {
-  border: 1px solid var(--panel-border);
-  background-color: var(--panel-background);
-  box-shadow: var(--panel-shadow);
-  margin: 4px;
-  padding: 4px 0 0 0;
-}
-
-fieldset > legend {
-  margin: 0;
-  padding: 0;
-  float: none;
-  background-color: var(--panel-titlebar-color);
-  color: var(--panel-titlebar-text);
-  width: 100%;
-}
 
 .four-section fieldset:nth-child(1) {
   grid-area: 1 / 1 / 4 / 2;
@@ -90,98 +74,6 @@ fieldset > legend {
   grid-area: 3 / 2 / 4 / 3;
 }
 
-.commodity.active {
-  background-color: var(--selection-color);
-}
-
-.manifest-item-action.action-drop {
-  background-image: url("./manifest-drop.svg");
-  width: var(--button-size);
-  height: var(--button-size);
-  padding: 0;
-  margin: 0;
-}
-
-.manifest-item-action.action-sell {
-  background-image: url("./manifest-sell.svg");
-  width: var(--button-size);
-  height: var(--button-size);
-  padding: 0;
-  margin: 0;
-}
-
-commodity-selector {
-  display: flex;
-  flex-flow: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.commodity {
-  border: 2px solid var(--button-border);
-  background-color: var(--button-background);
-  position: relative;
-  width: var(--button-size);
-  height: var(--button-size);
-  margin: 2px 2px;
-  background-size: var(--button-size);
-}
-
-.commodity--metal--is-raw {
-  background-image: url("./ore.svg");
-}
-
-.commodity--metal {
-  background-image: url("./metal.svg");
-}
-
-.commodity--gas,
-.commodity--halogen {
-  background-image: url("./foam.svg");
-}
-
-.commodity--mineral--is-raw {
-  background-image: url("./minerals.svg");
-}
-.commodity--mineral {
-  background-image: url("./gems.svg");
-}
-.commodity--drug,
-.commodity--vice {
-  background-image: url("./medicines.svg");
-}
-.commodity--medical {
-  background-image: url("./hospital-cross.svg");
-}
-.commodity--food {
-  background-image: url("./knife-fork.svg");
-}
-.commodity--agricultural {
-  background-image: url("./wheat.svg");
-}
-
-.commodity--natural {
-  background-image: url("./three-leaves.svg");
-}
-.commodity--waste {
-  background-image: url("waste.svg");
-}
-.commodity--junk,
-.commodity--scrap,
-.commodity--temporary {
-  background-image: url("./recycle.svg");
-}
-.commodity__label {
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  right: 0;
-  height: 10px;
-  background-color: var(--button-label-color);
-  text-align: center;
-  color: var(--button-text);
-  margin: 0 -2px;
-}
 .source-selector--outer {
   display: flex;
   flex-direction: column;

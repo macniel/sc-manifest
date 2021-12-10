@@ -1,0 +1,39 @@
+.ship-list {
+}
+
+.ship-list__button {
+  display: inline-block;
+  position: relative;
+  width: 204px;
+  height: 72px;
+  background-size: contain;
+  box-shadow: var(--button-shadow);
+  border: 1px solid var(--primary-button-border);
+  margin: 4px 8px;
+}
+
+.ship-list__button .button__label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: var(--button-text);
+  background-color: var(--button-label-color);
+  padding: 4px;
+}
+
+.ship-list__button:before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--selection-color);
+  opacity: 0;
+}
+
+.ship-list__button.active:before {
+  opacity: 0.5;
+}

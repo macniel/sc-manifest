@@ -3,6 +3,7 @@ import WelcomeScreen from "./components/WelcomeScreen";
 import { useState, useEffect } from "react";
 import FleetManager from "./components/FleetManager";
 import CommodityEntry from "./components/CommodityEntry";
+import ManifestView from "./components/ManifestView";
 
 function App() {
   const [tab, setTab] = useState(-1);
@@ -13,7 +14,7 @@ function App() {
       position: 2,
       name: "current",
       manifest: "0",
-      component: <div>Manifest View</div>,
+      component: <ManifestView />,
     },
     { position: 3, name: "log", component: <div>Log</div> },
   ]);

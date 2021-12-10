@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NumberInput.css";
 
 function NumberInput({ onChange, value, min, max }) {
   const [innerValue, setInnerValue] = useState(value);
 
   const append = (symbol) => {
-    setInnerValue(innerValue + symbol);
+    if (innerValue == "0") {
+      setInnerValue(symbol);
+    } else {
+      setInnerValue(innerValue + symbol);
+    }
   };
 
   const clear = () => {
@@ -15,6 +19,10 @@ function NumberInput({ onChange, value, min, max }) {
   const confirm = () => {
     onChange?.(innerValue);
   };
+
+  useEffect(() => {
+    setInnerValue(value);
+  }, [value]);
 
   return (
     <div className="numberinput">

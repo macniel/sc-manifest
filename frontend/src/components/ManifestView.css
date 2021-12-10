@@ -1,0 +1,17 @@
+.cargo-chart {
+  width: 100%;
+}
+
+.cargo-chart .meter {
+  min-width: 480px;
+  height: 40px;
+  border: var(--panel-border);
+  background-color: var(--workspace);
+  box-shadow: var(--panel-shadow);
+  margin: 4px 8px 4px 0;
+}
+
+.cargo-chart .meter .fill {
+  background-color: var(--selection-color);
+  height: 40px;
+}

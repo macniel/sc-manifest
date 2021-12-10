@@ -36,6 +36,55 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/ship/:shipId", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  if (!userData.ships) {
+    userData.ships = [];
+  }
+
+  const found = userData.ships.find((ship) => ship.ship === req.params.shipId);
+  if (found) {
+    res.send(JSON.stringify(found));
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.post("/ship", (req, res) => {
+  const name = req.body.shipName;
+  const actualShip = publicData.ships.find(
+    (ship) => ship.code === req.body.code
+  );
+  console.log(publicData.ships);
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  newShip = {
+    shipsName: name,
+    name: actualShip.name,
+    manufacturer: actualShip.manufacturer,
+    scu: actualShip.scu,
+    code: actualShip.code,
+    associatedManifest: null,
+    ship: guid.raw(),
+  };
+
+  if (!userData.ships) {
+    userData.ships = [];
+  }
+
+  userData.ships.push(newShip);
+
+  writeFileSync(
+    join("data", "userdata.json"),
+    JSON.stringify(userData),
+    "utf-8"
+  );
+  res.send(JSON.stringify(newShip));
+});
+
 app.get("/manifest/:manifestId", (req, res) => {
   console.log("GET MANIFEST " + req.params.manifestId);
   let userData = JSON.parse(
@@ -197,29 +246,63 @@ app.post("/archive/:manifest", (req, res) => {
   }
 });
 
-app.post("/sell/:manifest", (req, res) => {
+app.get("/ships/:shipId/manifest", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  if (userData.ships.find((ship) => ship.ship === req.params.shipId)) {
+    if (
+      ship.associatedManifest &&
+      userData.manifests.find((m) => m.manifest === ship.associatedManifest)
+    ) {
+      ship.manifest = userData.manifests.find(
+        (m) => m.manifest === ship.associatedManifest
+      );
+      res.send(JSON.stringify(ship));
+    }
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.post("/sell", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
   const envelope = req.body;
   const manifest = userData.manifests.find(
-    (manifest) => manifest.manifest == req.params.manifest
+    (manifest) => manifest.manifest == envelope.manifest
   );
-  const transactionItem = manifest.transactions.find(
-    (manifestItem) => manifestItem.transaction == envelope.transaction
+
+  // reduce capacity
+  const commodity = manifest.commodities.find(
+    (commodity) => commodity.code === req.body.commodity
   );
-  console.log(transactionItem);
-  if (transactionItem) {
-    if (!transactionItem.history) {
-      transactionItem.history = [];
-    }
-    transactionItem.history.push({
-      destination: envelope.shop,
-      quantity: envelope.quantity,
-      price: envelope.price,
-    });
+  if (!commodity || commodity.amount < envelope.quantity) {
+    // selling commodity you dont have?!
+    res.sendStatus(500);
+  } else {
+    commodity.amount -= envelope.quantity;
   }
+
+  if (!manifest.history) {
+    manifest.history = [];
+  }
+
+  manifest.history.push({
+    destination: envelope.shop,
+    quantity: parseInt(envelope.quantity),
+    price: parseFloat(envelope.price),
+    commodity: envelope.commodity,
+  });
+
+  if (manifest.profit) {
+    manifest.profit =
+      parseFloat(manifest.profit) +
+      parseInt(envelope.quantity) * parseFloat(envelope.price);
+  }
+
   console.log(userData);
   writeFileSync(
     join("data", "userdata.json"),
@@ -230,113 +313,79 @@ app.post("/sell/:manifest", (req, res) => {
 });
 
 app.post("/buy", (req, res) => {
-  console.log("buy on empty manifest");
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-  if (!userData) {
-    userData = {};
-  }
-  if (!userData.transactions) {
-    userData.transactions = [];
-  }
+  if (req.body.to) {
+    let userData = JSON.parse(
+      readFileSync(join("data", "userdata.json"), "utf-8")
+    );
 
-  if (!userData.manifests) {
-    userData.manifests = [];
+    if (!userData.manifests) {
+      userData.manifests = [];
+    }
+
+    const ship = userData.ships.find((ship) => req.body.to === ship.ship);
+    let manifest = {};
+    if (
+      !ship.associatedManifest ||
+      !userData.manifests.find(
+        (manifest) => ship.associatedManifest === manifest.manifest
+      )
+    ) {
+      manifest = {
+        manifest: guid.raw(),
+        transactions: [],
+        commodities: [],
+        profit: 0,
+      };
+      ship.associatedManifest = manifest.manifest;
+      userData.manifests.push(manifest);
+    } else {
+      manifest = userData.manifests.find(
+        (manifest) => ship.associatedManifest === manifest.manifest
+      );
+    }
+    // calculate cost of buy
+    manifest.profit -= parseInt(req.body.quantity) * parseFloat(req.body.price);
+    manifest.transactions.push({
+      code: req.body.commodity,
+      source: req.body.from,
+      destination: req.body.to,
+      quantity: req.body.quantity,
+      price: req.body.price,
+    });
+    // find similar commodity to add
+    let commodity = manifest.commodities.find(
+      (commodity) => commodity.code === req.body.commodity
+    );
+    if (!commodity) {
+      const template = publicData.commodities.find(
+        (c) => c.code === req.body.commodity
+      );
+      commodity = {
+        amount: 0,
+        total: 0,
+        code: template.code,
+        name: template.name,
+        kind: template.kind,
+      };
+    }
+    commodity.amount += parseInt(req.body.quantity);
+    commodity.total += parseInt(req.body.quantity);
+    // update commodity
+    manifest.commodities.push(commodity);
+
+    writeFileSync(
+      join("data", "userdata.json"),
+      JSON.stringify(userData),
+      "utf-8"
+    );
+    res.send(JSON.stringify(manifest));
+  } else {
+    res.sendStatus(400);
   }
-
-  let manifest = {
-    manifest: guid.raw(),
-    transactions: [],
-    ship: "AVTITA",
-  };
-  userData.manifests.push(manifest);
-
-  manifest.transactions.push({
-    commodity: req.body.commodity,
-    shop: req.body.shop || "unknown",
-    quantity: req.body.qty || 0,
-    price: req.body.price || 0,
-    transaction: guid.raw(),
-  });
-  writeFileSync(
-    join("data", "userdata.json"),
-    JSON.stringify(userData),
-    "utf-8"
-  );
-  res.send(JSON.stringify(manifest));
 });
 
 app.get("/ships", (req, res) => {
   res.send(JSON.stringify(publicData.ships));
-});
-
-app.post("/create", (req, res) => {
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-  if (!userData) {
-    userData = {};
-  }
-  if (!userData.transactions) {
-    userData.transactions = [];
-  }
-
-  if (!userData.manifests) {
-    userData.manifests = [];
-  }
-
-  let manifest = {
-    manifest: guid.raw(),
-    transactions: [],
-    ship: req.body.code,
-  };
-  userData.manifests.push(manifest);
-
-  writeFileSync(
-    join("data", "userdata.json"),
-    JSON.stringify(userData),
-    "utf-8"
-  );
-  res.send(JSON.stringify(manifest));
-});
-
-app.post("/buy/:manifest", (req, res) => {
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-  if (!userData) {
-    userData = {};
-  }
-  if (!userData.transactions) {
-    userData.transactions = [];
-  }
-
-  if (!userData.manifests) {
-    userData.manifests = [];
-  }
-
-  let manifest = userData.manifests.find(
-    (manifest) => manifest.manifest === req.params.manifest
-  );
-  if (!manifest) {
-    res.sendStatus(404);
-    return;
-  }
-
-  manifest.transactions.push({
-    commodity: req.body.commodity,
-    shop: req.body.shop || "unknown",
-    quantity: req.body.qty || 0,
-    price: req.body.price || 0,
-    transaction: guid.raw(),
-  });
-  writeFileSync(
-    join("data", "userdata.json"),
-    JSON.stringify(userData),
-    "utf-8"
-  );
-  res.send(JSON.stringify(manifest));
 });
 
 app.use(express.static("public"));

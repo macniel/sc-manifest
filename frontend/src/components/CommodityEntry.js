@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import NumberInput from "./NumberInput";
+import ShipSelector from "./ShipSelector";
 import "./CommodityEntry.css";
 import classNames from "classnames";
+import ShopSelector from "./ShopSeelctor";
 
 function CommodityEntry() {
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
+  const [ship, setShip] = useState({});
   const [commodity, setCommodity] = useState({
     code: "HADA",
     name: "Hadanite",
@@ -23,6 +26,22 @@ function CommodityEntry() {
         setCommodities(data);
       });
   }, []);
+
+  const buy = () => {
+    const payload = {
+      commodity: commodity.code,
+      from: source.code,
+      to: ship.ship,
+      quantity: quantity,
+      price: price,
+    };
+
+    fetch("/buy", {
+      headers: { "Content-Type": "application/json" },
+      method: "post",
+      body: JSON.stringify(payload),
+    });
+  };
 
   return (
     <div className="spatial-layout">
@@ -49,6 +68,12 @@ function CommodityEntry() {
 
       <fieldset className="shop">
         <legend>Source</legend>
+        <ShopSelector />
+      </fieldset>
+
+      <fieldset className="shipEntry">
+        <legend>Ship</legend>
+        <ShipSelector onChange={setShip} />
       </fieldset>
 
       <fieldset className="quantity">
@@ -75,6 +100,7 @@ function CommodityEntry() {
           {commodity.code} {source.code} {(quantity || 0).toFixed(0)}@
           {(price || 0).toFixed(2)}{" "}
         </pre>
+        <button onClick={buy}>Execute</button>
       </div>
     </div>
   );
