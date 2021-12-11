@@ -56,6 +56,11 @@
 .commodity--temporary {
   background-image: url("../assets/recycle.svg");
 }
+
+.commodity-matrix {
+  padding: 4px;
+}
+
 .commodity__label {
   position: absolute;
   left: 2px;
