@@ -1,11 +1,10 @@
 const express = require("express");
-const { existSync, readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 const bodyParser = require("body-parser");
 const { join } = require("path");
 const { engine } = require("express-handlebars");
 const fetch = require("node-fetch");
 const guid = require("guid");
-const res = require("express/lib/response");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,29 +12,6 @@ let publicData = {};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.engine("handlebars", engine());
-app.set("view engine", "handlebars");
-app.set("views", "./views");
-
-app.get("/", (req, res) => {
-  res.render("home", {
-    commodities: publicData.commodities.map((commodity) => {
-      const isRaw = commodity.name.indexOf("(Raw)") != -1;
-      const isOre = commodity.name.indexOf("(Ore)") != -1;
-      return {
-        className:
-          commodity.kind.toLowerCase() + (isRaw || isOre ? "--is-raw" : ""),
-        symbol: commodity.code,
-        name: commodity.name,
-        unrefined: isRaw || isOre,
-      };
-    }),
-    commodityListing: JSON.stringify(publicData.commodities),
-    stations: JSON.stringify(publicData.tradeports),
-    systemmap: JSON.stringify(publicData.systems),
-    ships: JSON.stringify(publicData.ships),
-  });
-});
 
 app.get("/ship/:shipId", (req, res) => {
   let userData = JSON.parse(
@@ -294,7 +270,7 @@ app.get("/ships", (req, res) => {
   res.send(JSON.stringify(publicData.ships));
 });
 
-app.use(express.static("public"));
+app.use(express.static("./frontend/build"));
 
 async function fetchShips() {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
