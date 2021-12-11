@@ -5,6 +5,7 @@ const { join } = require("path");
 const { engine } = require("express-handlebars");
 const fetch = require("node-fetch");
 const guid = require("guid");
+const res = require("express/lib/response");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -101,148 +102,9 @@ app.get("/manifest/:manifestId", (req, res) => {
   }
 });
 
-app.delete("/dump/:manifestId", (req, res) => {
-  console.log(req.body);
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-  userData.transactions = userData.transactions.filter(
-    (manifestItem) => manifestItem.transaction != req.body.transaction
-  );
-  writeFileSync(
-    join("data", "userdata.json"),
-    JSON.stringify(userData),
-    "utf-8"
-  );
-  res.send(JSON.stringify(userData.transactions));
-});
-
-app.post("/seal-manifest/:manifestId", (req, res) => {
-  console.log(req.body);
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-
-  const envelope = req.body;
-  const transactionItems = userData.transactions.filter(
-    (manifestItem) => !manifestItem.isArchived
-  );
-  const sealedManifest = [];
-  transactionItems.forEach((tx) => {
-    const smtx = sealedManifest.find((smtx) => smtx.commodity == tx.commodity);
-    if (smtx) {
-      smtx.source = "";
-      smtx.quantity += parseInt(tx.quantity);
-      smtx.transaction = guid.raw();
-      smtx.price += parseFloat(tx.quantity) * parseFloat(tx.price);
-      smtx.profit += tx.profit;
-    } else {
-      sealedManifest.push({
-        source: "",
-        commodity: tx.commodity,
-        quantity: parseInt(tx.quantity),
-        transaction: guid.raw(),
-        price: parseFloat(tx.quantity) * parseFloat(tx.price),
-        profit: tx.profit,
-      });
-    }
-  });
-  userData.transactions = sealedManifest;
-  writeFileSync(
-    join("data", "userdata.json"),
-    JSON.stringify(userData),
-    "utf-8"
-  );
-  res.send(JSON.stringify(userData.transactions));
-});
-
 app.get("/commodities", (req, res) => {
   if (publicData.commodities) {
     return res.send(publicData.commodities);
-  }
-});
-
-app.get("/log/:manifest", (req, res) => {
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-  const manifest = userData.manifests.find(
-    (manifestItem) => manifestItem.manifest === req.params.manifest
-  );
-  if (manifest.isArchived) {
-    res.send(JSON.stringify(manifest));
-  } else {
-    res.sendStatus(404);
-  }
-});
-
-app.post("/archive/:manifest", (req, res) => {
-  console.log(req.body);
-  let userData = JSON.parse(
-    readFileSync(join("data", "userdata.json"), "utf-8")
-  );
-
-  const envelope = req.body;
-  const manifest = userData.manifests.find(
-    (manifestItem) => manifestItem.manifest === req.params.manifest
-  );
-  const newManifest = {
-    manifest: req.params.manifest,
-    transactions: [],
-    volume: 0,
-    profit: 0,
-    commodities: [],
-    isArchived: true,
-    ship: manifest.ship,
-  };
-  if (manifest) {
-    console.log(manifest);
-    manifest.transactions.forEach((transactionItem) => {
-      newManifest.commodities.push({
-        code: transactionItem.commodity,
-        volume: transactionItem.quantity,
-      });
-      newManifest.volume += parseInt(transactionItem.quantity);
-      if (transactionItem.history) {
-        const stops =
-          transactionItem.shop +
-          " TO " +
-          transactionItem.history
-            .map((historyline) => historyline.destination)
-            .join(", ");
-        transactionItem.stops = stops;
-      }
-
-      if (transactionItem.profit) {
-        newManifest.profit += parseFloat(transactionItem.profit);
-      } else {
-        const buy =
-          parseFloat(transactionItem.quantity) *
-          parseFloat(transactionItem.price);
-        transactionItem.profit = -buy;
-        transactionItem.history.forEach((historyline) => {
-          transactionItem.profit +=
-            parseFloat(historyline.quantity) * parseFloat(historyline.price);
-        });
-        newManifest.profit += parseFloat(transactionItem.profit);
-      }
-      newManifest.timestamp = Date.now();
-      newManifest.transactions.push(transactionItem);
-    });
-    if (!userData.manifests) {
-      userData.manifests = [];
-    }
-    userData.manifests = userData.manifests.filter(
-      (manifest) => manifest.manifest !== req.params.manifest
-    );
-    userData.manifests.push(newManifest);
-    console.log(userData);
-    writeFileSync(
-      join("data", "userdata.json"),
-      JSON.stringify(userData),
-      "utf-8"
-    );
-    res.send(JSON.stringify(newManifest));
   }
 });
 
@@ -259,6 +121,50 @@ app.get("/ships/:shipId/manifest", (req, res) => {
         (m) => m.manifest === ship.associatedManifest
       );
       res.send(JSON.stringify(ship));
+    }
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.get("/log/:manifest", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  const manifest = userData.manifests.find(
+    (manifest) => req.params.manifest === manifest.manifest
+  );
+  if (manifest) {
+    res.send(JSON.stringify(manifest));
+    return;
+  }
+  res.sendStatus(404);
+});
+
+app.post("/archive", (req, res) => {
+  let userData = JSON.parse(
+    readFileSync(join("data", "userdata.json"), "utf-8")
+  );
+  const manifest = userData.manifests.find(
+    (manifest) => req.body.manifest === manifest.manifest
+  );
+  if (manifest) {
+    // find corresponding ship
+    const ship = userData.ships.find((ship) => {
+      return ship.associatedManifest === manifest.manifest;
+    });
+
+    if (ship) {
+      ship.associatedManifest = null;
+      manifest.isArchived = true;
+      manifest.associatedShip = ship;
+
+      writeFileSync(
+        join("data", "userdata.json"),
+        JSON.stringify(userData),
+        "utf-8"
+      );
+      res.send(JSON.stringify(manifest));
     }
   } else {
     res.sendStatus(404);

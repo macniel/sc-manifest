@@ -1,0 +1,54 @@
+.log-view {
+  position: fixed;
+  top: 48px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+}
+
+.logs {
+  width: 100%;
+}
+
+.log {
+  padding: 4px;
+}
+
+.log__name {
+  display: inline-block;
+  width: 30%;
+}
+
+.log__scu {
+  display: inline-block;
+  width: 30%;
+}
+
+.log__profit {
+  display: inline-block;
+  width: 30%;
+}
+
+.log .meter {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.log .meter .fill {
+  display: inline-block;
+  text-overflow: clip;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--selection-text);
+  border: 1px solid var(--selection-color);
+  background-color: var(--workspace-color);
+}
+
+.log .log__profit.negative {
+  color: red;
+}
+
+.log .log__profit.positive {
+  color: lime;
+}

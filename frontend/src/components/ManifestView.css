@@ -25,3 +25,27 @@
   height: 40px;
   transition: width 1s ease-in;
 }
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.shop .inner-layout {
+  display: flex;
+  flex-direction: row;
+  padding: 4px;
+  padding-left: 8px;
+}
+
+.profit {
+}
+
+.profit.negative {
+  color: red;
+}
+
+.profit.positive {
+  color: lime;
+}

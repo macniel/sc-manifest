@@ -45,62 +45,63 @@ function CommodityEntry() {
 
   return (
     <div className="spatial-layout">
-      <fieldset className="commodity-fieldset">
-        <legend>Add Commodity</legend>
-        <div className="commodity-matrix">
-          {commodities?.map((commodityItem) => (
-            <button
-              onClick={() => setCommodity(commodityItem)}
-              className={classNames(
-                "commodity",
-                "commodity--" + commodityItem.kind.toLowerCase(),
-                {
-                  active: commodity.code === commodityItem.code,
-                }
-              )}
-              title={commodityItem.name}
-            >
-              <span className="commodity__label">{commodityItem.code}</span>
+      <div className="rows">
+        <fieldset className="main">
+          <legend>Add Commodity</legend>
+          <div className="commodity-matrix">
+            {commodities?.map((commodityItem) => (
+              <button
+                onClick={() => setCommodity(commodityItem)}
+                className={classNames(
+                  "commodity",
+                  "commodity--" + commodityItem.kind.toLowerCase(),
+                  {
+                    active: commodity.code === commodityItem.code,
+                  }
+                )}
+                title={commodityItem.name}
+              >
+                <span className="commodity__label">{commodityItem.code}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="sidebar">
+          <fieldset>
+            <legend>Actions</legend>
+            <button onClick={buy} className="button--primary">
+              Buy
             </button>
-          ))}
+          </fieldset>
+
+          <fieldset className="shipEntry">
+            <legend>Ship</legend>
+            <ShipSelector onChange={setShip} />
+          </fieldset>
+
+          <div className="lower-row">
+            <fieldset className="quantity">
+              <legend>Quantity</legend>
+              <NumberInput
+                value=""
+                onChange={(newValue) => {
+                  setQuantity(parseInt(newValue));
+                }}
+              />
+            </fieldset>
+
+            <fieldset className="price">
+              <legend>Price</legend>
+              <NumberInput
+                value=""
+                onChange={(newValue) => {
+                  setPrice(parseFloat(newValue));
+                }}
+              />
+            </fieldset>
+          </div>
         </div>
-      </fieldset>
-
-      <fieldset className="shop">
-        <legend>Source</legend>
-        <ShopSelector />
-      </fieldset>
-
-      <fieldset className="shipEntry">
-        <legend>Ship</legend>
-        <ShipSelector onChange={setShip} />
-      </fieldset>
-
-      <fieldset className="quantity">
-        <legend>Quantity</legend>
-        <NumberInput
-          value=""
-          onChange={(newValue) => {
-            setQuantity(parseInt(newValue));
-          }}
-        />
-      </fieldset>
-
-      <fieldset className="price">
-        <legend>Price</legend>
-        <NumberInput
-          value=""
-          onChange={(newValue) => {
-            setPrice(parseFloat(newValue));
-          }}
-        />
-      </fieldset>
-      <div className="cmdline">
-        <pre>
-          {commodity.code} {source.code} {(quantity || 0).toFixed(0)}@
-          {(price || 0).toFixed(2)}{" "}
-        </pre>
-        <button onClick={buy}>Execute</button>
       </div>
     </div>
   );

@@ -29,22 +29,7 @@ function CargoChart({ cargo, onClick, isActive }) {
 }
 
 function ManifestView() {
-  const [cargo, setCargo] = useState([
-    {
-      code: "DIAM",
-      amount: 420,
-      total: 500,
-      kind: "Metals",
-      name: "Diamonds",
-    },
-    {
-      code: "BERY",
-      amount: 100,
-      total: 300,
-      name: "Beryl",
-      kind: "Gems",
-    },
-  ]);
+  const [cargo, setCargo] = useState([]);
   const [selectedCargo, setSelectedCargo] = useState(cargo[0]);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
@@ -97,61 +82,99 @@ function ManifestView() {
       });
   };
 
-  const accumulateCargo = (previous, current) => {
-    console.log("Acc", current.amount);
-    return previous.amount + current.amount;
+  const archive = function () {
+    fetch("/archive", {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        manifest: manifest.manifest,
+      }),
+      method: "post",
+    })
+      .then((response) => response.json())
+      .then((manifest) => {
+        if (!localStorage.getItem("logs")) {
+          localStorage.setItem("logs", "[]");
+        }
+        const logs = JSON.parse(localStorage.getItem("logs") || []);
+        logs.push(manifest.manifest);
+        localStorage.setItem("logs", JSON.stringify(logs));
+        setCargo([]);
+      });
   };
 
   return (
     <div className="spatial-layout">
-      <fieldset className="commodity-fieldset">
-        <legend>cargo</legend>
-        {cargo.map((c, index) => (
-          <CargoChart
-            isActive={index === selectedCargo}
-            cargo={c}
-            onClick={() => {
-              setSelectedCargo(index);
-              setQuantity(cargo[index].amount);
-            }}
-          />
-        ))}
-      </fieldset>
+      <div className="rows">
+        <fieldset className="main">
+          <legend>cargo</legend>
+          {cargo.map((c, index) => (
+            <CargoChart
+              isActive={index === selectedCargo}
+              cargo={c}
+              onClick={() => {
+                setSelectedCargo(index);
+                setQuantity(cargo[index].amount);
+              }}
+            />
+          ))}
+        </fieldset>
+        <div className="sidebar">
+          <fieldset className="shipEntry">
+            <legend>From ship</legend>
+            <ShipSelector onChange={setShip} />
+          </fieldset>
 
-      <fieldset className="shipEntry">
-        <legend>From ship</legend>
-        <ShipSelector onChange={setShip} />
-      </fieldset>
+          <fieldset className="shop">
+            <legend>Actions</legend>
+            <div className="inner-layout">
+              <div className="info">
+                {
+                  <>
+                    <span className="name">
+                      {ship?.shipsName || ship?.name}
+                    </span>
 
-      <fieldset className="shop">
-        <legend>Target</legend>
-      </fieldset>
+                    <span
+                      className={classNames("profit", {
+                        negative: manifest?.profit < 0,
+                        positive: manifest?.profit >= 0,
+                      })}
+                    >
+                      {manifest?.profit ?? "-"} aUEC
+                    </span>
+                    <span className="cargofill">
+                      {Math.ceil(cargo.reduce((p, c) => p + c.amount, 0) / 100)}{" "}
+                      / {ship.scu} SCU
+                    </span>
+                  </>
+                }
+              </div>
+              <button className="button--primary" onClick={archive}>
+                Archive
+              </button>
+              <button className="button--primary" onClick={sell}>
+                Execute
+              </button>
+            </div>
+          </fieldset>
 
-      <fieldset className="quantity">
-        <legend>Quantity</legend>
-        <NumberInput
-          max={quantity}
-          value={quantity}
-          min={0}
-          onChange={setSellQuantity}
-        />
-      </fieldset>
+          <div className="lower-row">
+            <fieldset className="quantity">
+              <legend>Quantity</legend>
+              <NumberInput
+                max={quantity}
+                value={quantity}
+                min={0}
+                onChange={setSellQuantity}
+              />
+            </fieldset>
 
-      <fieldset className="price">
-        <legend>Price</legend>
-        <NumberInput value={price} onChange={setSellPrice} />
-      </fieldset>
-      <div className="cmdline">
-        {
-          <>
-            <span className="profit">{manifest?.profit ?? "-"} aUEC</span>
-            <span className="cargofill">
-              {Math.ceil(cargo.reduce((p, c) => p + c.amount, 0) / 100)} /{" "}
-              {ship.scu} SCU
-            </span>
-          </>
-        }
-        <button onClick={sell}>Execute</button>
+            <fieldset className="price">
+              <legend>Price</legend>
+              <NumberInput value={price} onChange={setSellPrice} />
+            </fieldset>
+          </div>
+        </div>
       </div>
     </div>
   );

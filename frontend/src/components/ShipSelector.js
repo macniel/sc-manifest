@@ -55,19 +55,24 @@ function ShipSelector({ onChange }) {
     }
   }, []);
 
+  /*
+   */
+
   return (
     <div className="list--scrollable">
-      {ownShips.map((shipId) => (
-        <ShipButton
-          isActive={shipId === ship.ship}
-          ship={shipId}
-          onClick={(newShip) => {
-            console.log(newShip);
-            setShip(newShip);
-            onChange?.(newShip);
-          }}
-        ></ShipButton>
-      ))}
+      <div className="scrollcontent">
+        {ownShips.map((shipId) => (
+          <ShipButton
+            isActive={shipId === ship.ship}
+            ship={shipId}
+            onClick={(newShip) => {
+              console.log(newShip);
+              setShip(newShip);
+              onChange?.(newShip);
+            }}
+          ></ShipButton>
+        ))}
+      </div>
     </div>
   );
 }

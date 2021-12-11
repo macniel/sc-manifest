@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import FleetManager from "./components/FleetManager";
 import CommodityEntry from "./components/CommodityEntry";
 import ManifestView from "./components/ManifestView";
+import LogsView from "./components/LogsView";
 
 function App() {
   const [tab, setTab] = useState(-1);
@@ -16,7 +17,7 @@ function App() {
       manifest: "0",
       component: <ManifestView />,
     },
-    { position: 3, name: "log", component: <div>Log</div> },
+    { position: 3, name: "log", component: <LogsView /> },
   ]);
 
   useEffect(() => {

@@ -10,14 +10,11 @@ function NumberInput({ onChange, value, min, max }) {
     } else {
       setInnerValue(innerValue + symbol);
     }
+    onChange?.(innerValue);
   };
 
   const clear = () => {
     setInnerValue("");
-  };
-
-  const confirm = () => {
-    onChange?.(innerValue);
   };
 
   useEffect(() => {
@@ -32,20 +29,44 @@ function NumberInput({ onChange, value, min, max }) {
           setInnerValue(event.srcElement.value);
         }}
       />
-      <button onClick={() => append("7")}>7</button>
-      <button onClick={() => append("8")}>8</button>
-      <button onClick={() => append("9")}>9</button>
-      <button onClick={() => append("4")}>4</button>
-      <button onClick={() => append("5")}>5</button>
-      <button onClick={() => append("6")}>6</button>
-      <button onClick={() => append("1")}>1</button>
-      <button onClick={() => append("2")}>2</button>
-      <button onClick={() => append("3")}>3</button>
-      <button onClick={() => append("0")}>0</button>
-      <button onClick={() => append(".")}>.</button>
-      <button onClick={() => clear()}>cls</button>
-      <button className="confirm" onClick={() => confirm()}>
-        ok
+      <button className="numberinput__button" onClick={() => append("7")}>
+        7
+      </button>
+      <button className="numberinput__button" onClick={() => append("8")}>
+        8
+      </button>
+      <button className="numberinput__button" onClick={() => append("9")}>
+        9
+      </button>
+      <button className="numberinput__button" onClick={() => append("4")}>
+        4
+      </button>
+      <button className="numberinput__button" onClick={() => append("5")}>
+        5
+      </button>
+      <button className="numberinput__button" onClick={() => append("6")}>
+        6
+      </button>
+      <button className="numberinput__button" onClick={() => append("1")}>
+        1
+      </button>
+      <button className="numberinput__button" onClick={() => append("2")}>
+        2
+      </button>
+      <button className="numberinput__button" onClick={() => append("3")}>
+        3
+      </button>
+      <button className="numberinput__button" onClick={() => append("0")}>
+        0
+      </button>
+      <button className="numberinput__button" onClick={() => append(".")}>
+        .
+      </button>
+      <button
+        className="numberinput__button button--harmful"
+        onClick={() => clear()}
+      >
+        cls
       </button>
     </div>
   );
