@@ -165,3 +165,11 @@ fieldset > legend {
 .spatial-layout .sidebar .lower-row > * {
   flex-grow: 1;
 }
+
+button,
+li.ship,
+.ship-list__button,
+ul.tab-list li,
+.cargo-chart {
+  cursor: pointer;
+}
