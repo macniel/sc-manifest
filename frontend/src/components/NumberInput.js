@@ -10,7 +10,7 @@ function NumberInput({ onChange, value, min, max }) {
     } else {
       setInnerValue(innerValue + symbol);
     }
-    onChange?.(innerValue);
+    onChange?.(innerValue + symbol);
   };
 
   const clear = () => {
@@ -19,6 +19,7 @@ function NumberInput({ onChange, value, min, max }) {
 
   useEffect(() => {
     setInnerValue(value);
+    onChange?.(value);
   }, [value]);
 
   return (

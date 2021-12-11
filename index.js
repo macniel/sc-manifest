@@ -1,5 +1,5 @@
 const express = require("express");
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync, existsSync } = require("fs");
 const bodyParser = require("body-parser");
 const { join } = require("path");
 const { engine } = require("express-handlebars");
@@ -164,6 +164,7 @@ app.post("/sell", (req, res) => {
   if (!commodity || commodity.amount < envelope.quantity) {
     // selling commodity you dont have?!
     res.sendStatus(500);
+    return;
   } else {
     commodity.amount -= envelope.quantity;
   }
@@ -385,5 +386,19 @@ app.listen(PORT, async () => {
     console.log("no refresh issued, taking data from storage");
     publicData = JSON.parse(readFileSync("publicdata.json", "utf-8"));
   }
+
+  if (!existsSync(join("data", "userdata.json"))) {
+    const userData = {
+      ships: [],
+      manifests: [],
+    };
+    writeFileSync(
+      join("data", "userdata.json"),
+      JSON.stringify(userData),
+      "utf-8"
+    );
+    console.log("set up new database");
+  }
+
   console.log("everything is up and running");
 });

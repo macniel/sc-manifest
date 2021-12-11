@@ -37,9 +37,10 @@ function FleetManager() {
   return (
     <fieldset>
       <legend>Add new Ship to your Shipping Fleet</legend>
-      <ul className="ship-list">
+      <div role="list" className="ship-list">
         {ships?.map((ship) => (
-          <li
+          <button
+            role="listitem"
             key={ship.code}
             onClick={() => addShip(ship)}
             className={"ship ship--" + ship.manufacturer}
@@ -49,9 +50,9 @@ function FleetManager() {
             }}
           >
             <span>{ship.name}</span>
-          </li>
+          </button>
         ))}
-      </ul>
+      </div>
     </fieldset>
   );
 }
