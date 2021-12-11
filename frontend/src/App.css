@@ -1,0 +1,167 @@
+:root {
+  --button-size: 64px;
+  --margin: 8px -2px;
+  --primary-button-color: #939598;
+  --primary-button-text: black;
+  --primary-button-border: #fad41b;
+  --dangerous-button-color: red;
+  --dangerous-button-text: white;
+  --button-border: rgba(255, 255, 255, 0.6);
+  --button-background: black;
+  --button-text: white;
+  --button-label-color: rgba(0, 0, 0, 0.5);
+  --button-label-text: white;
+  --selection-color: #fad41b;
+  --selection-semi-color: rgba(250, 212, 27, 0.5);
+  --selection-text: #faf8eb;
+  --workspace-color: #54565b;
+  --application-color: #36373a;
+  --text-color: black;
+  --panel-border: 1px solid #fad41b;
+  --panel-background: #76777b;
+  --panel-titlebar-text: black;
+  --panel-titlebar-color: #939598;
+  --panel-selected-color: #939598;
+  --panel-selected-text: #faf8eb;
+  --panel-shadow: 0px 2px 2px black;
+  --button-shadow: 0 2px 2px black;
+  --push-button-color: #76777b;
+  --push-button-text: #faf8eb;
+  --shim-color: rgba(0, 0, 0, 0.8);
+}
+
+body {
+  padding-top: 44px;
+  background-color: var(--workspace-color);
+}
+
+fieldset {
+  border: 1px solid var(--panel-border);
+  background-color: var(--panel-background);
+  box-shadow: var(--panel-shadow);
+  margin: 4px;
+  padding: 4px 0 0 0;
+}
+
+fieldset > legend {
+  margin: 0;
+  padding: 0;
+  float: none;
+  background-color: var(--panel-titlebar-color);
+  color: var(--panel-titlebar-text);
+  width: 100%;
+}
+.tab-bar {
+  position: absolute;
+}
+
+.tab-list {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: var(--application-color);
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  border-bottom: 4px solid var(--panel-background);
+}
+
+.tab-list li {
+  display: inline-block;
+  list-style-type: none;
+  min-width: 40px;
+  background-color: var(--workspace-color);
+  margin: 0 8px;
+  padding: 0 16px;
+  line-height: 40px;
+  vertical-align: middle;
+  padding-top: 0;
+  height: 35px;
+  text-align: center;
+}
+
+.tab-list li.active {
+  color: var(--panel-text);
+  height: 40px;
+  padding-bottom: 4px;
+  background-color: var(--panel-background);
+}
+
+.button--primary {
+  min-width: var(--button-size);
+  min-height: var(--button-size);
+  margin: 4px 8px;
+  background-color: var(--primary-button-color);
+  border: 1px solid var(--primary-button-border);
+  color: var(--primary-button-text);
+}
+
+.button--harmful {
+  min-width: var(--button-size);
+  min-height: var(--button-size);
+  padding: 4px 8px;
+  background-color: var(--dangerous-button-color);
+  border: 1px solid var(--primary-button-border);
+  color: var(--dangerous-button-text);
+}
+
+.spatial-layout {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 48px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  flex: 1;
+  align-items: stretch;
+}
+
+.spatial-layout .rows {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  flex: 1 1 1px;
+}
+
+.spatial-layout .main {
+  flex-grow: 1;
+  flex-basis: auto;
+}
+
+.spatial-layout .sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 1;
+  min-width: 468px;
+  max-height: 100%;
+}
+
+.spatial-layout .sidebar .lower-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.spatial-layout .shipEntry {
+  flex-grow: 1;
+}
+
+.spatial-layout .list--scrollable {
+  height: 100%;
+  position: relative;
+}
+
+.spatial-layout .list--scrollable .scrollcontent {
+  overflow: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.spatial-layout .sidebar .lower-row > * {
+  flex-grow: 1;
+}

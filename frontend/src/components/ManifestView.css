@@ -1,0 +1,51 @@
+.cargo-chart {
+  padding: 8px;
+}
+
+.cargo-chart.active {
+  background-color: var(--selection-semi-color);
+  color: var(--selection-text);
+}
+
+.cargo-chart.active .meter {
+  background-color: black;
+}
+
+.cargo-chart .meter {
+  min-width: 480px;
+  height: 40px;
+  border: var(--panel-border);
+  background-color: var(--workspace);
+  box-shadow: var(--panel-shadow);
+  margin-top: 4px;
+}
+
+.cargo-chart .meter .fill {
+  background-color: var(--selection-color);
+  height: 40px;
+  transition: width 1s ease-in;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.shop .inner-layout {
+  display: flex;
+  flex-direction: row;
+  padding: 4px;
+  padding-left: 8px;
+}
+
+.profit {
+}
+
+.profit.negative {
+  color: red;
+}
+
+.profit.positive {
+  color: lime;
+}
