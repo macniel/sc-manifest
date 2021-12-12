@@ -161,6 +161,7 @@ app.post("/sell", (req, res) => {
   const commodity = manifest.commodities.find(
     (commodity) => commodity.code === req.body.commodity
   );
+
   if (!commodity || commodity.amount < envelope.quantity) {
     // selling commodity you dont have?!
     res.sendStatus(500);
@@ -250,11 +251,10 @@ app.post("/buy", (req, res) => {
         name: template.name,
         kind: template.kind,
       };
+      manifest.commodities.push(commodity);
     }
     commodity.amount += parseInt(req.body.quantity);
     commodity.total += parseInt(req.body.quantity);
-    // update commodity
-    manifest.commodities.push(commodity);
 
     writeFileSync(
       join("data", "userdata.json"),
