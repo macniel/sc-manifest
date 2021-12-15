@@ -82,8 +82,7 @@ function ManifestView() {
         const el = document.querySelector(`[data-ship-id="${ship.ship}"]`);
 
         if (filled === 0) {
-          el.disabled = true;
-          setShip({});
+          setSelectedCargo({});
         }
       });
   };
