@@ -72,6 +72,7 @@ function FleetManager() {
         <legend>Name your Ship</legend>
         <div className="inner">
           <input
+            aria-label="ship name"
             value={shipName}
             onChange={(event) => setShipName(event.target.value)}
           />

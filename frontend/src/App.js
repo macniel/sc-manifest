@@ -38,26 +38,31 @@ function App() {
   }, []);
 
   return (
-    <div className="tab-bar">
-      <ul className="tab-list">
-        {tabList.map((tabItem) => {
-          return (
-            <li
-              key={`${tabItem.name}${
-                tabItem.manifest ? "-" + tabItem.manifest : ""
-              }`}
-              className={tab === tabItem.position ? "active" : ""}
-              onClick={() => {
-                setTab(tabItem.position);
-              }}
-            >
-              {tabItem.name}
-            </li>
-          );
-        })}
-      </ul>
-      {tab === -1 ? <WelcomeScreen /> : tabList[tab].component}
-    </div>
+    <main>
+      <header></header>
+      <section>
+        <div className="tab-bar">
+          <ul className="tab-list">
+            {tabList.map((tabItem) => {
+              return (
+                <li
+                  key={`${tabItem.name}${
+                    tabItem.manifest ? "-" + tabItem.manifest : ""
+                  }`}
+                  className={tab === tabItem.position ? "active" : ""}
+                  onClick={() => {
+                    setTab(tabItem.position);
+                  }}
+                >
+                  {tabItem.name}
+                </li>
+              );
+            })}
+          </ul>
+          {tab === -1 ? <WelcomeScreen /> : tabList[tab].component}
+        </div>
+      </section>
+    </main>
   );
 }
 

@@ -4,7 +4,7 @@
   --primary-button-color: #939598;
   --primary-button-text: black;
   --primary-button-border: #fad41b;
-  --dangerous-button-color: red;
+  --dangerous-button-color: rgb(140, 0, 0);
   --dangerous-button-text: white;
   --button-border: rgba(255, 255, 255, 0.6);
   --button-background: black;
@@ -25,17 +25,42 @@
   --panel-selected-text: #faf8eb;
   --panel-shadow: 0px 2px 2px black;
   --button-shadow: 0 2px 2px black;
+  --input-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+  --input-background: #939598;
+  --input-text: #faf8eb;
   --push-button-color: #76777b;
   --push-button-text: #faf8eb;
   --shim-color: rgba(0, 0, 0, 0.8);
   --disabled-color: black;
   --disabled-color-with-opacity: rgba(0, 0, 0, 0.5);
   --disabled-border: #766619;
+  --text-color: #faf8eb;
+}
+
+a,
+a:link,
+a:visited {
+  color: var(--selection-color);
+  margin: 0 4px;
 }
 
 body {
   padding-top: 44px;
   background-color: var(--workspace-color);
+}
+
+input {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  box-shadow: var(--input-shadow);
+}
+
+h1,
+h2,
+h3,
+span,
+p {
+  color: var(--text-color);
 }
 
 fieldset {
@@ -82,14 +107,17 @@ fieldset > legend {
   line-height: 40px;
   vertical-align: middle;
   padding-top: 0;
-  height: 35px;
+  margin-top: 6px;
+  height: 34px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .tab-list li.active {
-  color: var(--panel-text);
+  color: var(--selection-color);
   height: 40px;
-  padding-bottom: 4px;
+  margin-top: 0;
+  padding-top: 0;
   background-color: var(--panel-background);
 }
 
@@ -167,6 +195,10 @@ fieldset > legend {
 
 .spatial-layout .sidebar .lower-row > * {
   flex-grow: 1;
+}
+
+button {
+  box-shadow: var(--button-shadow);
 }
 
 button,

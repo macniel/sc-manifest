@@ -29,7 +29,7 @@ function WelcomeScreen() {
       <div>
         <h2>Stay informed</h2>
         <p>
-          This Application is in active development, check out its progress on
+          This Application is in active development, check out its progress on{" "}
           <a href={trelloBoard}>Trello</a> and <a href={github}>Github</a>
         </p>
       </div>

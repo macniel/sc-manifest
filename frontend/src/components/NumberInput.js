@@ -25,6 +25,7 @@ function NumberInput({ onChange, value, min, max }) {
   return (
     <div className="numberinput">
       <input
+        aria-label="input value"
         value={innerValue}
         onChange={(event) => {
           setInnerValue(event.srcElement.value);
