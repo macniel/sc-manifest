@@ -37,7 +37,9 @@ function WelcomeScreen() {
         <h2>Problems?</h2>
         <p>Try deleting your localStorage</p>
 
-        <button onClick={() => clear()}>Clear LocalStorage</button>
+        <button className="button--primary" onClick={() => clear()}>
+          Clear LocalStorage
+        </button>
       </div>
     </div>
   );

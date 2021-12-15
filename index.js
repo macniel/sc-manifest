@@ -179,6 +179,7 @@ app.post("/api/sell", (req, res) => {
     quantity: parseInt(envelope.quantity),
     price: parseFloat(envelope.price),
     commodity: envelope.commodity,
+    when: Date.now(),
   });
 
   manifest.profit =
@@ -233,6 +234,7 @@ app.post("/api/buy", (req, res) => {
       destination: req.body.to,
       quantity: req.body.quantity,
       price: req.body.price,
+      when: Date.now(),
     });
     // find similar commodity to add
     let commodity = manifest.commodities.find(
