@@ -4,17 +4,21 @@ import "./ShipSelector.css";
 
 function ShipButton({ ship, onClick, isActive }) {
   const [actualShip, setActualShip] = useState({});
-
+  const [filledInPercent, setFilledInPercent] = useState(0);
   useEffect(() => {
     if (ship) {
       fetch(`/api/ship/${ship}`)
         .then((response) => response.json())
-        .then((data) => setActualShip(data));
+        .then((data) => {
+          setActualShip(data);
+          setFilledInPercent(data.filled / data.scu);
+        });
     }
   }, [ship]);
 
   return (
     <button
+      disabled={filledInPercent === 1}
       onClick={() => {
         onClick?.(actualShip);
       }}
@@ -24,6 +28,8 @@ function ShipButton({ ship, onClick, isActive }) {
       style={{
         backgroundImage:
           "url('/ships/" + actualShip?.code?.toLowerCase() + ".jpg')",
+        "--width": 100 + filledInPercent * -100 + "%",
+        "--filled": filledInPercent * 100 + "%",
       }}
     >
       <span className="button__label">

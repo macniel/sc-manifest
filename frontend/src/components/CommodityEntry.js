@@ -117,7 +117,11 @@ function CommodityEntry() {
                 <span>Selected Commodity: {commodity.name}</span>
                 <span>Price: {(quantity || 0) * (price || 0)} aUEC</span>
               </div>
-              <button onClick={buy} className="button--primary">
+              <button
+                onClick={buy}
+                disabled={!ship.name || !quantity || !(price >= 0)}
+                className="button--primary"
+              >
                 Buy
               </button>
             </div>

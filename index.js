@@ -23,6 +23,20 @@ app.get("/api/ship/:shipId", (req, res) => {
 
   const found = userData.ships.find((ship) => ship.ship === req.params.shipId);
   if (found) {
+    found.filled = 0;
+    // get details for meter
+    if (found.associatedManifest) {
+      const manifest = userData.manifests.find(
+        (manifest) => manifest.manifest == found.associatedManifest
+      );
+      if (manifest) {
+        manifest.commodities.forEach(
+          (commodity) => (found.filled += commodity.amount)
+        );
+      }
+      found.filled /= 100;
+    }
+
     res.send(JSON.stringify(found));
   } else {
     res.sendStatus(404);

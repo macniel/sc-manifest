@@ -150,10 +150,18 @@ function ManifestView() {
                   </>
                 }
               </div>
-              <button className="button--primary" onClick={archive}>
+              <button
+                className="button--primary"
+                disabled={manifest == null}
+                onClick={archive}
+              >
                 Archive
               </button>
-              <button className="button--primary" onClick={sell}>
+              <button
+                className="button--primary"
+                disabled={selectedCargo == null || sellQuantity <= 0}
+                onClick={sell}
+              >
                 Execute
               </button>
             </div>
