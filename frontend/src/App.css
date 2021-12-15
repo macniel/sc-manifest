@@ -102,7 +102,7 @@ fieldset > legend {
 .button--harmful {
   min-width: var(--button-size);
   min-height: var(--button-size);
-  padding: 4px 8px;
+  margin: 4px 8px;
   background-color: var(--dangerous-button-color);
   border: 1px solid var(--primary-button-border);
   color: var(--dangerous-button-text);
@@ -150,12 +150,12 @@ fieldset > legend {
   flex-grow: 1;
 }
 
-.spatial-layout .list--scrollable {
+.list--scrollable {
   height: 100%;
   position: relative;
 }
 
-.spatial-layout .list--scrollable .scrollcontent {
+.list--scrollable .scrollcontent {
   overflow: auto;
   position: absolute;
   top: 0;
@@ -172,4 +172,20 @@ li.ship,
 ul.tab-list li,
 .cargo-chart {
   cursor: pointer;
+}
+
+fieldset .inner {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin: 4px;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  margin: 0;
+  flex-grow: 1;
+  align-self: center;
 }

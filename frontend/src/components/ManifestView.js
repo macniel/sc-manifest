@@ -46,7 +46,7 @@ function ManifestView() {
 
   useEffect(() => {
     if (ship.associatedManifest) {
-      fetch("/manifest/" + ship.associatedManifest)
+      fetch("/api/manifest/" + ship.associatedManifest)
         .then((response) => response.json())
         .then((manifest) => {
           setManifest(manifest);
@@ -70,7 +70,7 @@ function ManifestView() {
       quantity: sellQuantity,
       commodity: cargo[selectedCargo].code,
     };
-    fetch("/sell/", {
+    fetch("/api/sell/", {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       method: "post",
@@ -83,7 +83,7 @@ function ManifestView() {
   };
 
   const archive = function () {
-    fetch("/archive", {
+    fetch("/api/archive", {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         manifest: manifest.manifest,

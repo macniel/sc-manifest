@@ -11,7 +11,7 @@ function LogsView() {
       console.log(logItems);
       const log = logItems.map(
         async (logItem) =>
-          await fetch("/log/" + logItem).then((response) => response.json())
+          await fetch("/api/log/" + logItem).then((response) => response.json())
       );
       Promise.all(log).then((result) => {
         console.log(result);

@@ -13,7 +13,7 @@ let publicData = {};
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get("/ship/:shipId", (req, res) => {
+app.get("/api/ship/:shipId", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
@@ -29,7 +29,7 @@ app.get("/ship/:shipId", (req, res) => {
   }
 });
 
-app.post("/ship", (req, res) => {
+app.post("/api/ship", (req, res) => {
   const name = req.body.shipName;
   const actualShip = publicData.ships.find(
     (ship) => ship.code === req.body.code
@@ -62,7 +62,7 @@ app.post("/ship", (req, res) => {
   res.send(JSON.stringify(newShip));
 });
 
-app.get("/manifest/:manifestId", (req, res) => {
+app.get("/api/manifest/:manifestId", (req, res) => {
   console.log("GET MANIFEST " + req.params.manifestId);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -78,13 +78,13 @@ app.get("/manifest/:manifestId", (req, res) => {
   }
 });
 
-app.get("/commodities", (req, res) => {
+app.get("/api/commodities", (req, res) => {
   if (publicData.commodities) {
     return res.send(publicData.commodities);
   }
 });
 
-app.get("/ships/:shipId/manifest", (req, res) => {
+app.get("/api/ships/:shipId/manifest", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
@@ -103,7 +103,7 @@ app.get("/ships/:shipId/manifest", (req, res) => {
   }
 });
 
-app.get("/log/:manifest", (req, res) => {
+app.get("/api/log/:manifest", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
@@ -117,7 +117,7 @@ app.get("/log/:manifest", (req, res) => {
   res.sendStatus(404);
 });
 
-app.post("/archive", (req, res) => {
+app.post("/api/archive", (req, res) => {
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
@@ -147,7 +147,7 @@ app.post("/archive", (req, res) => {
   }
 });
 
-app.post("/sell", (req, res) => {
+app.post("/api/sell", (req, res) => {
   console.log(req.body);
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
@@ -194,7 +194,7 @@ app.post("/sell", (req, res) => {
   res.send(JSON.stringify(manifest));
 });
 
-app.post("/buy", (req, res) => {
+app.post("/api/buy", (req, res) => {
   if (req.body.to) {
     let userData = JSON.parse(
       readFileSync(join("data", "userdata.json"), "utf-8")
@@ -265,11 +265,9 @@ app.post("/buy", (req, res) => {
   }
 });
 
-app.get("/ships", (req, res) => {
+app.get("/api/ships", (req, res) => {
   res.send(JSON.stringify(publicData.ships));
 });
-
-app.use(express.static("./frontend/build"));
 
 async function fetchShips() {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {

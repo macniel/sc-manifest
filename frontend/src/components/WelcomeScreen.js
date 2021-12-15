@@ -1,4 +1,5 @@
 import { ReactComponent as Logo } from "../logo.svg";
+import "./WelcomeScreen.css";
 
 function WelcomeScreen() {
   const trelloBoard = "https://trello.com/b/jqy54pmb/sc-manifest";
@@ -12,7 +13,7 @@ function WelcomeScreen() {
   };
 
   return (
-    <>
+    <div className="welcome-screen">
       <div>
         <Logo />
         <h1>Shipping Solutions Ltd.</h1>
@@ -38,7 +39,7 @@ function WelcomeScreen() {
 
         <button onClick={() => clear()}>Clear LocalStorage</button>
       </div>
-    </>
+    </div>
   );
 }
 

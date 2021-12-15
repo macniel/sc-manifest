@@ -3,18 +3,11 @@ import React, { useEffect, useState } from "react";
 import "./ShipSelector.css";
 
 function ShipButton({ ship, onClick, isActive }) {
-  const [actualShip, setActualShip] = useState({
-    shipsName: "golddigger",
-    code: "FREMAX",
-    name: "Freelancer MAX",
-    manufacturer: "MISC",
-    scu: 12000,
-    associatedManifest: "0",
-  });
+  const [actualShip, setActualShip] = useState({});
 
   useEffect(() => {
     if (ship) {
-      fetch(`/ship/${ship}`)
+      fetch(`/api/ship/${ship}`)
         .then((response) => response.json())
         .then((data) => setActualShip(data));
     }
@@ -30,7 +23,7 @@ function ShipButton({ ship, onClick, isActive }) {
       })}
       style={{
         backgroundImage:
-          "url('./ships/" + actualShip?.code?.toLowerCase() + ".jpg')",
+          "url('/ships/" + actualShip?.code?.toLowerCase() + ".jpg')",
       }}
     >
       <span className="button__label">

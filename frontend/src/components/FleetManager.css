@@ -26,3 +26,44 @@
   background-color: var(--button-label-color);
   padding: 4px;
 }
+
+.fleet-selector {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  position: fixed;
+  top: 48px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  flex: 1 1;
+  align-items: stretch;
+}
+
+.fleet-selector > :nth-child(1) {
+  flex-grow: 1;
+  flex-basis: auto;
+}
+
+.fleet-selector > :nth-child(2) {
+  flex-grow: 0;
+  flex-basis: 0;
+  flex-shrink: 0;
+}
+
+.ship-namer {
+}
+
+.ship-namer .inner input {
+  flex-grow: 1;
+  margin-right: 4px;
+  margin: 4px;
+}
+
+.ship-namer .inner button {
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 20px;
+  margin: 4px;
+}

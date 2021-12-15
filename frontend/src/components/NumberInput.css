@@ -27,7 +27,8 @@
 .numberinput .numberinput__button.button--harmful {
   min-width: var(--button-size);
   min-height: var(--button-size);
-  padding: 4px 8px;
+  margin: 0;
+  padding: 0;
   background-color: var(--dangerous-button-color);
   border: 1px solid var(--primary-button-border);
   color: var(--dangerous-button-text);

@@ -30,7 +30,7 @@ function CommodityEntry() {
   });
 
   useEffect(() => {
-    fetch("/commodities")
+    fetch("/api/commodities")
       .then((response) => response.json())
       .then((data) => {
         setCommodities(data);
@@ -46,7 +46,7 @@ function CommodityEntry() {
       price: price,
     };
 
-    fetch("/buy", {
+    fetch("/api/buy", {
       headers: { "Content-Type": "application/json" },
       method: "post",
       body: JSON.stringify(payload),
@@ -83,6 +83,8 @@ function CommodityEntry() {
     }
   };
 
+  const destroyShip = () => {};
+
   return (
     <div className="spatial-layout">
       <div className="rows">
@@ -107,9 +109,18 @@ function CommodityEntry() {
         <div className="sidebar">
           <fieldset>
             <legend>Actions</legend>
-            <button onClick={buy} className="button--primary">
-              Buy
-            </button>
+            <div className="inner">
+              <div className="status">
+                <span>
+                  Selected Ship: {ship.shipsName} ({ship.name})
+                </span>
+                <span>Selected Commodity: {commodity.name}</span>
+                <span>Price: {(quantity || 0) * (price || 0)} aUEC</span>
+              </div>
+              <button onClick={buy} className="button--primary">
+                Buy
+              </button>
+            </div>
           </fieldset>
 
           <fieldset className="shipEntry">
