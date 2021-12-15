@@ -206,7 +206,21 @@ app.post("/api/sell", (req, res) => {
     JSON.stringify(userData),
     "utf-8"
   );
-  res.send(JSON.stringify(manifest));
+
+  let filled = 0;
+  // get details for meter
+
+  if (manifest) {
+    manifest.commodities.forEach((commodity) => (filled += commodity.amount));
+  }
+  filled /= 100;
+
+  res.send(
+    JSON.stringify({
+      manifest,
+      filled,
+    })
+  );
 });
 
 app.post("/api/buy", (req, res) => {
@@ -275,7 +289,21 @@ app.post("/api/buy", (req, res) => {
       JSON.stringify(userData),
       "utf-8"
     );
-    res.send(JSON.stringify(manifest));
+
+    filled = 0;
+    // get details for meter
+
+    if (manifest) {
+      manifest.commodities.forEach((commodity) => (filled += commodity.amount));
+    }
+    filled /= 100;
+
+    res.send(
+      JSON.stringify({
+        manifest,
+        filled,
+      })
+    );
   } else {
     res.sendStatus(400);
   }

@@ -17,6 +17,22 @@
   background-size: cover;
 }
 
+.ship:before {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--selection-color);
+  display: block;
+  content: "";
+}
+
+.ship.active:before {
+  opacity: 0.5;
+}
+
 .ship span {
   position: absolute;
   bottom: 0;

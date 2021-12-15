@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, forwardRef } from "react";
 import "./ShipSelector.css";
 
-function ShipButton({ ship, onClick, isActive }) {
+function ShipButton({ ship, onClick, isActive, isBuyTarget = false }) {
   const [actualShip, setActualShip] = useState({});
   const [filledInPercent, setFilledInPercent] = useState(0);
   useEffect(() => {
@@ -18,7 +18,8 @@ function ShipButton({ ship, onClick, isActive }) {
 
   return (
     <button
-      disabled={filledInPercent === 1}
+      disabled={isBuyTarget && filledInPercent === 1}
+      data-ship-id={actualShip.ship}
       onClick={() => {
         onClick?.(actualShip);
       }}
@@ -39,10 +40,12 @@ function ShipButton({ ship, onClick, isActive }) {
   );
 }
 
-function ShipSelector({ onChange }) {
+function ShipSelector({ onChange, refreshToken }) {
   const [ownShips, setOwnShips] = useState([]);
 
   const [ship, setShip] = useState({});
+
+  const ships = useRef(new Array());
 
   // register storage changes
   useEffect(() => {}, []);

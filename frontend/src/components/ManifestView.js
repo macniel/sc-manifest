@@ -76,9 +76,15 @@ function ManifestView() {
       method: "post",
     })
       .then((response) => response.json())
-      .then((manifest) => {
+      .then(({ manifest, filled }) => {
         setCargo(manifest.commodities);
         setManifest(manifest);
+        const el = document.querySelector(`[data-ship-id="${ship.ship}"]`);
+
+        if (filled === 0) {
+          el.disabled = true;
+          setShip({});
+        }
       });
   };
 

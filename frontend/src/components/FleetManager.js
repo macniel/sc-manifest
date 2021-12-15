@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useEffect, useState } from "react";
 import "./FleetManager.css";
 
@@ -52,7 +53,9 @@ function FleetManager() {
                   role="listitem"
                   key={ship.code}
                   onClick={() => selectShip(ship)}
-                  className={"ship ship--" + ship.manufacturer}
+                  className={classNames("ship ship--" + ship.manufacturer, {
+                    active: selectedShip === ship,
+                  })}
                   style={{
                     backgroundImage:
                       "url('./ships/" + ship.code.toLowerCase() + ".jpg')",

@@ -19,6 +19,7 @@ function CommodityEntry() {
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [ship, setShip] = useState({});
+  const [refreshToken, setRefreshToken] = useState(Date.now());
   const [commodity, setCommodity] = useState({
     code: "HADA",
     name: "Hadanite",
@@ -45,12 +46,24 @@ function CommodityEntry() {
       quantity: quantity,
       price: price,
     };
+    setRefreshToken();
 
     fetch("/api/buy", {
       headers: { "Content-Type": "application/json" },
       method: "post",
       body: JSON.stringify(payload),
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const el = document.querySelector(`[data-ship-id="${ship.ship}"]`);
+        const filled = data.filled;
+        el.style.setProperty("--width", 100 - (filled / ship.scu) * 100 + "%");
+        el.style.setProperty("--filled", (filled / ship.scu) * 100 + "%");
+        if (filled / ship.scu === 1) {
+          setShip({});
+          el.disabled = true;
+        }
+      });
   };
 
   const renderSvg = (kind) => {
@@ -129,7 +142,7 @@ function CommodityEntry() {
 
           <fieldset className="shipEntry">
             <legend>Ship</legend>
-            <ShipSelector onChange={setShip} />
+            <ShipSelector onChange={setShip} refreshToken={refreshToken} />
           </fieldset>
 
           <div className="lower-row">
