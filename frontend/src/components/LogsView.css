@@ -33,6 +33,7 @@
   display: block;
   width: 100%;
   overflow: hidden;
+  height: 20px;
 }
 
 .log .meter .fill {
@@ -43,6 +44,9 @@
   color: var(--selection-text);
   border: 1px solid var(--selection-color);
   background-color: var(--workspace-color);
+  box-sizing: border-box;
+  height: 20px;
+  line-height: 1;
 }
 
 .log .log__profit.negative {
