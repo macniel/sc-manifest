@@ -114,6 +114,7 @@ function ManifestView() {
               onClick={() => {
                 setSelectedCargo(index);
                 setQuantity(cargo[index].amount);
+                setPrice("0");
               }}
             />
           ))}
