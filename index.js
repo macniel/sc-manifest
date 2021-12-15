@@ -181,11 +181,9 @@ app.post("/sell", (req, res) => {
     commodity: envelope.commodity,
   });
 
-  if (manifest.profit) {
-    manifest.profit =
-      parseFloat(manifest.profit) +
-      parseInt(envelope.quantity) * parseFloat(envelope.price);
-  }
+  manifest.profit =
+    parseFloat(manifest.profit) +
+    parseInt(envelope.quantity) * parseFloat(envelope.price);
 
   console.log(userData);
   writeFileSync(
