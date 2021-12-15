@@ -2,7 +2,13 @@ import classNames from "classnames";
 import React, { useEffect, useState, useRef, forwardRef } from "react";
 import "./ShipSelector.css";
 
-function ShipButton({ ship, onClick, isActive, isBuyTarget = false }) {
+function ShipButton({
+  ship,
+  onClick,
+  isActive,
+  isBuyTarget = false,
+  isInverse,
+}) {
   const [actualShip, setActualShip] = useState({});
   const [filledInPercent, setFilledInPercent] = useState(0);
   useEffect(() => {
@@ -25,6 +31,7 @@ function ShipButton({ ship, onClick, isActive, isBuyTarget = false }) {
       }}
       className={classNames("ship-list ship-list__button", {
         active: isActive,
+        inverse: isInverse,
       })}
       style={{
         backgroundImage:
@@ -40,7 +47,7 @@ function ShipButton({ ship, onClick, isActive, isBuyTarget = false }) {
   );
 }
 
-function ShipSelector({ onChange, refreshToken }) {
+function ShipSelector({ onChange, isInverse = false }) {
   const [ownShips, setOwnShips] = useState([]);
 
   const [ship, setShip] = useState({});
@@ -65,6 +72,7 @@ function ShipSelector({ onChange, refreshToken }) {
       <div className="scrollcontent">
         {ownShips.map((shipId) => (
           <ShipButton
+            isInverse={isInverse}
             isActive={shipId === ship.ship}
             ship={shipId}
             onClick={(newShip) => {

@@ -46,6 +46,32 @@
   width: var(--filled);
 }
 
+.ship-list__button.inverse:before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: unset;
+  background-color: var(--selection-color);
+  opacity: 0;
+  width: var(--width);
+}
+
+.ship-list__button.inverse:after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: unset;
+  background-color: var(--disabled-color);
+  opacity: 0;
+  width: var(--filled);
+}
+
 .ship-list__button.active:before,
 .ship-list__button.active:after {
   opacity: 0.5;

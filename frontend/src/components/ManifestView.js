@@ -80,9 +80,10 @@ function ManifestView() {
         setCargo(manifest.commodities);
         setManifest(manifest);
         const el = document.querySelector(`[data-ship-id="${ship.ship}"]`);
-
+        el.style.setProperty("--filled", 100 - (filled / ship.scu) * 100 + "%");
+        el.style.setProperty("--width", (filled / ship.scu) * 100 + "%");
         if (filled === 0) {
-          setSelectedCargo({});
+          setSelectedCargo(null);
         }
       });
   };
@@ -104,6 +105,8 @@ function ManifestView() {
         logs.push(manifest.manifest);
         localStorage.setItem("logs", JSON.stringify(logs));
         setCargo([]);
+        setSelectedCargo(null);
+        setShip({});
       });
   };
 
@@ -127,7 +130,7 @@ function ManifestView() {
         <div className="sidebar">
           <fieldset className="shipEntry">
             <legend>From ship</legend>
-            <ShipSelector onChange={setShip} />
+            <ShipSelector onChange={setShip} isInverse={true} />
           </fieldset>
 
           <fieldset className="shop">
