@@ -5,7 +5,10 @@ function NumberInput({ onChange, value, min, max }) {
   const [innerValue, setInnerValue] = useState(value);
 
   const append = (symbol) => {
-    if (innerValue == "0") {
+    if (innerValue >= max) {
+      return;
+    }
+    if (innerValue === "0") {
       setInnerValue(symbol);
     } else {
       setInnerValue(innerValue + symbol);
@@ -20,7 +23,7 @@ function NumberInput({ onChange, value, min, max }) {
   useEffect(() => {
     setInnerValue(value);
     onChange?.(value);
-  }, [value]);
+  }, [value, onChange]);
 
   return (
     <div className="numberinput">

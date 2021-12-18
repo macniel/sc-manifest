@@ -8,9 +8,30 @@ import LogsView from "./components/LogsView";
 
 function App() {
   const [tab, setTab] = useState(-1);
-  const [tabList, setTabList] = useState([
-    { position: 0, name: "fleet", component: <FleetManager /> },
-    { position: 1, name: "commodity", component: <CommodityEntry /> },
+
+  const onFleetUpdate = () => {
+    const commodityElement = document.querySelector("#commodity");
+    commodityElement.classList.add("highlight");
+    setTimeout(() => commodityElement.classList.remove("highlight"), 1000);
+  };
+
+  const onCargoChange = () => {
+    const manifestElement = document.querySelector("#current");
+    manifestElement.classList.add("highlight");
+    setTimeout(() => manifestElement.classList.remove("highlight"), 1000);
+  };
+
+  const [tabList] = useState([
+    {
+      position: 0,
+      name: "fleet",
+      component: <FleetManager onFleetUpdate={onFleetUpdate} />,
+    },
+    {
+      position: 1,
+      name: "commodity",
+      component: <CommodityEntry onCargoChange={onCargoChange} />,
+    },
     {
       position: 2,
       name: "current",
@@ -49,6 +70,7 @@ function App() {
                   key={`${tabItem.name}${
                     tabItem.manifest ? "-" + tabItem.manifest : ""
                   }`}
+                  id={tabItem.name}
                   className={tab === tabItem.position ? "active" : ""}
                   onClick={() => {
                     setTab(tabItem.position);

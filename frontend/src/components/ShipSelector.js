@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useState, useRef, forwardRef } from "react";
+import React, { useEffect, useState } from "react";
 import "./ShipSelector.css";
 
 function ShipButton({
@@ -52,8 +52,6 @@ function ShipSelector({ onChange, isInverse = false }) {
 
   const [ship, setShip] = useState({});
 
-  const ships = useRef(new Array());
-
   // register storage changes
   useEffect(() => {}, []);
 
@@ -72,6 +70,7 @@ function ShipSelector({ onChange, isInverse = false }) {
       <div className="scrollcontent">
         {ownShips.map((shipId) => (
           <ShipButton
+            key={shipId}
             isInverse={isInverse}
             isActive={shipId === ship.ship}
             ship={shipId}

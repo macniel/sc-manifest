@@ -111,6 +111,9 @@ fieldset > legend {
   height: 34px;
   text-align: center;
   color: var(--text-color);
+  transition-property: background-color, color;
+  transition-timing-function: ease-in-out;
+  transition-duration: 500ms;
 }
 
 .tab-list li.active {
@@ -228,4 +231,9 @@ fieldset .inner {
 [disabled] {
   background-color: var(--disabled-color-with-opacity);
   border-color: var(--disabled-border);
+}
+
+.highlight {
+  background-color: var(--selection-color) !important;
+  color: var(--text-color) !important;
 }

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import "./FleetManager.css";
 
-function FleetManager() {
+function FleetManager({ onFleetUpdate }) {
   const [ships, setShips] = useState([]);
   const [selectedShip, setSelectedShip] = useState(null);
   const [shipName, setShipName] = useState("");
@@ -20,6 +20,7 @@ function FleetManager() {
     })
       .then((response) => response.json())
       .then((newShip) => {
+        onFleetUpdate?.();
         let shipList = localStorage.getItem("ships");
 
         if (!shipList) {
@@ -28,6 +29,8 @@ function FleetManager() {
         const l = JSON.parse(shipList);
         l.push(newShip.ship);
         localStorage.setItem("ships", JSON.stringify(l));
+        setSelectedShip(null);
+        setShipName("");
       });
   };
 

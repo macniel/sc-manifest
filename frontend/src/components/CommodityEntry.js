@@ -15,7 +15,7 @@ import { ReactComponent as NaturalIcon } from "../assets/three-leaves.svg";
 import { ReactComponent as WasteIcon } from "../assets/waste.svg";
 import { ReactComponent as RecycleIcon } from "../assets/recycle.svg";
 
-function CommodityEntry() {
+function CommodityEntry({ onCargoChange }) {
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [ship, setShip] = useState({});
@@ -25,7 +25,7 @@ function CommodityEntry() {
     name: "Hadanite",
   });
   const [commodities, setCommodities] = useState([]);
-  const [source, setSource] = useState({
+  const [source] = useState({
     code: "ANDER",
     name: "HDMS-Anderson",
   });
@@ -63,6 +63,7 @@ function CommodityEntry() {
           setShip({});
           el.disabled = true;
         }
+        onCargoChange?.();
       });
   };
 
@@ -96,26 +97,30 @@ function CommodityEntry() {
     }
   };
 
-  const destroyShip = () => {};
-
   return (
     <div className="spatial-layout">
       <div className="rows">
         <fieldset className="main">
           <legend>Add Commodity</legend>
           <div className="commodity-matrix">
-            {commodities?.map((commodityItem) => (
-              <button
-                onClick={() => setCommodity(commodityItem)}
-                className={classNames("commodity", {
-                  active: commodity.code === commodityItem.code,
-                })}
-                title={commodityItem.name}
-              >
-                {renderSvg(commodityItem.kind.toLowerCase())}
-                <span className="commodity__label">{commodityItem.code}</span>
-              </button>
-            ))}
+            {commodities
+              ?.filter(
+                (commodity) =>
+                  commodity.name.indexOf("Ore") === -1 &&
+                  commodity.name.indexOf("Raw") === -1
+              )
+              .map((commodityItem) => (
+                <button
+                  onClick={() => setCommodity(commodityItem)}
+                  className={classNames("commodity", {
+                    active: commodity.code === commodityItem.code,
+                  })}
+                  title={commodityItem.name}
+                >
+                  {renderSvg(commodityItem.kind.toLowerCase())}
+                  <span className="commodity__label">{commodityItem.code}</span>
+                </button>
+              ))}
           </div>
         </fieldset>
 
