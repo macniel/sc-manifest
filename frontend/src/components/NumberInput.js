@@ -23,7 +23,7 @@ function NumberInput({ onChange, value, min, max }) {
   useEffect(() => {
     setInnerValue(value);
     onChange?.(value);
-  }, [value, onChange]);
+  }, [value]);
 
   return (
     <div className="numberinput">
