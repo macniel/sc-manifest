@@ -119,10 +119,11 @@ function ManifestView() {
             <CargoChart
               isActive={index === selectedCargo}
               cargo={c}
+              key={c.name}
               onClick={() => {
                 setSelectedCargo(index);
                 setQuantity(cargo[index].amount);
-                setPrice("0");
+                setPrice(0);
               }}
             />
           ))}

@@ -8,7 +8,7 @@ function NumberInput({ onChange, value, min, max }) {
     if (innerValue >= max) {
       return;
     }
-    if (innerValue === "0") {
+    if (innerValue == "0") {
       setInnerValue(symbol);
     } else {
       setInnerValue(innerValue + symbol);
