@@ -59,11 +59,8 @@ function FleetManager({ onFleetUpdate }) {
                   className={classNames("ship ship--" + ship.manufacturer, {
                     active: selectedShip === ship,
                   })}
-                  style={{
-                    backgroundImage:
-                      "url('./ships/" + ship.code.toLowerCase() + ".jpg')",
-                  }}
                 >
+                  <img role="presentation" src={"./ships/" + ship.code.toLowerCase() + ".jpg"}/>
                   <span>{ship.name}</span>
                 </button>
               ))}
