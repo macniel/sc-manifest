@@ -15,7 +15,7 @@ function WelcomeScreen() {
   return (
     <div className="welcome-screen">
       <div>
-        <Logo />
+        <Logo width="240px" height="240px" />
         <h1>Shipping Solutions Ltd.</h1>
       </div>
       <div>
