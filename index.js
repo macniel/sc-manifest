@@ -92,6 +92,22 @@ app.get("/api/manifest/:manifestId", (req, res) => {
   }
 });
 
+app.get("/api/ores", (req, res) => {
+  if (publicData.commodities) {
+    const refined = publicData.commodities.filter(c => c.kind == "Mineral" || c.kind == "Metal").filter(c => c.name.indexOf("(") === -1).map(refined => {
+      return {
+        code: refined.code,
+        name: refined.name,
+        kind: refined.kind,
+        trade_price_sell: refined.trade_price_sell,
+        data_modified: refined.data_modified
+      }
+    });
+    return res.send(JSON.stringify(refined));   
+  }
+  res.send(404);
+});
+
 app.get("/api/commodities", (req, res) => {
   if (publicData.commodities) {
     return res.send(publicData.commodities);

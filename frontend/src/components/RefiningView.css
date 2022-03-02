@@ -1,0 +1,50 @@
+.commodity-row {
+    margin: var(--margin);
+    padding-left: 8px;
+
+}
+
+.commodity-row.active,
+.commodity-row.active * {
+    color: var(--selection-color)
+}
+
+.commodity-row label {
+    display: inline-block;
+}
+
+.commodity-row .name {
+    width: 120px;
+    display: inline-block;
+}
+
+.commodity-row .price {
+    width: 120px;
+    display: inline-block;
+    opacity: 0.8;
+    text-align: right;
+}
+
+.commodity-row .subtotal {
+    padding-left: 16px;
+    width: 120px;
+    text-align: right;
+    display: inline-block;
+}
+
+.unit {
+    margin: 0 8px;
+    text-align: right;
+    display: inline-block;
+    width: 80px;
+}
+
+.total--line {
+    padding-left: 8px;
+    font-weight: bold;
+    color: var(--input-text);
+}
+.total--line span:first-child {
+    width: 120px;
+    display: inline-block;
+}

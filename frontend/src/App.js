@@ -5,6 +5,7 @@ import FleetManager from "./components/FleetManager";
 import CommodityEntry from "./components/CommodityEntry";
 import ManifestView from "./components/ManifestView";
 import LogsView from "./components/LogsView";
+import RefiningView from "./components/RefiningView";
 
 function App() {
   const [tab, setTab] = useState(-1);
@@ -34,11 +35,16 @@ function App() {
     },
     {
       position: 2,
+      name: "refined goods",
+      component: <RefiningView />,
+    },
+    {
+      position: 3,
       name: "current",
       manifest: "0",
       component: <ManifestView />,
     },
-    { position: 3, name: "log", component: <LogsView /> },
+    { position: 4, name: "log", component: <LogsView /> },
   ]);
 
   useEffect(() => {

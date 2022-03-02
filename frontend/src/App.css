@@ -15,7 +15,7 @@
   --selection-semi-color: rgba(250, 212, 27, 0.5);
   --selection-text: #faf8eb;
   --workspace-color: #54565b;
-  --application-color: #36373a;
+  --application-color: #050505;
   --text-color: black;
   --panel-border: 1px solid #fad41b;
   --panel-background: #76777b;
@@ -236,4 +236,11 @@ fieldset .inner {
 .highlight {
   background-color: var(--selection-color) !important;
   color: var(--text-color) !important;
+}
+
+
+.spacer {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
 }

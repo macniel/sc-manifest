@@ -12,6 +12,10 @@
   margin: 4px 8px;
 }
 
+.ship-list__button[disabled] {
+  opacity: 0.5;
+}
+
 .ship-list__button .button__label {
   position: absolute;
   bottom: 0;

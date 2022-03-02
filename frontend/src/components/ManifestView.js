@@ -33,6 +33,7 @@ function ManifestView() {
   const [selectedCargo, setSelectedCargo] = useState(cargo[0]);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
+  const [estimatedProfit, setEstimatedProfit] = useState(0);
 
   useEffect(() => {
     console.log("changed Selected Cargo to", cargo[selectedCargo]);
@@ -62,6 +63,24 @@ function ManifestView() {
   const [manifest, setManifest] = useState(null);
   const [sellPrice, setSellPrice] = useState(0);
   const [sellQuantity, setSellQuantity] = useState(0);
+
+  
+  useEffect(() => {
+    const fetchCommodityPrices = async () => {
+      const prices = await fetch("/api/commodities")
+        .then((response) => response.json());
+      if (manifest && manifest.commodities) {
+        const total = manifest.commodities.reduce((p, c) => {
+          const price = prices.find(price => price.code === c.code)?.trade_price_sell ?? 0;
+          const amount = c.total || 0;
+          return p += price * amount
+        }, 0);
+        setEstimatedProfit(total.toFixed(0));
+      }
+    }
+    fetchCommodityPrices();
+    
+  }, [manifest])
 
   const sell = function () {
     const payload = {
@@ -150,10 +169,11 @@ function ManifestView() {
                         positive: manifest?.profit >= 0,
                       })}
                     >
-                      {manifest?.profit ?? "-"} aUEC
+                      Profit: {manifest?.profit ?? "-"} aUEC
+                      (est. {estimatedProfit} aUEC)
                     </span>
                     <span className="cargofill">
-                      {Math.ceil(cargo.reduce((p, c) => p + c.amount, 0) / 100)}{" "}
+                      Cargo: {Math.ceil(cargo.reduce((p, c) => p + c.amount, 0) / 100)}{" "}
                       / {ship.scu} SCU
                     </span>
                   </>
