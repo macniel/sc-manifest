@@ -7,7 +7,8 @@
     "start": "node -r dotenv/config index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:frontend": "yarn --cwd ./frontend build",
-    "dep:frontend": "yarn --cwd ./frontend install"
+    "dep:frontend": "yarn --cwd ./frontend install",
+    "swagger-autogen": "node swagger.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,12 @@
     "express-handlebars": "^6.0.2",
     "guid": "0.0.12",
     "node-fetch": "^2.6.6",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "swagger-autogen": "^2.19.0",
+    "swagger-ui-express": "^4.3.0"
+  },
+  "devDependencies": {
+    "bcrypt": "^5.0.1",
+    "jsonwebtoken": "^8.5.1"
   }
 }

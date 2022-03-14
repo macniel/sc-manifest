@@ -1,10 +1,15 @@
 const express = require("express");
-const { readFileSync, writeFileSync, existsSync } = require("fs");
+const { readFileSync, writeFileSync, existsSync, exists } = require("fs");
 const bodyParser = require("body-parser");
 const { join } = require("path");
 const { engine } = require("express-handlebars");
 const fetch = require("node-fetch");
 const guid = require("guid");
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger_output.json');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const { send } = require("process");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -43,7 +48,8 @@ app.get("/api/ship/:shipId", (req, res) => {
   }
 });
 
-app.post("/api/ship", (req, res) => {
+app.post("/api/ship",
+  (req, res) => {
   const name = req.body.shipName;
   const actualShip = publicData.ships.find(
     (ship) => ship.code === req.body.code
@@ -239,7 +245,93 @@ app.post("/api/sell", (req, res) => {
   );
 });
 
-app.post("/api/buy", (req, res) => {
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403)
+
+    // check if user exists in database
+    let users = JSON.parse(readFileSync(join("data", "users.json"), "utf-8"));
+    
+    const userObject = users.find(u => u.username === user.username && u.userid === user.userid);
+
+    if (!userObject) {
+      return res.sendStatus(404);
+    }
+    req.user = userObject
+    next()
+  })
+}
+
+app.post("/api/login", (req, res) => {
+  if (!req.body.username) return res.sendStatus(401);
+  if (!req.body.password) return res.sendStatus(401);
+  let users = JSON.parse(readFileSync(join("data", "users.json"), "utf-8"));
+  const userObject = users.find(u => u.username === req.body.username && bcrypt.compareSync(req.body.password, u.hashedPassword));
+  if (!userObject) return res.sendStatus(401);
+ const token = jwt.sign({ username: userObject.username, userid: userObject.userid }, process.env.TOKEN_SECRET, { expiresIn: '1 day' })
+  res.json(token)
+})
+
+app.post("/api/register", (req, res) => {
+  if (!req.body.username) return res.sendStatus(400);
+  if (!req.body.password) return res.sendStatus(400);
+  const uuid = guid.raw();
+  
+  let users = JSON.parse(readFileSync(join("data", "users.json"), "utf-8"));
+  const userObject = users.find(u => u.username === user.username && u.userid === user.userid);
+  if (userObject) return res.sendStatus(403);
+  users.push({
+    username: req.body.username,
+    userid: uuid,
+    hashedPassword: bcrypt.hashSync(req.body.password, 10)
+  });
+  writeFileSync(join("data", "users.json"), JSON.stringify(users), "utf-8");
+  
+  const token = jwt.sign({ username: req.body.username, userid: uuid }, process.env.TOKEN_SECRET, { expiresIn: '1 day' })
+  
+  res.json(token);
+})
+
+app.get("/api/logout", (req, res) => {
+  
+})
+
+app.get("/api/verify", authenticateToken, (req, res) => {
+  console.log(req.user)
+  res.json(req.user)
+})
+
+
+/**
+ * @typedef BuyRequest
+ * @property {BuyRequestBody} body
+ */
+
+/**
+ * @typedef BuyRequestBody
+ * @property {ShipId} to the target ship
+ * @property {number} quantity the amount of commodity that should be bought
+ * @property {number} price of the bought commodity per unit
+ * @property {CommodityId} commodity which should be bought
+ * @property {ShopId} from a shop
+ */
+
+/**
+ * @typedef CommodityId
+ * A four letter code associated with a Commodity e.g. HADA - Hadanite, QUAN - Quantanium, AGRI - Agricultural Supplies
+ */
+
+/**
+ * @typedef ShipId
+ * A uuid assigned to a ship on creation
+ */
+/**
+ * @function
+ */
+app.post("/api/buy", (/** @type {BuyRequest} */ req, res) => {
   if (req.body.to) {
     let userData = JSON.parse(
       readFileSync(join("data", "userdata.json"), "utf-8")
@@ -325,9 +417,12 @@ app.post("/api/buy", (req, res) => {
   }
 });
 
+
 app.get("/api/ships", (req, res) => {
   res.send(JSON.stringify(publicData.ships));
 });
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 async function fetchShips() {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
@@ -441,6 +536,10 @@ app.listen(PORT, async () => {
   } else {
     console.log("no refresh issued, taking data from storage");
     publicData = JSON.parse(readFileSync("publicdata.json", "utf-8"));
+  }
+
+  if (!existsSync(join("data", "users.json"))) {
+    writeFileSync(join("data", "users.json"), "[]", "utf-8")
   }
 
   if (!existsSync(join("data", "userdata.json"))) {
