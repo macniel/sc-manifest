@@ -35,6 +35,15 @@ const findShip = (by) => {
     return retrieveUserData().ships.find(by);
 }
 
+const findAllShips = (by) => {
+    if (by) {
+        return retrieveUserData().ships.filter(by);
+    } else {
+        return retrieveUserData().ships;
+    }
+    
+}
+
 const findRegistrarShip = (by) => {
     return retrievePublicData().ships.find(by);
 }
@@ -58,9 +67,55 @@ const insertShip = (newShip) => {
     );
 }
 
+
+const updateShip = (shipId, newShip) => {
+    let userData = retrieveUserData();
+    let index = userData.ships.findIndex(predicate => predicate.ship === shipId);
+    if (index>=0) {
+        userData.ships.splice(index, 1);
+        userData.ships.push(newShip);
+        
+        writeFileSync(
+            join("data", "userdata.json"),
+            JSON.stringify(userData),
+            "utf-8"
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+const updateManifest = (manifestId, newManifest) => {
+    let userData = retrieveUserData();
+    let index = userData.manifests.findIndex(predicate => predicate.manifest === manifestId);
+    if (index>=0) {
+        userData.manifests.splice(index, 1);
+        userData.manifests.push(newManifest);
+        
+        writeFileSync(
+            join("data", "userdata.json"),
+            JSON.stringify(userData),
+            "utf-8"
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
 const findManifest = (by) => {
     const userData = retrieveUserData();
     return userData.manifests.find(by);
+}
+
+
+const findAllManifests = (by) => {
+    if (by) {
+        return retrieveUserData().manifests.filter(by);
+    } else {
+        return retrieveUserData().manifests;
+    }
 }
 
 const findCommodity = (by) => {
@@ -77,10 +132,14 @@ const findAllCommodities = (by) => {
 
 module.exports = {
     findShip,
+    findAllShips,
     findRegistrarShip,
     findAllRegistrarShips,
     insertShip,
     findManifest,
     findCommodity,
-    findAllCommodities
+    findAllCommodities,
+    findAllManifests,
+    updateManifest,
+    updateShip,
 }

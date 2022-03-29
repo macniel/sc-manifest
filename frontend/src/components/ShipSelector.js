@@ -91,21 +91,19 @@ function ShipSelector({ demands = {}, onChange, isInverse = false }) {
 
   // load ships from storage
   useEffect(() => {
-    if (localStorage.getItem("ships")) {
-      setOwnShips(JSON.parse(localStorage.getItem("ships")));
-    }
+    fetch('/api/ships').then(res => res.json()).then(setOwnShips);
   }, []);
 
   return (
     <div className="list--scrollable">
       <div className="scrollcontent">
-        {ownShips.map((shipId) => (
+        {ownShips.map((cShip) => (
           <ShipButton
             demands={demands}
-            key={shipId}
+            key={cShip.ships}
             isInverse={isInverse}
-            isActive={shipId === ship.ship}
-            ship={shipId}
+            isActive={cShip.ship === ship.ship}
+            ship={cShip.ship}
             onClick={(newShip) => {
               console.log(newShip);
               setShip(newShip);

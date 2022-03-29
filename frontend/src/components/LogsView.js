@@ -6,24 +6,7 @@ function LogsView() {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    const logHandler = () => {
-      const logItems = JSON.parse(localStorage.getItem("logs") || []);
-      console.log(logItems);
-      const log = logItems.map(
-        async (logItem) =>
-          await fetch("/api/log/" + logItem).then((response) => response.json())
-      );
-      Promise.all(log).then((result) => {
-        console.log(result);
-        setLogs(result);
-      });
-    };
-    window.addEventListener("storage", logHandler);
-    logHandler();
-
-    return () => {
-      window.removeEventListener("storage", logHandler);
-    };
+      fetch("api/logs").then(res => res.json()).then(setLogs);
   }, []);
 
   return (

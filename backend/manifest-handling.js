@@ -1,10 +1,22 @@
 const router = require('express').Router();
-const { findManifest, findShip } = require('./data-handling');
+const guid = require('guid');
+const { authenticateToken } = require('./authentication-handling');
+const { findManifest, findShip, findCommodity, updateManifest, updateShip, findAllManifests } = require('./data-handling');
+
+router.get("/logs", authenticateToken, (req, res) => {
+    let m = findAllManifests((manifest) => req.user.userid === manifest.owner && manifest.isArchived); 
+    console.log(m);
+    if (m) {
+        res.send(JSON.stringify(m));
+        return;
+    }
+    res.sendStatus(404);
+})
 
 router.get("/log/:manifest", (req, res) => {
     let m;
     if (m = findManifest((manifest) => req.params.manifest === manifest.manifest)) {
-        res.send(JSON.stringify(manifest));
+        res.send(JSON.stringify(m));
         return;
     }
     res.sendStatus(404);
@@ -19,10 +31,9 @@ router.get("/manifest/:manifestId", (req, res) => {
     }
 });
 
-router.post("/archive", (req, res) => {
-    let userData = retrieveUserData();
+router.post("/archive", authenticateToken, (req, res) => {
     let manifest;
-    if (manifest = findManifest((manifest) => req.body.manifest === manifest.manifest)) {
+    if (manifest = findManifest((manifest) => req.body.manifest === manifest.manifest && manifest.owner === req.user.userid)) {
         // find corresponding ship
         let ship;
         if (ship = findShip((ship) => {
@@ -30,13 +41,9 @@ router.post("/archive", (req, res) => {
         })) {
             ship.associatedManifest = null;
             manifest.isArchived = true;
-            manifest.associatedShip = ship;
-// TODO: fix this direct access
-            writeFileSync(
-                join("data", "userdata.json"),
-                JSON.stringify(userData),
-                "utf-8"
-            );
+            manifest.associatedShip = ship.ship;
+            updateShip(ship.ship, ship);
+            updateManifest(manifest.manifest, manifest);
             res.send(JSON.stringify(manifest));
         }
     } else {
@@ -44,12 +51,10 @@ router.post("/archive", (req, res) => {
     }
 });
 
-router.post("/sell", (req, res) => {
-    console.log(req.body);
-    let userData = retrieveUserData();
+router.post("/sell", authenticateToken, (req, res) => {
     const envelope = req.body;
-    const manifest = userData.manifests.find(
-        (manifest) => manifest.manifest == envelope.manifest
+    const manifest = findManifest(
+        (manifest) => manifest.manifest == envelope.manifest && manifest.owner === req.user.userid
     );
 
     // reduce capacity
@@ -80,13 +85,8 @@ router.post("/sell", (req, res) => {
     manifest.profit =
         parseFloat(manifest.profit) +
         parseInt(envelope.quantity) * parseFloat(envelope.price);
-
-// TODO: fix this direct access
-    writeFileSync(
-        join("data", "userdata.json"),
-        JSON.stringify(userData),
-        "utf-8"
-    );
+    
+    updateManifest(manifest.manifest, manifest);
 
     let filled = 0;
     // get details for meter
@@ -130,82 +130,71 @@ router.post("/sell", (req, res) => {
 /**
  * @function
  */
-router.post("/api/buy", (/** @type {BuyRequest} */ req, res) => {
+router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req, res) => {
     if (req.body.to) {
-        let userData = retrieveUserData();
-
-
-        const ship = userData.ships.find((ship) => req.body.to === ship.ship);
-        let manifest = {};
-        if (
-            !ship.associatedManifest ||
-            !userData.manifests.find(
-                (manifest) => ship.associatedManifest === manifest.manifest
-            )
-        ) {
+        let ship = findShip((ship) => req.body.to === ship.ship);
+        let manifest = findManifest(
+            (manifest) => ship.associatedManifest === manifest.manifest
+        );
+        if (!manifest) { // prepopulate manifest
             manifest = {
                 manifest: guid.raw(),
                 transactions: [],
                 commodities: [],
+                owner: req.user.userid,
                 profit: 0,
             };
             ship.associatedManifest = manifest.manifest;
-            userData.manifests.push(manifest);
-        } else {
-            manifest = userData.manifests.find(
-                (manifest) => ship.associatedManifest === manifest.manifest
+            updateShip(ship.ship, ship);
+        }
+        
+            // calculate cost of buy
+            manifest.profit -= parseInt(req.body.quantity) * parseFloat(req.body.price);
+            manifest.transactions.push({
+                code: req.body.commodity,
+                source: req.body.from,
+                destination: req.body.to,
+                quantity: req.body.quantity,
+                price: req.body.price,
+                when: Date.now(),
+            });
+            // find similar commodity to add
+            let commodity = manifest.commodities.find(
+                (commodity) => commodity.code === req.body.commodity
             );
-        }
-        // calculate cost of buy
-        manifest.profit -= parseInt(req.body.quantity) * parseFloat(req.body.price);
-        manifest.transactions.push({
-            code: req.body.commodity,
-            source: req.body.from,
-            destination: req.body.to,
-            quantity: req.body.quantity,
-            price: req.body.price,
-            when: Date.now(),
-        });
-        // find similar commodity to add
-        let commodity = manifest.commodities.find(
-            (commodity) => commodity.code === req.body.commodity
-        );
-        if (!commodity) {
-            const template = publicData.commodities.find(
-                (c) => c.code === req.body.commodity
+            if (!commodity) {
+                const template = findCommodity(
+                    (c) => c.code === req.body.commodity
+                );
+                commodity = {
+                    amount: 0,
+                    total: 0,
+                    code: template.code,
+                    name: template.name,
+                    kind: template.kind,
+                };
+                manifest.commodities.push(commodity);
+            }
+            commodity.amount += parseInt(req.body.quantity);
+            commodity.total += parseInt(req.body.quantity);
+
+            updateManifest(manifest.manifest, manifest);
+
+            filled = 0;
+            // get details for meter
+
+            if (manifest) {
+                manifest.commodities.forEach((commodity) => (filled += commodity.amount));
+            }
+            filled /= 100;
+
+            res.send(
+                JSON.stringify({
+                    manifest,
+                    filled,
+                })
             );
-            commodity = {
-                amount: 0,
-                total: 0,
-                code: template.code,
-                name: template.name,
-                kind: template.kind,
-            };
-            manifest.commodities.push(commodity);
-        }
-        commodity.amount += parseInt(req.body.quantity);
-        commodity.total += parseInt(req.body.quantity);
-// TODO: fix this direct access
-        writeFileSync(
-            join("data", "userdata.json"),
-            JSON.stringify(userData),
-            "utf-8"
-        );
-
-        filled = 0;
-        // get details for meter
-
-        if (manifest) {
-            manifest.commodities.forEach((commodity) => (filled += commodity.amount));
-        }
-        filled /= 100;
-
-        res.send(
-            JSON.stringify({
-                manifest,
-                filled,
-            })
-        );
+        
     } else {
         res.sendStatus(400);
     }

@@ -1,7 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { findShip, findRegistrarShip, findAllRegistrarShips, findManifest } = require('./data-handling.js');
+const { findShip, findAllShips, findRegistrarShip, findAllRegistrarShips, findManifest, insertShip } = require('./data-handling.js');
 const { authenticateToken } = require('./authentication-handling');
+const guid = require('guid');
+
+const appendFillMeter = (ship) => {
+    let filled = 0;
+    // get details for meter
+    if (ship.associatedManifest) {
+        let manifest;
+        if (manifest = findManifest((manifest) => manifest.manifest == ship.associatedManifest)) {
+            manifest.commodities.forEach(
+                (commodity) => (filled += commodity.amount)
+            );
+        }
+        filled /= 100;
+    }
+    return { ...ship, filled };
+}
 
 router.get("/ships", authenticateToken, (req, res) => {
     res.json(findAllShips(ship => ship.owner === req.user.userid));
@@ -9,23 +25,9 @@ router.get("/ships", authenticateToken, (req, res) => {
 
 router.get("/ship/:shipId", authenticateToken, (req, res) => {
     console.log(req.params.shipId);
-    const found = findShip((ship) => ship.ship === req.params.shipId);
-    if (found) {
-        found.filled = 0;
-        // get details for meter
-        if (found.associatedManifest) {
-            const manifest = findManifest(
-                (manifest) => manifest.manifest == found.associatedManifest
-            );
-            if (manifest) {
-                manifest.commodities.forEach(
-                    (commodity) => (found.filled += commodity.amount)
-                );
-            }
-            found.filled /= 100;
-        }
-
-        res.send(JSON.stringify(found));
+    let found;
+    if (found = findShip((ship) => ship.ship === req.params.shipId)) {
+        res.json(appendFillMeter(found));
     } else {
         res.sendStatus(404);
     }
