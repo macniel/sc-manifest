@@ -244,3 +244,7 @@ fieldset .inner {
   width: 4px;
   height: 4px;
 }
+
+.invalid {
+  border-color: red;
+}

@@ -1,4 +1,5 @@
 import { ReactComponent as Logo } from "../logo.svg";
+import LoginOrRegisterView from "./LoginOrRegisterView";
 import "./WelcomeScreen.css";
 
 function WelcomeScreen() {
@@ -23,7 +24,7 @@ function WelcomeScreen() {
         <p
           style={{ padding: "40px", marginTop: "80px", marginBottom: "120px" }}
         >
-          Touch tabs to start
+          <LoginOrRegisterView/>
         </p>
       </div>
       <div>
