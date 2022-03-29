@@ -49,7 +49,7 @@ app.get("/api/ship/:shipId", authenticateToken, (req, res) => {
   }
 });
 
-app.post("/api/ship",
+app.post("/api/ship", authenticateToken,
   (req, res) => {
   const name = req.body.shipName;
   const actualShip = publicData.ships.find(
@@ -59,7 +59,8 @@ app.post("/api/ship",
   let userData = JSON.parse(
     readFileSync(join("data", "userdata.json"), "utf-8")
   );
-  newShip = {
+    newShip = {
+    owner: req.user.userid,
     shipsName: name,
     name: actualShip.name,
     manufacturer: actualShip.manufacturer,
@@ -68,7 +69,7 @@ app.post("/api/ship",
     associatedManifest: null,
     ship: guid.raw(),
   };
-
+  
   if (!userData.ships) {
     userData.ships = [];
   }
