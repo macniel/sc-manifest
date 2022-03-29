@@ -248,3 +248,18 @@ fieldset .inner {
 .invalid {
   border-color: red;
 }
+
+.login-form {
+
+}
+
+.login-form div {
+  padding: 12px 0;
+}
+
+.login-form div span {
+  padding-right: 8px;
+  display: inline-block;
+  text-align: right;
+  width: 180px;
+}

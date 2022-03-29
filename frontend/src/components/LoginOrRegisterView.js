@@ -73,7 +73,7 @@ function LoginOrRegisterView() {
 
 
     return (
-        <fieldset>
+        <fieldset className="login-form">
             <legend style={{height: "5px"}}></legend>
             <div>
                 <label><span>Username</span><input name="username" onChange={(event) => setUsername(event?.target?.value)} value={username} /></label></div>
@@ -83,7 +83,7 @@ function LoginOrRegisterView() {
                 <label><input type="checkbox" onChange={() => setMode(!mode)} defaultChecked={mode} />Register new account</label></div>
             {mode ? <div><label><span>Repeat your password</span><input name="passwordrepeat" onChange={(event) => updatePasswordRepeat(event?.target?.value)} value={passwordRepeat} type="password" disabled={!mode} /></label></div> : <div />}
                 <div>
-            <button onClick={() => loginOrRegister()} >{mode ? 'Register' : 'Login'}</button>
+            <button className="button button--primary" onClick={() => loginOrRegister()} >{mode ? 'Register' : 'Login'}</button>
             </div>
             
         </fieldset>);

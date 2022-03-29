@@ -40,7 +40,7 @@ function FleetManager({ onFleetUpdate }) {
   };
 
   useEffect(() => {
-    fetch("/api/ships")
+    fetch("/api/all-ships")
       .then((response) => response.json())
       .then(setShips);
   }, []);
