@@ -1,8 +1,9 @@
+import { useEffect, useState } from "react";
 import { ReactComponent as Logo } from "../logo.svg";
 import LoginOrRegisterView from "./LoginOrRegisterView";
 import "./WelcomeScreen.css";
 
-function WelcomeScreen() {
+function WelcomeScreen({onLoginStateChange}) {
   const trelloBoard = "https://trello.com/b/jqy54pmb/sc-manifest";
   const github = "https://www.github.com/macniel/sc-manifest";
 
@@ -13,6 +14,30 @@ function WelcomeScreen() {
     location.reload();
   };
 
+  const logout = () => {
+    fetch('/api/logout').then((state) => {
+      // eslint-disable-next-line no-restricted-globals
+      setLoggedIn(false);
+    })
+  }
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    onLoginStateChange?.(loggedIn);
+  }, [loggedIn, onLoginStateChange]);
+
+  
+  useEffect(() => {
+    fetch('/api/verify').then((res) => res.json()).then(({ username }) => {
+      setLoggedIn(username)
+    }
+    ).catch((error) => {
+      setLoggedIn(false)
+    }
+    );
+  }, []);
+
   return (
     <div className="welcome-screen">
       <div>
@@ -21,11 +46,11 @@ function WelcomeScreen() {
       </div>
       <div>
         <p>Never misplace a Shipping Manifest</p>
-        <p
-          style={{ padding: "40px", marginTop: "80px", marginBottom: "120px" }}
+        <div
+          style={{ padding: "40px", marginTop: "20px", marginBottom: "20px" }}
         >
-          <LoginOrRegisterView/>
-        </p>
+          {!loggedIn ? <LoginOrRegisterView onLoginStateChange={(username) => { setLoggedIn(username) }} /> : <fieldset><legend style={{ height: "5px" }}></legend>logged in as {loggedIn}<br /><button className="button--link" onClick={logout}>Click to Logout</button></fieldset>}
+        </div>
       </div>
       <div>
         <h2>Stay informed</h2>
@@ -33,14 +58,6 @@ function WelcomeScreen() {
           This Application is in active development, check out its progress on{" "}
           <a href={trelloBoard}>Trello</a> and <a href={github}>Github</a>
         </p>
-      </div>
-      <div>
-        <h2>Problems?</h2>
-        <p>Try deleting your localStorage</p>
-
-        <button className="button--primary" onClick={() => clear()}>
-          Clear LocalStorage
-        </button>
       </div>
     </div>
   );

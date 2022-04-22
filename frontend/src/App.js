@@ -9,6 +9,7 @@ import RefiningView from "./components/RefiningView";
 
 function App() {
   const [tab, setTab] = useState(-1);
+  const [currentUser, setCurrentUser] = useState(false);
 
   const onFleetUpdate = () => {
     const commodityElement = document.querySelector("#commodity");
@@ -21,6 +22,14 @@ function App() {
     manifestElement.classList.add("highlight");
     setTimeout(() => manifestElement.classList.remove("highlight"), 1000);
   };
+
+  const onLoginChange = (newLoginState) => {
+    if (newLoginState) { // logged in with name
+      setCurrentUser(newLoginState);
+    } else { // not logged in
+      setCurrentUser(false);
+    }
+  }
 
   const [tabList] = useState([
     {
@@ -86,8 +95,9 @@ function App() {
                 </li>
               );
             })}
+            {currentUser ? <li className="tab-login"><button className="button--link" onClick={()=> setTab(-1)}>logged in as {currentUser}</button></li> : <li className="tab-login"><button className="button--link" onClick={()=> setTab(-1)}>click to login or register</button></li>}
           </ul>
-          {tab === -1 ? <WelcomeScreen /> : tabList[tab].component}
+          {tab === -1 ? <WelcomeScreen onLoginStateChange={onLoginChange} /> : tabList[tab].component}
         </div>
       </section>
     </main>

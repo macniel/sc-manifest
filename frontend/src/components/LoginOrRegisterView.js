@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React, { useState, useEffect } from "react";
 
-function LoginOrRegisterView() {
+function LoginOrRegisterView({onLoginStateChange}) {
 
     const [mode, setMode] = useState(false);
     const [password, setPassword] = useState('');
@@ -22,9 +22,12 @@ function LoginOrRegisterView() {
                     password: password,
                 }),
                 method: 'post',
-            }).then(res => res.json()).then(response => {
-                console.log(response);
-            }).catch(error => console.log);
+            }).then(res => res.json()).then(({username}) => {
+                console.log(username);
+                onLoginStateChange?.(username);
+            }).catch(error => {
+                onLoginStateChange?.(false);
+            });
         } else { // login
             fetch('/api/login', {
                  headers: { "Content-Type": "application/json" },
@@ -33,9 +36,12 @@ function LoginOrRegisterView() {
                     password: password,
                 }),
                 method: 'post',
-            }).then(res => res.json()).then(response => {
-                console.log(response);
-            }).catch(error => console.log);
+            }).then(res => res.json()).then(({username}) => {
+                console.log(username);
+                onLoginStateChange?.(username);
+            }).catch(error => {
+                onLoginStateChange?.(false);
+            });
         }
     }
 
@@ -80,7 +86,7 @@ function LoginOrRegisterView() {
             <div className={passwordInvalid ? 'invalid' : ''}>
                 <label><span>Password</span><input name="password" onChange={(event) => updatePassword(event?.target?.value)} type="password" value={password} /></label></div>
             <div>
-                <label><input type="checkbox" onChange={() => setMode(!mode)} defaultChecked={mode} />Register new account</label></div>
+                <label><input type="checkbox" onChange={() => setMode(!mode)} defaultChecked={mode} /><span>Register new account</span></label></div>
             {mode ? <div><label><span>Repeat your password</span><input name="passwordrepeat" onChange={(event) => updatePasswordRepeat(event?.target?.value)} value={passwordRepeat} type="password" disabled={!mode} /></label></div> : <div />}
                 <div>
             <button className="button button--primary" onClick={() => loginOrRegister()} >{mode ? 'Register' : 'Login'}</button>

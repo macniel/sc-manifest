@@ -8,6 +8,7 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json');
 
 const { fetchCommodities, fetchShips, fetchTradeports } = require('./backend/fetcher.js');
+const { application } = require("express");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -22,7 +23,7 @@ app.use("/api", require('./backend/manifest-handling'));
 app.use("/api", require('./backend/commodities-handling'));
 app.use("/api", require('./backend/authentication-handling').router);
 
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.listen(PORT, async () => {
     console.log("sc-manifest started on Port", PORT);

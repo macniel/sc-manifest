@@ -116,6 +116,15 @@ fieldset > legend {
   transition-duration: 500ms;
 }
 
+.tab-list li.tab-login {
+  float: right;
+  background-color: unset;
+}
+
+.tab-list li.tab-login button {
+  color: var(--selection-color);
+}
+
 .tab-list li.active {
   color: var(--selection-color);
   height: 40px;
@@ -131,6 +140,15 @@ fieldset > legend {
   background-color: var(--primary-button-color);
   border: 1px solid var(--primary-button-border);
   color: var(--primary-button-text);
+}
+
+.button--link {
+  border: unset;
+  margin: unset;
+  background: unset;
+  box-shadow: unset;
+  border: unset;
+  padding: unset;
 }
 
 .button--harmful {

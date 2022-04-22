@@ -21,13 +21,13 @@ function CommodityEntry({ onCargoChange }) {
   const [ship, setShip] = useState({});
   const [refreshToken, setRefreshToken] = useState(Date.now());
   const [commodity, setCommodity] = useState({
-    code: "HADA",
-    name: "Hadanite",
+    code: "",
+    name: "",
   });
   const [commodities, setCommodities] = useState([]);
   const [source] = useState({
-    code: "ANDER",
-    name: "HDMS-Anderson",
+    code: "",
+    name: "",
   });
 
   useEffect(() => {

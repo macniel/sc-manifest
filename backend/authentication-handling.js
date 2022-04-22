@@ -34,7 +34,7 @@ router.post("/login", (req, res) => {
     if (!userObject) return res.sendStatus(401);
     const token = jwt.sign({ username: userObject.username, userid: userObject.userid }, process.env.TOKEN_SECRET, { expiresIn: '1 day' })
     res.cookie("auth", token, { httpOnly: true });
-    res.sendStatus(200);
+    res.json({ "username": userObject.username });
 })
 
 router.post("/register", (req, res) => {
@@ -55,7 +55,7 @@ router.post("/register", (req, res) => {
 
     const token = jwt.sign({ username: req.body.username, userid: uuid }, process.env.TOKEN_SECRET, { expiresIn: '1 day' })
     res.cookie("auth", token, { httpOnly: true });
-    res.sendStatus(200);
+    res.json({username: req.body.username});
 })
 
 router.get("/logout", (req, res) => {
@@ -63,8 +63,11 @@ router.get("/logout", (req, res) => {
 })
 
 router.get("/verify", authenticateToken, (req, res) => {
-    console.log(req.user)
-    res.json(req.user)
+    if (req.user) {
+        res.json({ username: req.user.username }).statusCode(200);
+    } else {
+        res.sendStatus(401);
+    }
 })
 
 module.exports = {
