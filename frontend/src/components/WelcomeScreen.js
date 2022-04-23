@@ -7,13 +7,6 @@ function WelcomeScreen({onLoginStateChange}) {
   const trelloBoard = "https://trello.com/b/jqy54pmb/sc-manifest";
   const github = "https://www.github.com/macniel/sc-manifest";
 
-  const clear = () => {
-    localStorage.removeItem("manifests");
-    localStorage.removeItem("logs");
-    // eslint-disable-next-line no-restricted-globals
-    location.reload();
-  };
-
   const logout = () => {
     fetch('/api/logout').then((state) => {
       // eslint-disable-next-line no-restricted-globals

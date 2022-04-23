@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import React, { useState, useEffect } from "react";
 
 function LoginOrRegisterView({onLoginStateChange}) {
@@ -11,7 +10,6 @@ function LoginOrRegisterView({onLoginStateChange}) {
     const [passwordRepeatInvalid, setPasswordRepeatInvalid] = useState(false);
    
     const loginOrRegister = () => {
-        console.log('called', username, password, passwordRepeat, passwordInvalid, mode && passwordRepeatInvalid);
         if (passwordInvalid) return false;
         if (mode && passwordRepeatInvalid) return false;
         if (mode) { // register
@@ -23,7 +21,6 @@ function LoginOrRegisterView({onLoginStateChange}) {
                 }),
                 method: 'post',
             }).then(res => res.json()).then(({username}) => {
-                console.log(username);
                 onLoginStateChange?.(username);
             }).catch(error => {
                 onLoginStateChange?.(false);
@@ -37,7 +34,6 @@ function LoginOrRegisterView({onLoginStateChange}) {
                 }),
                 method: 'post',
             }).then(res => res.json()).then(({username}) => {
-                console.log(username);
                 onLoginStateChange?.(username);
             }).catch(error => {
                 onLoginStateChange?.(false);
@@ -47,7 +43,6 @@ function LoginOrRegisterView({onLoginStateChange}) {
 
     const updatePassword = (newValue) => {
         setPassword(newValue);
-        console.log(newValue, passwordRepeat);
         if (mode && (newValue === '' || newValue !== passwordRepeat)) {
             setPasswordInvalid(true);
         } else if (newValue === '') {
@@ -68,13 +63,10 @@ function LoginOrRegisterView({onLoginStateChange}) {
         }
     }
 
-    useEffect( () => {
-        console.log('mode', mode);
-    }, [mode])
-
     useEffect(() => {
         updatePassword(password);
         updatePasswordRepeat(passwordRepeat);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 

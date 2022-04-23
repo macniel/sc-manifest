@@ -89,19 +89,17 @@ const updateShip = (shipId, newShip) => {
 const updateManifest = (manifestId, newManifest) => {
     let userData = retrieveUserData();
     let index = userData.manifests.findIndex(predicate => predicate.manifest === manifestId);
-    if (index>=0) {
-        userData.manifests.splice(index, 1);
-        userData.manifests.push(newManifest);
-        
-        writeFileSync(
-            join("data", "userdata.json"),
-            JSON.stringify(userData),
-            "utf-8"
-        );
-        return true;
-    } else {
-        return false;
+    if (index >= 0) {
+        userData.manifests.splice(index, 1); // remove previous entry as it is no longer valid
     }
+    userData.manifests.push(newManifest); // push updated or new entry into array
+    
+    writeFileSync(
+        join("data", "userdata.json"),
+        JSON.stringify(userData),
+        "utf-8"
+    );
+    return true;
 }
 
 const findManifest = (by) => {
