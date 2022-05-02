@@ -64,7 +64,7 @@ router.get("/logout", (req, res) => {
 
 router.get("/verify", authenticateToken, (req, res) => {
     if (req.user) {
-        res.json({ username: req.user.username }).statusCode(200);
+        res.json({ username: req.user.username }).status(200);
     } else {
         res.sendStatus(401);
     }

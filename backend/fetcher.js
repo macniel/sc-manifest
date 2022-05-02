@@ -1,4 +1,6 @@
 const fetch = require("node-fetch");
+const { join } = require("path");
+const { readFileSync, writeFileSync, existsSync, exists } = require("fs");
 
 const fetchShips = async function () {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
