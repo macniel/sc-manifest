@@ -80,7 +80,7 @@ function RefiningView(props) {
     }
 
     const addVolume = () => {
-        let targetCommodity = volumes.find(v => v.code === selectedCommodity.code);
+        let targetCommodity = volumes.find(v => v.code == selectedCommodity.code);
         
         if (targetCommodity) {
             targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(tempVolume);

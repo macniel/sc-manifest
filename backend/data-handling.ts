@@ -1,7 +1,8 @@
-const { join } = require("path");
-const { readFileSync, writeFileSync, existsSync, exists } = require("fs");
+import { ManifestData, PublicSystem, ShipData } from "./types";
+import { join } from "path";
+import { readFileSync, writeFileSync, existsSync, exists } from "fs";
 
-function retrieveUserData() {
+export const retrieveUserData = () => {
     let ud = JSON.parse(
         readFileSync(join("data", "userdata.json"), "utf-8")
     );
@@ -15,7 +16,7 @@ function retrieveUserData() {
     }
 }
 
-function retrievePublicData() {
+export const retrievePublicData = () => {
     let pd = JSON.parse(
         readFileSync(join("data", "publicdata.json"), "utf-8")
     );
@@ -31,11 +32,11 @@ function retrievePublicData() {
     }
 }
 
-const findShip = (by) => {
+export const findShip = (by: Function) => {
     return retrieveUserData().ships.find(by);
 }
 
-const findAllShips = (by) => {
+export const findAllShips = (by?: Function) => {
     if (by) {
         return retrieveUserData().ships.filter(by);
     } else {
@@ -44,11 +45,11 @@ const findAllShips = (by) => {
     
 }
 
-const findRegistrarShip = (by) => {
+export const findRegistrarShip = (by:Function) => {
     return retrievePublicData().ships.find(by);
 }
 
-const findAllRegistrarShips = (by) => {
+export const findAllRegistrarShips = (by?:Function) => {
     if (by) {
         return retrievePublicData().ships.filter(by);
     } else {
@@ -57,7 +58,7 @@ const findAllRegistrarShips = (by) => {
 }
 
 
-const insertShip = (newShip) => {
+export const insertShip = (newShip:ShipData) => {
     let userData = retrieveUserData();
     userData.ships.push(newShip);
     writeFileSync(
@@ -68,12 +69,14 @@ const insertShip = (newShip) => {
 }
 
 
-const updateShip = (shipId, newShip) => {
+export const updateShip = (shipId: string, newShip:ShipData|null) => {
     let userData = retrieveUserData();
-    let index = userData.ships.findIndex(predicate => predicate.ship === shipId);
+    let index = userData.ships.findIndex( (predicate:ShipData) => predicate.ship === shipId);
     if (index>=0) {
         userData.ships.splice(index, 1);
-        userData.ships.push(newShip);
+        if (newShip != null) {
+            userData.ships.push(newShip);
+        }
         
         writeFileSync(
             join("data", "userdata.json"),
@@ -86,9 +89,9 @@ const updateShip = (shipId, newShip) => {
     }
 }
 
-const updateManifest = (manifestId, newManifest) => {
+export const updateManifest = (manifestId:string, newManifest:ManifestData) => {
     let userData = retrieveUserData();
-    let index = userData.manifests.findIndex(predicate => predicate.manifest === manifestId);
+    let index = userData.manifests.findIndex( (predicate:ManifestData) => predicate.manifest === manifestId);
     if (index >= 0) {
         userData.manifests.splice(index, 1); // remove previous entry as it is no longer valid
     }
@@ -102,13 +105,13 @@ const updateManifest = (manifestId, newManifest) => {
     return true;
 }
 
-const findManifest = (by) => {
+export const findManifest = (by:Function) => {
     const userData = retrieveUserData();
     return userData.manifests.find(by);
 }
 
 
-const findAllManifests = (by) => {
+export const findAllManifests = (by?:Function) => {
     if (by) {
         return retrieveUserData().manifests.filter(by);
     } else {
@@ -116,11 +119,11 @@ const findAllManifests = (by) => {
     }
 }
 
-const findCommodity = (by) => {
+export const findCommodity = (by:Function) => {
     return retrievePublicData().commodities.find(by);
 }
 
-const findAllCommodities = (by) => {
+export const findAllCommodities = (by?:Function) => {
     if (by) {
         return retrievePublicData().commodities.filter(by);
     } else {
@@ -128,16 +131,31 @@ const findAllCommodities = (by) => {
     }
 }
 
-module.exports = {
-    findShip,
-    findAllShips,
-    findRegistrarShip,
-    findAllRegistrarShips,
-    insertShip,
-    findManifest,
-    findCommodity,
-    findAllCommodities,
-    findAllManifests,
-    updateManifest,
-    updateShip,
+export const findShop = (by: Function) => {
+    return retrievePublicData().tradeports.find(by);
+}
+
+function walker (byCode: string, currentElement: PublicSystem): PublicSystem|undefined {
+    if (currentElement.code === byCode) {
+        return currentElement;
+    } else {
+        if (currentElement.children) {
+            for (let i = 0; i < currentElement.children.length; ++i) {
+                let poi = walker(byCode, currentElement.children[i]);
+                if (poi) {
+                    return poi;
+                }
+            }
+        } else {
+            return;
+        }
+    }
+}
+
+export const findPOI = (byCode?: string): PublicSystem | any => {
+    if (byCode) {
+        return walker(byCode, retrievePublicData().systems[0]);
+    } else {
+        return {};
+    }
 }

@@ -1,10 +1,11 @@
-const router = require('express').Router();
-const guid = require('guid');
-const { authenticateToken } = require('./authentication-handling');
-const { findManifest, findShip, findCommodity, updateManifest, updateShip, findAllManifests } = require('./data-handling');
+export const router = require('express').Router();
+import guid from 'guid';
+import { authenticateToken } from './authentication-handling';
+import { findManifest, findShip, findCommodity, updateManifest, updateShip, findAllManifests } from './data-handling';
+import { CommodityEntry, ManifestData, ShipData } from './types';
 
-router.get("/logs", authenticateToken, (req, res) => {
-    let m = findAllManifests((manifest) => req.user.userid === manifest.owner && manifest.isArchived); 
+router.get("/logs", authenticateToken, (req: any, res: any) => {
+    let m = findAllManifests((manifest: ManifestData) => req.user.userid === manifest.owner && manifest.isArchived); 
     console.log(m);
     if (m) {
         res.send(JSON.stringify(m));
@@ -13,30 +14,30 @@ router.get("/logs", authenticateToken, (req, res) => {
     res.sendStatus(404);
 })
 
-router.get("/log/:manifest", (req, res) => {
+router.get("/log/:manifest", (req: any, res: any) => {
     let m;
-    if (m = findManifest((manifest) => req.params.manifest === manifest.manifest)) {
+    if (m = findManifest((manifest:ManifestData) => req.params.manifest === manifest.manifest)) {
         res.send(JSON.stringify(m));
         return;
     }
     res.sendStatus(404);
 });
 
-router.get("/manifest/:manifestId", (req, res) => {
+router.get("/manifest/:manifestId", (req:any, res:any) => {
     let m;
-    if (m = findManifest((manifest) => manifest.manifest === req.params.manifestId)) {
+    if (m = findManifest((manifest:ManifestData) => manifest.manifest === req.params.manifestId)) {
         res.send(JSON.stringify(m));
     } else {
         res.sendStatus(404);
     }
 });
 
-router.post("/archive", authenticateToken, (req, res) => {
-    let manifest;
-    if (manifest = findManifest((manifest) => req.body.manifest === manifest.manifest && manifest.owner === req.user.userid)) {
+router.post("/archive", authenticateToken, (req:any, res:any) => {
+    let manifest: ManifestData;
+    if (manifest = findManifest((manifest:ManifestData) => req.body.manifest === manifest.manifest && manifest.owner === req.user.userid)) {
         // find corresponding ship
         let ship;
-        if (ship = findShip((ship) => {
+        if (ship = findShip((ship:ShipData) => {
             return ship.associatedManifest === manifest.manifest;
         })) {
             ship.associatedManifest = null;
@@ -51,10 +52,10 @@ router.post("/archive", authenticateToken, (req, res) => {
     }
 });
 
-router.post("/sell", authenticateToken, (req, res) => {
+router.post("/sell", authenticateToken, (req: any, res: any) => {
     const envelope = req.body;
-    const manifest = findManifest(
-        (manifest) => manifest.manifest == envelope.manifest && manifest.owner === req.user.userid
+    const manifest: ManifestData = findManifest(
+        (manifest:ManifestData) => manifest.manifest == envelope.manifest && manifest.owner === req.user.userid
     );
 
     // reduce capacity
@@ -130,11 +131,11 @@ router.post("/sell", authenticateToken, (req, res) => {
 /**
  * @function
  */
-router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req, res) => {
+router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req: any, res: any) => {
     if (req.body.to) {
-        let ship = findShip((ship) => req.body.to === ship.ship);
+        let ship = findShip((ship: ShipData) => req.body.to === ship.ship);
         let manifest = findManifest(
-            (manifest) => ship.associatedManifest === manifest.manifest
+            (manifest: ManifestData) => ship.associatedManifest === manifest.manifest
         );
         if (!manifest) { // prepopulate manifest
             manifest = {
@@ -160,11 +161,11 @@ router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req, res) => {
             });
             // find similar commodity to add
             let commodity = manifest.commodities.find(
-                (commodity) => commodity.code === req.body.commodity
+                (commodity: CommodityEntry) => commodity.code === req.body.commodity
             );
             if (!commodity) {
                 const template = findCommodity(
-                    (c) => c.code === req.body.commodity
+                    (c: CommodityEntry) => c.code === req.body.commodity
                 );
                 commodity = {
                     amount: 0,
@@ -180,11 +181,11 @@ router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req, res) => {
 
             updateManifest(manifest.manifest, manifest);
 
-            filled = 0;
+            let filled = 0;
             // get details for meter
 
             if (manifest) {
-                manifest.commodities.forEach((commodity) => (filled += commodity.amount));
+                (manifest as ManifestData).commodities.forEach((commodity) => (filled += commodity.amount));
             }
             filled /= 100;
 
@@ -200,6 +201,20 @@ router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req, res) => {
     }
 });
 
-
-
-module.exports = router;
+router.post("/simulate-buy", authenticateToken, (req: any, res: any) => {
+    if (req.body.to) {
+        let ship:ShipData = findShip((ship: ShipData) => req.body.to === ship.ship);
+        let manifest: ManifestData = findManifest(
+            (manifest: ManifestData) => ship.associatedManifest === manifest.manifest
+        );
+        let totalCargoAvailable = ship.scu * 100;
+        manifest?.commodities.forEach(
+                (commodity) => totalCargoAvailable -= commodity.amount
+        );
+        if (totalCargoAvailable >= req.body.quantity)
+            return res.json({"status": "success"});
+        else
+            return res.json({"status": "fail"});
+    }
+    return res.sendStatus(200);
+})

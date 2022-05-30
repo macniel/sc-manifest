@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import NumberInput from "./NumberInput";
 import ShipSelector from "./ShipSelector";
+import ShopSelector from "./ShopSelector";
 import "./CommodityEntry.css";
 import classNames from "classnames";
 
@@ -19,24 +20,62 @@ function CommodityEntry({ onCargoChange }) {
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [ship, setShip] = useState({});
+  const [isValid, setValid] = useState(true);
   const [refreshToken, setRefreshToken] = useState(Date.now());
+  
   const [commodity, setCommodity] = useState({
     code: "",
     name: "",
   });
   const [commodities, setCommodities] = useState([]);
-  const [source] = useState({
+  const [source, setSource] = useState({
     code: "",
     name: "",
   });
 
-  useEffect(() => {
-    fetch("/api/commodities")
+  const setShop = (shop) => {
+    if (shop != null) {
+      setSource({ code: shop.code, name: shop.name });
+      // update commodity display to show only buyables
+      fetch("/api/commodities/?from=" + shop.code + "&mode=buy")
+        .then((response) => response.json())
+        .then((data) => {
+          setCommodities(data);
+        });
+    } else {
+      fetch("/api/commodities")
       .then((response) => response.json())
       .then((data) => {
         setCommodities(data);
       });
-  }, []);
+      setSource({}) 
+    }
+  }
+
+  useEffect(() => {
+    if (ship.ship && quantity && commodity) {
+      const payload = {
+        to: ship.ship,
+        quantity: quantity,
+        commodity: commodity.code,
+      }
+      fetch("/api/simulate-buy", {
+        headers: { "Content-Type": "application/json" },
+        method: "post",
+        body: JSON.stringify(payload)
+      }).then(res => res.json())
+        .then(result => {
+          setValid(result.status === "success");
+        });
+    }
+  }, [quantity, ship, commodity]);
+
+  const updateCommodity = (commodityItem) => {
+    setCommodity(commodityItem);
+    if (commodityItem.price_buy) {
+      setPrice(commodityItem.price_buy);
+    }
+  }
 
   const buy = () => {
     const payload = {
@@ -111,7 +150,7 @@ function CommodityEntry({ onCargoChange }) {
               )
               .map((commodityItem) => (
                 <button
-                  onClick={() => setCommodity(commodityItem)}
+                  onClick={() => updateCommodity(commodityItem)}
                   className={classNames("commodity", {
                     active: commodity.code === commodityItem.code,
                   })}
@@ -134,10 +173,11 @@ function CommodityEntry({ onCargoChange }) {
                 </span>
                 <span>Selected Commodity: {commodity.name}</span>
                 <span>Price: {(quantity || 0) * (price || 0)} aUEC</span>
+                <span>Selected Outpost: {source.name}</span>
               </div>
               <button
                 onClick={buy}
-                disabled={!ship.name || !quantity || !(price >= 0)}
+                disabled={!ship.name || !quantity || !(price >= 0) || !isValid}
                 className="button--primary"
               >
                 Buy
@@ -148,6 +188,11 @@ function CommodityEntry({ onCargoChange }) {
           <fieldset className="shipEntry">
             <legend>Ship</legend>
             <ShipSelector onChange={setShip} refreshToken={refreshToken} />
+          </fieldset>
+
+          <fieldset className="shopEntry">
+            <legend>Tradepost</legend>
+            <ShopSelector onChange={setShop} refreshToken={refreshToken} defaultShop="GAFAF"></ShopSelector>
           </fieldset>
 
           <div className="lower-row">
@@ -164,7 +209,7 @@ function CommodityEntry({ onCargoChange }) {
             <fieldset className="price">
               <legend>Price</legend>
               <NumberInput
-                value=""
+                value={price}
                 onChange={(newValue) => {
                   setPrice(parseFloat(newValue));
                 }}

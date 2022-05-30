@@ -55,11 +55,6 @@
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  position: fixed;
-  top: 48px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
   flex: 1 1;
   align-items: stretch;
 }
@@ -78,7 +73,7 @@
 .ship-namer {
 }
 
-.ship-namer .inner input {
+.inner input {
   flex-grow: 1;
   margin-right: 4px;
   margin: 4px;
@@ -90,4 +85,29 @@
   height: 40px;
   padding: 0 20px;
   margin: 4px;
+}
+
+
+.fleet-manager {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  top: 48px;
+  bottom: 8px;
+}
+
+.fleet-manager > * {
+  width: 50%;
+}
+
+.ship-manager {
+  display: flex;
+  flex-direction: column;
+}
+
+.ship-manager > :nth-child(1) {
+  flex-grow: 1;
+  flex-basis: auto;
 }

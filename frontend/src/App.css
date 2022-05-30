@@ -46,7 +46,11 @@ a:visited {
 
 body {
   padding-top: 44px;
-  background-color: var(--workspace-color);
+  /*background-color: var(--workspace-color);*/
+ 
+  background: linear-gradient(90deg, var(--workspace-color) 7px, transparent 1%) center, linear-gradient(var(--workspace-color) 7px, transparent 1%) center, #a799cc;
+  background-size: 8px 8px;
+
 }
 
 input {
@@ -160,6 +164,41 @@ fieldset > legend {
   color: var(--dangerous-button-text);
 }
 
+.shopSelectorButton {
+  width: var(--button-size);
+  height: var(--button-size);
+  overflow: hidden;
+  text-overflow: clip;
+  position: relative;
+  text-align: center;
+  margin: 4px 8px;
+  background-color: var(--primary-button-color);
+  border: 1px solid var(--primary-button-border);
+  color: var(--primary-button-text);
+}
+
+.shopSelectorButton.active {
+  background-color: var(--selection-color);
+}
+
+.shopSelectorButton span {
+  position: absolute;
+  left: 2px;
+  bottom: 1px;
+  right: 2px;
+  height: 12px;
+  background-color: var(--button-label-color);
+  text-align: center;
+  color: var(--button-text);
+  margin: 0 -2px;
+}
+.selected-shop-name {
+  display: block;
+  text-align: center;
+  clear: both;
+  
+}
+
 .spatial-layout {
   display: flex;
   flex-direction: column;
@@ -212,6 +251,7 @@ fieldset > legend {
   position: absolute;
   top: 0;
   bottom: 0;
+  width: 100%;
 }
 
 .spatial-layout .sidebar .lower-row > * {
@@ -276,4 +316,51 @@ fieldset .inner {
   display: inline-block;
   text-align: right;
   width: 180px;
+}
+
+.dialog {
+  
+}
+
+li.active {
+  color: var(--primary-button-border)
+}
+
+ul.breadcrumb {
+  display: block;
+  list-style-type: none;
+  margin: 0;
+  padding: 4px;
+  
+  border-bottom: 1px solid var(--panel-titlebar-color);
+}
+
+ul.breadcrumb li {
+  display: inline-block;
+  
+  text-indent: 0; 
+}
+ul.breadcrumb :not(:last-child)::after {
+  content: '>';
+  color: var(--button-text);
+  display: inline-block;
+  margin: 8px;
+}
+
+ul.breadcrumb :not(:last-child) span {
+  text-decoration: underline;
+}
+ul.breadcrumb li span {
+  line-height: 40px;
+  height: 40px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+ul.childrenSelection {
+  padding-right: 120px;
+}
+
+.dialogActions button {
+  float: right;
 }

@@ -1,11 +1,14 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import "./FleetManager.css";
+import ShipSelector from "./ShipSelector";
 
 function FleetManager({ onFleetUpdate }) {
   const [ships, setShips] = useState([]);
   const [selectedShip, setSelectedShip] = useState(null);
   const [shipName, setShipName] = useState("");
+  const [shipNewName, setShipNewName] = useState("");
+  const [shipNew, setShipNew] = useState(null);
 
   const addShip = () => {
     fetch("/api/ship", {
@@ -44,7 +47,25 @@ function FleetManager({ onFleetUpdate }) {
       .then((response) => response.json())
       .then(setShips);
   }, []);
+
+  const shipChanged = (ship) => {
+    setShipNewName(ship.name);
+    setShipNew(ship);
+  }
+
+  const removeShip = () => {
+    // check if ship has commodities
+    // fetch delete /api/ship/:shipId
+    // then onFleetUpdate
+  }
+
+  const renameShip = () => {
+    // fetch patch /api/ship/:shipId payload {name: shipNewName}
+    // then onFleetUpdate
+  }
+
   return (
+    <div className="fleet-manager">
     <div className="fleet-selector">
       <fieldset>
         <legend>Add new Ship to your Shipping Fleet</legend>
@@ -81,6 +102,28 @@ function FleetManager({ onFleetUpdate }) {
           </button>
         </div>
       </fieldset>
+      </div>
+      <div className="ship-manager">
+        <fieldset className="own-ships">
+          <legend>Your current ships</legend>
+           <div className="list--scrollable">
+          <div className="scrollcontent">
+            <div role="list" className="ship-list"></div><ShipSelector onChange={shipChanged}>
+
+              </ShipSelector>
+            </div>
+            </div>
+        </fieldset>
+        <fieldset>
+          <legend>Manage your ship</legend>
+          <div className="inner">
+          <input value={shipNewName} onChange={({value}) => setShipNewName(value)} />
+          <button className="button--primary" onClick={renameShip}>Rename</button>
+            <button className="button--harmful" onClick={removeShip}>Remove</button>
+            </div>
+        </fieldset>
+        
+      </div>
     </div>
   );
 }

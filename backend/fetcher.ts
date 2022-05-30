@@ -1,4 +1,5 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
+import { PublicData, ShipData, ShipResponse } from "./types";
 const { join } = require("path");
 const { readFileSync, writeFileSync, existsSync, exists } = require("fs");
 
@@ -6,15 +7,14 @@ const fetchShips = async function () {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
     const UEX_APIKEY = process.env.UEX_APIKEY;
     const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
-    let ships = await fetch(UEX_ENDPOINT + "ships", {
+    const shipResponse: ShipResponse = await fetch(UEX_ENDPOINT + "ships", {
       headers: { api_key: UEX_APIKEY },
     })
       .then((response) => response.json())
       .catch((error) => console.error(error));
-    console.log(ships);
-    ships = ships.data
-      .filter((shipData) => shipData.scu > 0 && shipData.implemented == "1")
-      .map((shipData) => {
+    const ships = shipResponse.data
+      .filter((shipData: ShipData) => shipData.scu > 0 && shipData.implemented == "1")
+      .map((shipData: ShipData) => {
         return {
           manufacturer: shipData.manufacturer,
           series: shipData.series,
@@ -39,11 +39,11 @@ const fetchCommodities = async function () {
   }
 }
 
-const fetchTradeports = async function (systems) {
+const fetchTradeports = async function (systems?: any) {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
     const UEX_APIKEY = process.env.UEX_APIKEY;
     const UEX_ENDPOINT = process.env.UEX_ENDPOINT;
-    const publicData = {};
+    const publicData = {} as PublicData;
     publicData.systems = JSON.parse(
       readFileSync(join("data", "systemmap.json"), "utf-8")
     );
@@ -54,20 +54,20 @@ const fetchTradeports = async function (systems) {
 
     publicData.tradeports = tradeports.data;
 
-    const fn = (tradeport) => {
+    const fn = (tradeport: any) => {
       // tradeport system, planet, satellite, city
-      const starsystem = publicData.systems.find(
+      const starsystem = publicData.systems?.find(
         (c) => c.code == tradeport.system && c.trade != "1"
       );
       if (starsystem) {
-        const planet = starsystem.children.find(
+        const planet = starsystem.children?.find(
           (c) => c.code == tradeport.planet && c.trade != "1"
         );
         if (planet) {
-          const moon = planet.children.find(
+          const moon = planet.children?.find(
             (c) => c.code == tradeport.satellite && c.trade != "1"
           );
-          const city = planet.children.find(
+          const city = planet.children?.find(
             (c) => c.code == tradeport.city && c.trade != "1"
           );
 
@@ -81,18 +81,14 @@ const fetchTradeports = async function (systems) {
             city.children.push(tradeport);
           } else {
             // must be planetside
-            planet.children.push(tradeport);
+            planet.children?.push(tradeport);
           }
         }
       }
     };
-    publicData.tradeports.forEach((tradeport) => fn(tradeport));
+    publicData.tradeports?.forEach((tradeport) => fn(tradeport));
     return publicData;
   }
 }
 
-module.exports = {
-  fetchCommodities,
-  fetchShips,
-  fetchTradeports
-}
+export { fetchCommodities, fetchShips, fetchTradeports };

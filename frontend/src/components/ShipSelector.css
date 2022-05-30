@@ -10,6 +10,7 @@
   box-shadow: var(--button-shadow);
   border: 1px solid var(--primary-button-border);
   margin: 4px 8px;
+  overflow: hidden;
 }
 
 .ship-list__button[disabled] {
