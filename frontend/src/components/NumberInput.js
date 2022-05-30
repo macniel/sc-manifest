@@ -19,11 +19,11 @@ function NumberInput({ onChange, value, min, max }) {
   const clear = () => {
     setInnerValue("");
   };
-/*
+
   useEffect(() => {
     setInnerValue(value);
     onChange?.(value);
-  }, [value]);*/
+  }, [value]);
 
   return (
     <div className="numberinput">
