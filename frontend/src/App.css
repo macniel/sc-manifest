@@ -364,3 +364,18 @@ ul.childrenSelection {
 .dialogActions button {
   float: right;
 }
+
+.danger {
+  color: red;
+  display: inline-block;
+  border: 1px solid red;
+  background-color: var(--application-color);
+  width: 20px;
+  line-height: 20px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+}
+.danger::after {
+  content: '!';
+}

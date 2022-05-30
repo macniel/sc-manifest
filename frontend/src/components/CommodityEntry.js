@@ -17,8 +17,8 @@ import { ReactComponent as WasteIcon } from "../assets/waste.svg";
 import { ReactComponent as RecycleIcon } from "../assets/recycle.svg";
 
 function CommodityEntry({ onCargoChange }) {
-  const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState('0');
+  const [price, setPrice] = useState('0');
   const [ship, setShip] = useState({});
   const [isValid, setValid] = useState(true);
   const [refreshToken, setRefreshToken] = useState(Date.now());
@@ -74,6 +74,8 @@ function CommodityEntry({ onCargoChange }) {
     setCommodity(commodityItem);
     if (commodityItem.price_buy) {
       setPrice(commodityItem.price_buy);
+    } else {
+      setPrice('')
     }
   }
 
@@ -164,26 +166,6 @@ function CommodityEntry({ onCargoChange }) {
         </fieldset>
 
         <div className="sidebar">
-          <fieldset>
-            <legend>Actions</legend>
-            <div className="inner">
-              <div className="status">
-                <span>
-                  Selected Ship: {ship.shipsName} ({ship.name})
-                </span>
-                <span>Selected Commodity: {commodity.name}</span>
-                <span>Price: {(quantity || 0) * (price || 0)} aUEC</span>
-                <span>Selected Outpost: {source.name}</span>
-              </div>
-              <button
-                onClick={buy}
-                disabled={!ship.name || !quantity || !(price >= 0) || !isValid}
-                className="button--primary"
-              >
-                Buy
-              </button>
-            </div>
-          </fieldset>
 
           <fieldset className="shipEntry">
             <legend>Ship</legend>
@@ -192,7 +174,7 @@ function CommodityEntry({ onCargoChange }) {
 
           <fieldset className="shopEntry">
             <legend>Tradepost</legend>
-            <ShopSelector onChange={setShop} refreshToken={refreshToken} defaultShop="GAFAF"></ShopSelector>
+            <ShopSelector onChange={setShop} refreshToken={refreshToken}></ShopSelector>
           </fieldset>
 
           <div className="lower-row">
@@ -216,6 +198,25 @@ function CommodityEntry({ onCargoChange }) {
               />
             </fieldset>
           </div>
+                    <fieldset>
+            <legend>Actions</legend>
+            <div className="inner">
+              <div className="status">
+                <span>
+                  Ship: {ship.shipsName} ({ship.name})
+                </span>
+                <span>Price: {(quantity || 0) * (price || 0)} aUEC</span>
+                <span>Outpost: {source.name}</span>
+              </div>
+              <button
+                onClick={buy}
+                disabled={!ship.name || !quantity || !(price >= 0) || !isValid}
+                className="button--primary"
+              >
+                Buy
+              </button>
+            </div>
+          </fieldset>
         </div>
       </div>
     </div>

@@ -12295,11 +12295,6 @@
                             ]
                         },
                         {
-                            "code": "EVERU",
-                            "type": "station",
-                            "name": "Everus Harbor"
-                        },
-                        {
                             "code": "MAGD",
                             "type": "satellite",
                             "name": "Magda",

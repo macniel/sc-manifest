@@ -3,19 +3,22 @@ import NumberInput from "./NumberInput";
 import classNames from "classnames";
 import ShipSelector from "./ShipSelector";
 import "./ManifestView.css";
+import ShopSelector from "./ShopSelector";
 
-function CargoChart({ cargo, onClick, isActive }) {
+function CargoChart({ cargo, onClick, isActive, isSellable }) {
   return (
     <div
       className={classNames("cargo-chart", {
         active: isActive,
+        
       })}
       onClick={() => {
-        console.log(cargo);
-        onClick?.(cargo);
+          console.log(cargo);
+          onClick?.(cargo);
       }}
     >
       <span>{cargo.name}</span>
+      {!isSellable && <span className="danger" title="Cargo is not sellable at this port"/>}
       <div className="meter">
         <div
           className="fill"
@@ -63,7 +66,8 @@ function ManifestView() {
   const [manifest, setManifest] = useState(null);
   const [sellPrice, setSellPrice] = useState(0);
   const [sellQuantity, setSellQuantity] = useState(0);
-
+  const [sellDestination, setSellDestination] = useState('');
+  const [sellableCommodities, setSellableCommodities] = useState([]);
   
   useEffect(() => {
     const fetchCommodityPrices = async () => {
@@ -87,6 +91,7 @@ function ManifestView() {
       manifest: manifest.manifest,
       price: sellPrice,
       quantity: sellQuantity,
+      shop: sellDestination.code,
       commodity: cargo[selectedCargo].code,
     };
     fetch("/api/sell/", {
@@ -117,17 +122,24 @@ function ManifestView() {
     })
       .then((response) => response.json())
       .then((manifest) => {
-        if (!localStorage.getItem("logs")) {
-          localStorage.setItem("logs", "[]");
-        }
-        const logs = JSON.parse(localStorage.getItem("logs") || []);
-        logs.push(manifest.manifest);
-        localStorage.setItem("logs", JSON.stringify(logs));
         setCargo([]);
         setSelectedCargo(null);
         setShip({});
       });
   };
+
+  const setDestination = (shop) => {
+    
+    const commodities = Object.entries(shop.prices).filter(([key, price]) => price.operation === "sell").map( ([key, price]) => {
+    return {
+      code: key
+    }
+    })
+    console.log(commodities);
+    setSellableCommodities(commodities);
+    
+    setSellDestination(shop)
+  }
 
   return (
     <div className="spatial-layout">
@@ -137,6 +149,7 @@ function ManifestView() {
           {cargo.map((c, index) => (
             <CargoChart
               isActive={index === selectedCargo}
+              isSellable={sellableCommodities.find(sc => sc.code === c.code)}
               cargo={c}
               key={c.name}
               onClick={() => {
@@ -153,6 +166,29 @@ function ManifestView() {
             <ShipSelector onChange={setShip} isInverse={true} />
           </fieldset>
 
+          <fieldset>
+            <legend>Target Tradepost</legend>
+            <ShopSelector onChange={setDestination} />
+          </fieldset>
+
+          <div className="lower-row">
+            <fieldset className="quantity">
+              <legend>Quantity</legend>
+              <NumberInput
+                max={quantity}
+                value={quantity}
+                min={0}
+                onChange={setSellQuantity}
+              />
+            </fieldset>
+
+            <fieldset className="price">
+              <legend>Price</legend>
+              <NumberInput value={price} onChange={setSellPrice} />
+            </fieldset>
+
+            
+          </div>
           <fieldset className="shop">
             <legend>Actions</legend>
             <div className="inner-layout">
@@ -160,21 +196,18 @@ function ManifestView() {
                 {
                   <>
                     <span className="name">
-                      {ship?.shipsName || ship?.name}
+                      Ship: {ship?.shipsName || ship?.name}
                     </span>
-
+                    <span>Outpost: {sellDestination.name}
+                  </span>
                     <span
                       className={classNames("profit", {
                         negative: manifest?.profit < 0,
                         positive: manifest?.profit >= 0,
                       })}
                     >
-                      Profit: {manifest?.profit ?? "-"} aUEC
+                      Profit: {manifest?.profit?.toFixed(0) ?? "-"} aUEC
                       (est. {estimatedProfit} aUEC)
-                    </span>
-                    <span className="cargofill">
-                      Cargo: {Math.ceil(cargo.reduce((p, c) => p + c.amount, 0) / 100)}{" "}
-                      / {ship.scu} SCU
                     </span>
                   </>
                 }
@@ -195,23 +228,6 @@ function ManifestView() {
               </button>
             </div>
           </fieldset>
-
-          <div className="lower-row">
-            <fieldset className="quantity">
-              <legend>Quantity</legend>
-              <NumberInput
-                max={quantity}
-                value={quantity}
-                min={0}
-                onChange={setSellQuantity}
-              />
-            </fieldset>
-
-            <fieldset className="price">
-              <legend>Price</legend>
-              <NumberInput value={price} onChange={setSellPrice} />
-            </fieldset>
-          </div>
         </div>
       </div>
     </div>

@@ -9,9 +9,13 @@ import { ReactComponent as StationIcon } from '../assets/shop-station.svg';
 import { ReactComponent as ShopIcon } from '../assets/shop-outpost.svg';
 import { ReactComponent as ResetIcon } from '../assets/shop-reset.svg';
 
-function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
-  const [path, setPath] = useState(['ST', 'CRU', 'CELL']);
-  const [selectedShop, setSelectedShop] = useState({});
+function ShopSelector({ onChange, refreshToken, defaultShop }) {
+  const [path, setPath] = useState([{
+    code: "ST",
+    name: "Stanton",
+    type: "system"
+  }]);
+  const [selectedShop, setSelectedShop] = useState(null);
   const [shopSelectorVisible, setShopSelectorVisible] = useState(false);
   const [outposts, setOutposts] = useState([]);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
@@ -69,7 +73,6 @@ function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
   const resetShop = () => {
     if (selectedShop === null) {
       showShopSelector(0);
-      console.log('shop selector visible')
     } else {
       setSelectedShop(null);
       setPath([]);
@@ -92,9 +95,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
   }
 
   const updateShopSelector = async (downToIndex, optionalPath) => {
-    const sliced = optionalPath || path.slice(0, downToIndex + 1);
+    let sliced = optionalPath || path.slice(0, downToIndex + 1);
     setPath(sliced);
-    console.log(sliced);
     const result = await Promise.all(sliced.map((segment) => 
       fetch('/api/system/resolve?code=' + segment.code).then(res => res.json()).then(res => {
         return {
@@ -126,7 +128,20 @@ function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
   }
 
   useEffect(() => {
-    fetch('/api/system/?' + path.map(segment => 'path[]=' + segment).join('&')).then(res => res.json()).then(data => {
+    const fn = async () => {
+      const result = await Promise.all(path.map((segment) =>
+        fetch('/api/system/resolve?code=' + segment.code).then(res => res.json()).then(res => {
+          return {
+            code: res.code,
+            name: res.name,
+            name_short: res.name_short
+          }
+        })
+      ))
+    
+      setBreadcrumbs(result);
+    }
+    fetch('/api/system/?' + path.map(segment => 'path[]=' + segment.code).join('&')).then(res => res.json()).then(data => {
       setOutposts(data.children.map((child) => {
         return {
           code: child.code,
@@ -136,6 +151,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
         }
       }))
     })
+    fn();
   }, []);
 
   return (
@@ -148,7 +164,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop = 'GAFAF' }) {
           </ul>
 
           <ul className="childrenSelection">
-            <li onClick={() => updateShopSelector(path.length-2)}>..</li>
+            {path.length > 1 && <li onClick={() => updateShopSelector(path.length - 2)}>..</li>}
             { outposts.map(outpost => 
               <li className={cx({ active: outpost.code === selection })} onClick={() => { console.log(outpost); if (outpost.tradeport) { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
             )}

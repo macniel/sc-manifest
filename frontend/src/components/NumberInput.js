@@ -19,11 +19,11 @@ function NumberInput({ onChange, value, min, max }) {
   const clear = () => {
     setInnerValue("");
   };
-
+/*
   useEffect(() => {
     setInnerValue(value);
     onChange?.(value);
-  }, [value]);
+  }, [value]);*/
 
   return (
     <div className="numberinput">
@@ -31,7 +31,9 @@ function NumberInput({ onChange, value, min, max }) {
         aria-label="input value"
         value={innerValue}
         onChange={(event) => {
-          setInnerValue(event.srcElement.value);
+          if (event.srcElement) {
+            setInnerValue(event.srcElement.value);
+          }
         }}
       />
       <button className="numberinput__button" onClick={() => append("7")}>

@@ -47,9 +47,8 @@ router.post("/archive", authenticateToken, (req:any, res:any) => {
             updateManifest(manifest.manifest, manifest);
             res.send(JSON.stringify(manifest));
         }
-    } else {
-        res.sendStatus(404);
     }
+    res.sendStatus(404);
 });
 
 router.post("/sell", authenticateToken, (req: any, res: any) => {
