@@ -17,6 +17,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   }]);
   const [selectedShop, setSelectedShop] = useState(null);
   const [shopSelectorVisible, setShopSelectorVisible] = useState(false);
+  const [internalPath, setInternalPath] = useState(path);
   const [outposts, setOutposts] = useState([]);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [selection, setSelection] = useState({});
@@ -85,7 +86,6 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   }
 
   const updateShopSelection = async() => {
-    console.log(selection);
     const symbol = selection;
     if (symbol) {
       const shopPath = await getShopData(symbol);
@@ -99,8 +99,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   }
 
   const updateShopSelector = async (downToIndex, optionalPath) => {
-    let sliced = optionalPath || path.slice(0, downToIndex + 1);
-    setPath(sliced);
+    let sliced = optionalPath || internalPath.slice(0, downToIndex + 1);
+    setInternalPath(sliced);
     const result = await Promise.all(sliced.map((segment) => 
       fetch('/api/system/resolve?code=' + segment.code).then(res => res.json()).then(res => {
         return {
@@ -130,7 +130,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   }
 
   const updatePath = (newPathSegment) => {
-    updateShopSelector(path.length, [...path, newPathSegment]);
+    updateShopSelector(internalPath.length, [...internalPath, newPathSegment]);
   }
 
   useEffect(() => {
@@ -180,8 +180,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
         </fieldset>
         <fieldset className="dialogActions">
           <legend>Actions</legend>
-          <button className="button--harmful" onClick={() => {dialogRef.current.close(null)}}>Cancel</button>
-          <button className="button--primary" onClick={() => {dialogRef.current.close(); updateShopSelection(); }}>Select</button>
+          <button className="button--harmful" onClick={() => { dialogRef.current.close(null); setInternalPath(path) }}>Cancel</button>
+          <button className="button--primary" onClick={() => { dialogRef.current.close(); setPath(internalPath); updateShopSelection() }}>Select</button>
         </fieldset>
       </dialog >
     <div className="shopSelector">
