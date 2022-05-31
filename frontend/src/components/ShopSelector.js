@@ -80,6 +80,11 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
       showShopSelector(0);
     } else {
       setSelectedShop(null);
+      setInternalPath([{
+        code: "ST",
+        name: "Stanton",
+        type: "system"
+      }]);
       setPath([]);
       onChange?.(null);
     }
@@ -89,9 +94,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
     const symbol = selection;
     if (symbol) {
       const shopPath = await getShopData(symbol);
-      console.log(shopPath);
       setPath(shopPath);
-    setSelectedShop(shopPath[shopPath.length - 1]);
+      setSelectedShop(shopPath[shopPath.length - 1]);
     if (onChange) {
         onChange?.(shopPath[shopPath.length - 1]);
     }
@@ -101,28 +105,14 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   const updateShopSelector = async (downToIndex, optionalPath) => {
     let sliced = optionalPath || internalPath.slice(0, downToIndex + 1);
     setInternalPath(sliced);
-    const result = await Promise.all(sliced.map((segment) => 
-      fetch('/api/system/resolve?code=' + segment.code).then(res => res.json()).then(res => {
-        return {
-          code: res.code,
-          name: res.name,
-          name_short: res.name_short
-        }
-      })
-    ))
+    const codified = sliced.map((segment) => segment.code).join('&code[]=');
+    const result = await fetch('/api/system/resolve?code[]=' + codified).then(res => res.json());
+        
     setBreadcrumbs(result);
-    fetch('/api/system/?' + result.map(segment => 'path[]=' + segment.code).join('&')).then(res => res.json()).then(data => {
+    const stringifiedBreadcrumbs = result.map(segment => 'path[]=' + segment.code).join('&');
+    fetch('/api/system/?' + stringifiedBreadcrumbs).then(res => res.json()).then(data => {
       if (data.children) {
-        console.time('rendering')
-        setOutposts(data.children?.map((child) => {
-        return {
-          code: child.code,
-          name: child.name,
-          name_short: child.name_short,
-          tradeport: child.trade === "1"
-        }
-        }))
-        console.timeEnd('rendering');
+        setOutposts(data.children);
       } else {
         setOutposts([])
       }
@@ -148,17 +138,25 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
       setBreadcrumbs(result);
     }
     fetch('/api/system/?' + path.map(segment => 'path[]=' + segment.code).join('&')).then(res => res.json()).then(data => {
-      setOutposts(data.children.map((child) => {
-        return {
-          code: child.code,
-          name: child.name,
-          name_short: child.name_short,
-          tradeport: child.trade === "1"
-        }
-      }))
+      setOutposts(data.children)
     })
     fn();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const renderOutposts = () => {
+    const rValue = outposts.map((outpost, index) =>
+      <li key={index + outpost.code} className={cx({ active: outpost.code === selection })} onClick={() => { if (outpost.trade === "1") { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
+    );
+    return rValue;
+  }
+
+  const renderShopButton = (shop, index, array) => {
+    if (shop) {
+      return <button key={shop.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shopSelectorButton shopSelectorButton", { "active": selectedShop?.code === shop.code })}>
+        {getSymbol(shop.type)}<span>{shop.name_short || shop.name}</span></button>
+    }
+  }
 
   return (
     <>
@@ -171,9 +169,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
 
           <ul className="childrenSelection">
             {path.length > 1 && <li onClick={() => updateShopSelector(path.length - 2)}>..</li>}
-            { outposts.map( (outpost, index) => 
-              <li key={index + outpost.code} className={cx({ active: outpost.code === selection })} onClick={() => { console.log(outpost); if (outpost.tradeport) { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
-            )}
+            { renderOutposts() }
           </ul>
         
 
@@ -181,14 +177,11 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
         <fieldset className="dialogActions">
           <legend>Actions</legend>
           <button className="button--harmful" onClick={() => { dialogRef.current.close(null); setInternalPath(path) }}>Cancel</button>
-          <button className="button--primary" onClick={() => { dialogRef.current.close(); setPath(internalPath); updateShopSelection() }}>Select</button>
+          <button className="button--primary" onClick={() => { dialogRef.current.close(); updateShopSelection(internalPath) }}>Select</button>
         </fieldset>
       </dialog >
     <div className="shopSelector">
-      {path?.map((pathSegment, index) => (
-        <button key={ pathSegment.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shopSelectorButton shopSelectorButton", pathSegment?.type?.toLowerCase(), {"active": selectedShop?.code === pathSegment.code})}>
-          { getSymbol(pathSegment?.type)}<span>{pathSegment?.name_short||pathSegment?.name}</span></button>
-      ))}
+        {path?.map((pathSegment, index, arr) => renderShopButton(pathSegment, index, arr))}
       <button className="shopSelector__shopSelectorButton shopSelectorButton" style={{"float": "right"}} onClick={resetShop}>
         <ResetIcon/></button>
       <span className="shopSelector__selected-shop-name selected-shop-name">{selectedShop?.name ?? 'none'}</span>
