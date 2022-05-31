@@ -5,11 +5,14 @@ import { findShop, findPOI } from './data-handling';
 import { authenticateToken } from './authentication-handling';
 import guid from 'guid';
 import { PublicTradeport } from './types';
+import { cacheResult } from './lookup-handling';
 
 router.get('/shop/:shopCode', (req: any, res: any) => {
+    res.startTime('processing request');
     if (req.params.shopCode) {
-
-        const shop: PublicTradeport = findShop((shop: PublicTradeport) => shop.code === req.params.shopCode);
+        const returnValue = cacheResult(req.params.shopCode, () => {
+            res.startTime('request not cached');
+const shop: PublicTradeport = findShop((shop: PublicTradeport) => shop.code === req.params.shopCode);
         if (shop) {
             // expand shop data
             let data = [];
@@ -22,9 +25,17 @@ router.get('/shop/:shopCode', (req: any, res: any) => {
                 ...shop,
                 type: actualShop?.type
             });
-            return res.json(data);
+            res.endTime('request not cached');
+            return data;
         } else {
-            return res.sendStatus(404);
+            res.endTime('request not cached');
+            return null;
+        }
+        });
+    res.endTime('processing request');
+        
+        if (returnValue) {
+            return res.json(returnValue);
         }
     }
     return res.sendStatus(404);

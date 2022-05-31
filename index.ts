@@ -25,7 +25,9 @@ let publicData: PublicData = {};
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+const serverTiming = require('server-timing');
 
+app.use(serverTiming());
 app.use("/api", Ship.router);
 app.use("/api", Manifest.router);
 app.use("/api", Commodities.router);

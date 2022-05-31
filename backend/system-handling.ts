@@ -5,24 +5,32 @@ import { findShop, findPOI, retrievePublicData } from './data-handling';
 import { authenticateToken } from './authentication-handling';
 import guid from 'guid';
 import { PublicTradeport } from './types';
+import { cacheResult } from './lookup-handling';
 
 router.get('/system/', (req: any, res: any) => {
-
+    res.startTime('request', 'processing');
     const path = req.query.path;
+
     if (path) {
-        const system = retrievePublicData().systems.find((system: any) => system.code === path[0]);
-        if (system) {
+        const result = cacheResult(path, () => {
+            res.startTime('calculating');
+            const system = retrievePublicData().systems.find((system: any) => system.code === path[0]);
             let walker = system;
-            for (let i = 1; i < path.length; ++i) {
-                if (walker.children) {
-                    const child = walker.children.find((child: any) => child.code === path[i]);
-                    if (child) {
-                        walker = child;
+            if (system) {
+                for (let i = 1; i < path.length; ++i) {
+                    if (walker.children) {
+                        const child = walker.children.find((child: any) => child.code === path[i]);
+                        if (child) {
+                            walker = child;
+                        }
                     }
                 }
             }
-            return res.json(walker);
-        }
+            res.endTime('calculating');
+            return walker;
+        });
+        res.endTime('request');
+        return res.json(result);
     }
     return res.sendStatus(404);
 })
@@ -30,7 +38,7 @@ router.get('/system/', (req: any, res: any) => {
 router.get('/system/resolve', (req, res) => {
     if (req.query.code) {
         const code = req.query.code as string;
-        return res.json(findPOI(code));
+        return res.json(cacheResult(code, () => findPOI(code)));
     } else {
         return res.sendStatus(400);
     }
