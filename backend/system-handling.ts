@@ -16,10 +16,11 @@ router.get('/system/', (req: any, res: any) => {
             res.startTime('calculating');
             const system = retrievePublicData().systems.find((system: any) => system.code === path[0]);
             let walker = system;
-            if (system) {
+            if (walker) {
                 for (let i = 1; i < path.length; ++i) {
+                    let child;
                     if (walker.children) {
-                        const child = walker.children.find((child: any) => child.code === path[i]);
+                        child = walker.children.find((child: any) => child.code === path[i]);
                         if (child) {
                             walker = child;
                         }
@@ -37,8 +38,15 @@ router.get('/system/', (req: any, res: any) => {
 
 router.get('/system/resolve', (req, res) => {
     if (req.query.code) {
-        const code = req.query.code as string;
-        return res.json(cacheResult(code, () => findPOI(code)));
+        if (!(req.query.code as string).charAt) {
+            let bag = [...req.query.code as string[]].map(code => 
+                cacheResult(code, () => findPOI(code))
+            );
+            res.json(bag);
+        } else {
+            const code = req.query.code as string;
+            return res.json(cacheResult(code, () => findPOI(code)));
+        }
     } else {
         return res.sendStatus(400);
     }

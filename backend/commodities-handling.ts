@@ -6,7 +6,7 @@ const { findAllCommodities, findCommodity } = require('./data-handling');
 import { PublicTradeport } from './types';
 
 router.get("/ores", (req: any, res: any) => {
-    const refined = findAllCommodities( (c: CommodityEntry) => (c.kind == "Mineral" || c.kind == "Metal") && c.name.indexOf("(") === -1).map( (refined: CommodityEntry) => {
+    const refined = findAllCommodities( (c: CommodityEntry) => (c.kind == "Mineral" || c.kind == "Metal") && c.name.indexOf("(") === -1).filter((c: CommodityEntry) => !['HADA','APHO', 'DOLI'].includes(c.code)).map( (refined: CommodityEntry) => {
         return {
             code: refined.code,
             name: refined.name,
