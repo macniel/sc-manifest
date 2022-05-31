@@ -9,6 +9,7 @@
     "dev": "nodemon -r dotenv/config --ignore data/ index.ts",
     "start": "node -r dotenv/config index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start:frontend": "yarn --cwd ./frontend start",
     "build:frontend": "yarn --cwd ./frontend build",
     "dep:frontend": "yarn --cwd ./frontend install",
     "swagger-autogen": "node swagger.js"
