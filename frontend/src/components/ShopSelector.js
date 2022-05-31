@@ -16,7 +16,6 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
     type: "system"
   }]);
   const [selectedShop, setSelectedShop] = useState(null);
-  const [shopSelectorVisible, setShopSelectorVisible] = useState(false);
   const [internalPath, setInternalPath] = useState(path);
   const [outposts, setOutposts] = useState([]);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
@@ -56,6 +55,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
       }
       fetchData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultShop]);
   
   const getSymbol = (of) => {

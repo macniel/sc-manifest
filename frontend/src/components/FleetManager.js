@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import "./FleetManager.css";
-import ShipSelector from "./ShipSelector";
+// import ShipSelector from "./ShipSelector";
 
 function FleetManager({ onFleetUpdate }) {
   const [ships, setShips] = useState([]);
   const [selectedShip, setSelectedShip] = useState(null);
   const [shipName, setShipName] = useState("");
-  const [shipNewName, setShipNewName] = useState("");
-  const [shipNew, setShipNew] = useState(null);
+  // const [shipNewName, setShipNewName] = useState("");
+  // const [shipNew, setShipNew] = useState(null);
 
   const addShip = () => {
     fetch("/api/ship", {
@@ -48,21 +48,21 @@ function FleetManager({ onFleetUpdate }) {
       .then(setShips);
   }, []);
 
-  const shipChanged = (ship) => {
+  /*const shipChanged = (ship) => {
     setShipNewName(ship.name);
     setShipNew(ship);
-  }
+  }*/
 
-  const removeShip = () => {
+  /*const removeShip = () => {
     // check if ship has commodities
     // fetch delete /api/ship/:shipId
     // then onFleetUpdate
-  }
+  }*/
 
-  const renameShip = () => {
+  /*const renameShip = () => {
     // fetch patch /api/ship/:shipId payload {name: shipNewName}
     // then onFleetUpdate
-  }
+  }*/
 
   return (
     <div className="fleet-manager">
@@ -81,7 +81,7 @@ function FleetManager({ onFleetUpdate }) {
                     active: selectedShip === ship,
                   })}
                 >
-                  <img role="presentation" src={"./ships/" + ship.code.toLowerCase() + ".jpg"}/>
+                  <img alt={ship.name} src={"./ships/" + ship.code.toLowerCase() + ".jpg"}/>
                   <span>{ship.name}</span>
                 </button>
               ))}

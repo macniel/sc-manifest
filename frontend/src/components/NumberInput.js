@@ -8,6 +8,7 @@ function NumberInput({ onChange, value, min, max }) {
     if (innerValue >= max) {
       return;
     }
+    // eslint-disable-next-line eqeqeq
     if (innerValue == "0") {
       setInnerValue(symbol);
     } else {
@@ -23,6 +24,7 @@ function NumberInput({ onChange, value, min, max }) {
   useEffect(() => {
     setInnerValue(value);
     onChange?.(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   return (

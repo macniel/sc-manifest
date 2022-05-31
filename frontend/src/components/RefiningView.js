@@ -45,7 +45,6 @@ function RefiningView(props) {
     }, [totalCSCU]);
     
     const transferRefinedGoodsToShip = () => {
-        let totalSCU = 0;
         let promises = volumes.filter(v => v.volume > 0).map(order => {
             const payload = {
                 commodity: order.code,
@@ -54,7 +53,6 @@ function RefiningView(props) {
                 quantity: order.volume,
                 price: 0,
             };
-            totalSCU += order.volume / 100;
             return fetch("/api/buy", {
                 headers: { "Content-Type": "application/json" },
                 method: "post",
@@ -80,7 +78,7 @@ function RefiningView(props) {
     }
 
     const addVolume = () => {
-        let targetCommodity = volumes.find(v => v.code == selectedCommodity.code);
+        let targetCommodity = volumes.find(v => v.code === selectedCommodity.code);
         
         if (targetCommodity) {
             targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(tempVolume);
@@ -111,7 +109,7 @@ function RefiningView(props) {
          <div className="spatial-layout">
       <div className="rows">
         <fieldset className="main">
-            <legend>Refined Materials</legend>
+            <legend>Workorder</legend>
             <div>
             {volumes.sort((a, b) => b.trade_price_sell - a.trade_price_sell).map(ore => 
                 <div className={classNames("commodity-row", { "active": ore.code === selectedCommodity.code })} key={ore.code} onClick={() => setSelection(ore)}>
@@ -134,6 +132,9 @@ function RefiningView(props) {
             </div>
         </fieldset>
                 <div className="sidebar">
+                    <fieldset>
+                        <legend>Workorders</legend>
+                    </fieldset>
                     <fieldset className="shipEntry">
                         <legend>Target Cargo Ship</legend>
                         <ShipSelector demands={demands} onChange={(ship) => { setSelectedShip(ship) }}></ShipSelector>
@@ -151,10 +152,12 @@ function RefiningView(props) {
                                 <span>{selectedShip?.name}</span>
                                 <span>{selectedShip?.scu} Total SCU</span>
                                 <span>{((selectedShip?.scu ?? 0) - (selectedShip?.filled ?? 0)).toFixed(2)} SCU left</span>
-              </div> <button onClick={transferRefinedGoodsToShip} className="button--primary" disabled={!isValidTarget}>Transfer</button>
+                            </div>
+                            <button className="button--primary">Save</button>
+                            <button onClick={transferRefinedGoodsToShip} className="button--primary" disabled={!isValidTarget}>Transfer</button>
                             <span className="spacer" />
-                            <button onClick={addVolume} disabled={parseInt(tempVolume) == 0} className="button--primary">+Volume</button>
-                        <button onClick={removeVolume} disabled={parseInt(tempVolume) == 0} className="button--primary">-Volume</button>
+                            <button onClick={addVolume} disabled={parseInt(tempVolume) === 0} className="button--primary">+Volume</button>
+                        <button onClick={removeVolume} disabled={parseInt(tempVolume) === 0} className="button--primary">-Volume</button>
                         </div>
                     </fieldset>
                     </div>
