@@ -152,6 +152,7 @@ function CommodityEntry({ onCargoChange }) {
               )
               .map((commodityItem) => (
                 <button
+                  key={commodityItem.code}
                   onClick={() => updateCommodity(commodityItem)}
                   className={classNames("commodity", {
                     active: commodity.code === commodityItem.code,

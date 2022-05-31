@@ -97,10 +97,10 @@ function ShipSelector({ demands = {}, onChange, isInverse = false }) {
   return (
     <div className="list--scrollable">
       <div className="scrollcontent">
-        {ownShips.map((cShip) => (
+        {ownShips.map((cShip, index) => (
           <ShipButton
             demands={demands}
-            key={cShip.ships}
+            key={cShip.ship}
             isInverse={isInverse}
             isActive={cShip.ship === ship.ship}
             ship={cShip.ship}

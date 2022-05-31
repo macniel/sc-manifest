@@ -23,34 +23,38 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   const dialogRef = useRef();
   
   const getShopData = async (shopSymbol) => {
-    return await fetch('/api/shop/' + shopSymbol).then(res => res.json()).then(shop => {
-      let shopPath = [];
-      for (let i = 0; i < shop.length - 1; ++i) {
-        if (shop[i]) {
-          shopPath.push({
-            code: shop[i].code,
-            name: shop[i].name,
-            name_short: shop[i].name_short,
-            type: shop[i].type
-          });
+    
+      return await fetch('/api/shop/' + shopSymbol).then(res => res.json()).then(shop => {
+        let shopPath = [];
+        for (let i = 0; i < shop.length - 1; ++i) {
+          if (shop[i]) {
+            shopPath.push({
+              code: shop[i].code,
+              name: shop[i].name,
+              name_short: shop[i].name_short,
+              type: shop[i].type
+            });
+          }
         }
-      }
-      shopPath.push(shop[shop.length - 1]);
-      return shopPath;
-    })
+        shopPath.push(shop[shop.length - 1]);
+        return shopPath;
+      })
+    
   }
 
   useEffect(() => {
-    const fetchData = async() => {
-      const shopPath = await getShopData(defaultShop)
+    if (defaultShop) {
+      const fetchData = async () => {
+        const shopPath = await getShopData(defaultShop)
     
-      setPath(shopPath);
-      setSelectedShop(shopPath[shopPath.length - 1]);
-      if (onChange) {
-        onChange?.(shopPath[shopPath.length - 1]);
+        setPath(shopPath);
+        setSelectedShop(shopPath[shopPath.length - 1]);
+        if (onChange) {
+          onChange?.(shopPath[shopPath.length - 1]);
+        }
       }
+      fetchData();
     }
-    fetchData();
   }, [defaultShop]);
   
   const getSymbol = (of) => {
@@ -109,6 +113,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
     setBreadcrumbs(result);
     fetch('/api/system/?' + result.map(segment => 'path[]=' + segment.code).join('&')).then(res => res.json()).then(data => {
       if (data.children) {
+        console.time('rendering')
         setOutposts(data.children?.map((child) => {
         return {
           code: child.code,
@@ -116,7 +121,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
           name_short: child.name_short,
           tradeport: child.trade === "1"
         }
-      }))
+        }))
+        console.timeEnd('rendering');
       } else {
         setOutposts([])
       }
@@ -160,13 +166,13 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
         <fieldset>
           <legend>Select your Tradepost</legend>
           <ul className="breadcrumb">
-            {breadcrumbs.map((breadcrumb, index) => <li onClick={() => updateShopSelector(index)}><span>{ breadcrumb.name }</span></li>)}
+            {breadcrumbs.map((breadcrumb, index) => <li key={breadcrumb.name} onClick={() => updateShopSelector(index)}><span>{ breadcrumb.name }</span></li>)}
           </ul>
 
           <ul className="childrenSelection">
             {path.length > 1 && <li onClick={() => updateShopSelector(path.length - 2)}>..</li>}
-            { outposts.map(outpost => 
-              <li className={cx({ active: outpost.code === selection })} onClick={() => { console.log(outpost); if (outpost.tradeport) { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
+            { outposts.map( (outpost, index) => 
+              <li key={index + outpost.code} className={cx({ active: outpost.code === selection })} onClick={() => { console.log(outpost); if (outpost.tradeport) { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
             )}
           </ul>
         
@@ -180,7 +186,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
       </dialog >
     <div className="shopSelector">
       {path?.map((pathSegment, index) => (
-        <button onClick={() => showShopSelector(index)} className={cx("shopSelector__shopSelectorButton shopSelectorButton", pathSegment?.type?.toLowerCase(), {"active": selectedShop?.code === pathSegment.code})}>
+        <button key={ pathSegment.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shopSelectorButton shopSelectorButton", pathSegment?.type?.toLowerCase(), {"active": selectedShop?.code === pathSegment.code})}>
           { getSymbol(pathSegment?.type)}<span>{pathSegment?.name_short||pathSegment?.name}</span></button>
       ))}
       <button className="shopSelector__shopSelectorButton shopSelectorButton" style={{"float": "right"}} onClick={resetShop}>
