@@ -103,7 +103,13 @@ function FleetManager({ onFleetUpdate }) {
         </div>
       </fieldset>
       </div>
-      <div className="ship-manager">
+      
+    </div>
+  );
+}
+
+/*
+<div className="ship-manager">
         <fieldset className="own-ships">
           <legend>Your current ships</legend>
            <div className="list--scrollable">
@@ -124,8 +130,5 @@ function FleetManager({ onFleetUpdate }) {
         </fieldset>
         
       </div>
-    </div>
-  );
-}
-
+*/
 export default FleetManager;
