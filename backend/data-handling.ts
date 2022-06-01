@@ -1,4 +1,4 @@
-import { ManifestData, PublicSystem, ShipData } from "./types";
+import { ManifestData, PublicSystem, PublicTradeport, ShipData, TypedElement } from "./types";
 import { join } from "path";
 import { readFileSync, writeFileSync, existsSync, exists } from "fs";
 
@@ -135,26 +135,60 @@ export const findShop = (by: Function) => {
     return retrievePublicData().tradeports.find(by);
 }
 
-function walker (byCode: string, currentElement: PublicSystem): PublicSystem|undefined {
-    if (currentElement.code === byCode) {
-        return currentElement;
-    } else {
-        if (currentElement.children) {
-            for (let i = 0; i < currentElement.children.length; ++i) {
-                let poi = walker(byCode, currentElement.children[i]);
-                if (poi) {
-                    return poi;
-                }
+function walker (byCode: string, currentElement: PublicSystem[]): PublicSystem|undefined {
+    const element = currentElement.find((element) => element.code === byCode);
+    if (element) { // expanding data
+        let expandedElement = { ...element };
+        expandedElement.children = expandedElement.children?.map((code) => {
+            const systemElement = retrievePublicData().systems.find((element: TypedElement) => element.code === byCode);
+            const tradeportElement = retrievePublicData().tradeports.find((element: TypedElement) => element.code === byCode);
+            if (systemElement) {
+                return systemElement
+            } else {
+                return tradeportElement
             }
-        } else {
-            return;
-        }
+        }) as any;
     }
+    return element;
+}
+
+export const findPOIByPath = (byPath: string[]): any => {
+    if (byPath) {
+        const element = retrievePublicData().systems.find((s: PublicSystem) => {
+           if (s.path) {
+          const target = JSON.stringify([...s.path, s.code]);
+          const stringifiedPath = JSON.stringify(byPath);
+          return stringifiedPath === target
+        } else {
+          return false
+        }
+        })
+        if (element) { // expanding data
+        let expandedElement = { ...element };
+        expandedElement.children = expandedElement.children?.map((code: string) => {
+            const systemElement = retrievePublicData().systems.find((element: TypedElement) => element.code === code);
+            const tradeportElement = retrievePublicData().tradeports.find((element: TypedElement) => element.code === code);
+            if (systemElement) {
+                return systemElement
+            } else {
+                return tradeportElement
+            }
+        }) as any;
+            return expandedElement;
+        }
+        
+    }
+    return;
 }
 
 export const findPOI = (byCode?: string): PublicSystem | any => {
     if (byCode) {
-        return walker(byCode, retrievePublicData().systems[0]);
+        const system = walker(byCode, retrievePublicData().systems);
+        if (system) {
+            return system;
+        } else {
+            return retrievePublicData().tradeports.find( (t: PublicTradeport) => t.code === byCode);
+        }
     } else {
         return {};
     }

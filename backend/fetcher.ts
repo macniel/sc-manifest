@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
-import { PublicData, ShipData, ShipResponse } from "./types";
-const { join } = require("path");
-const { readFileSync, writeFileSync, existsSync, exists } = require("fs");
+import { PublicData, PublicTradeport, ShipData, ShipResponse } from "./types";
+import { join } from"path";
+import { readFileSync } from "fs";
 
 const fetchShips = async function () {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
@@ -53,40 +53,32 @@ const fetchTradeports = async function (systems?: any) {
     }).then((response) => response.json());
 
     publicData.tradeports = tradeports.data;
-
-    const fn = (tradeport: any) => {
-      // tradeport system, planet, satellite, city
-      const starsystem = publicData.systems?.find(
-        (c) => c.code == tradeport.system && c.trade != "1"
-      );
-      if (starsystem) {
-        const planet = starsystem.children?.find(
-          (c) => c.code == tradeport.planet && c.trade != "1"
-        );
-        if (planet) {
-          const moon = planet.children?.find(
-            (c) => c.code == tradeport.satellite && c.trade != "1"
-          );
-          const city = planet.children?.find(
-            (c) => c.code == tradeport.city && c.trade != "1"
-          );
-
-          if (moon) {
-            // is on a moon
-            if (!moon.children) moon.children = [];
-            moon.children.push(tradeport);
-          } else if (city) {
-            // must be in a city
-            if (!city.children) city.children = [];
-            city.children.push(tradeport);
-          } else {
-            // must be planetside
-            planet.children?.push(tradeport);
-          }
+    tradeports.data.forEach( (tradeport:PublicTradeport) => {
+      const path: string[] = [];
+      if (tradeport.system) path.push(tradeport.system);  
+      if (tradeport.planet) path.push(tradeport.planet);
+      if (tradeport.satellite) path.push(tradeport.satellite)
+      else if (tradeport.city) path.push(tradeport.city)
+      
+      const location = publicData.systems?.find((s) => {
+        if (s.path) {
+          const target = JSON.stringify([...s.path, s.code]);
+          const stringifiedPath = JSON.stringify(path);
+          return stringifiedPath === target
+        } else {
+          return false
         }
+      });
+      if (location) {
+        if (!location.children) {
+          location.children = [];
+        }
+        console.log('adding ' + tradeport.code + ' to ' + location.code);
+        location.children.push(tradeport.code)
       }
-    };
-    publicData.tradeports?.forEach((tradeport) => fn(tradeport));
+      tradeport.path = path;
+      publicData.tradeports?.push(tradeport);
+    })
     return publicData;
   }
 }

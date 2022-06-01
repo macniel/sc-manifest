@@ -32,7 +32,7 @@ export type PublicData = {
 }
 
 export interface PublicSystem extends TypedElement {
-    children?: PublicSystem[] & PublicTradeport[];
+    children?: PublicSystem[] & PublicTradeport[] & String[];
     trade: "0" | "1";
 }
 
@@ -105,4 +105,5 @@ export type TypedElement = {
     code: string;
     kind?: string;
     name: string;
+    path?: string[];
 }

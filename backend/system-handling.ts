@@ -1,37 +1,23 @@
 import express, { Request, Response } from 'express';
 
 export const router = express.Router();
-import { findShop, findPOI, retrievePublicData } from './data-handling';
+import { findShop, findPOI, retrievePublicData, findPOIByPath } from './data-handling';
 import { authenticateToken } from './authentication-handling';
 import guid from 'guid';
 import { PublicTradeport } from './types';
 import { cacheResult } from './lookup-handling';
 
 router.get('/system/', (req: any, res: any) => {
-    res.startTime('request', 'processing');
+    
     const path = req.query.path;
 
     if (path) {
-        const result = cacheResult(path, () => {
-            res.startTime('calculating');
-            const system = retrievePublicData().systems.find((system: any) => system.code === path[0]);
-            let walker = system;
-            if (walker) {
-                for (let i = 1; i < path.length; ++i) {
-                    let child;
-                    if (walker.children) {
-                        child = walker.children.find((child: any) => child.code === path[i]);
-                        if (child) {
-                            walker = child;
-                        }
-                    }
-                }
-            }
-            res.endTime('calculating');
-            return walker;
-        });
-        res.endTime('request');
-        return res.json(result);
+        
+        const result = findPOIByPath(path);
+        if (result) {
+            return res.json(result);
+        } else
+            return res.sendStatus(404);
     }
     return res.sendStatus(404);
 })
