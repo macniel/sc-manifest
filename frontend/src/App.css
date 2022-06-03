@@ -82,6 +82,7 @@ fieldset > legend {
   background-color: var(--panel-titlebar-color);
   color: var(--panel-titlebar-text);
   width: 100%;
+  text-indent: 4px;
 }
 .tab-bar {
   position: absolute;
@@ -378,4 +379,69 @@ ul.childrenSelection {
 }
 .danger::after {
   content: '!';
+}
+
+.namedPill {
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--application-color);
+  padding-left: 4px;
+  display: block;
+  position: relative;
+  margin-bottom: 1px;
+}
+
+.namedPill, .namedPill * {
+  cursor: pointer;
+}
+.namedPill::after {
+  background-color: var(--primary-button-border);
+  color: var(--application-color);
+  content: attr(title);
+  margin-left: 4px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.workorder {
+  border: 1px solid var(--push-button-color);
+  background-color: var(--primary-button-color);
+  box-shadow: var(--panel-shadow);
+  margin: 4px 0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.workorder+.workorder {
+  margin-top: 8px;
+}
+
+.workorder.active {
+  border: 1px solid var(--primary-button-border);
+  background-color: var(--panel-selected-color);
+}
+
+.workorder.active .workorder__title {
+  color: var(--primary-button-border);
+}
+
+.workorder__title {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.workorder-list {
+  list-style-type: none;
+  text-indent: 0;
+  padding: 0 8px;
+}
+
+.pills {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  row-gap: 2px;
+  column-gap: 4px;
 }
