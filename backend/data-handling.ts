@@ -1,4 +1,4 @@
-import { ManifestData, PublicSystem, PublicTradeport, ShipData, TypedElement } from "./types";
+import { ManifestData, PublicSystem, PublicTradeport, ShipData, TypedElement, WorkorderData } from "./types";
 import { join } from "path";
 import { readFileSync, writeFileSync, existsSync, exists } from "fs";
 
@@ -10,6 +10,7 @@ export const retrieveUserData = () => {
         return {
             ships: [],
             manifests: [],
+            workorders: [],
         };
     } else {
         return ud;
@@ -68,7 +69,6 @@ export const insertShip = (newShip:ShipData) => {
     );
 }
 
-
 export const updateShip = (shipId: string, newShip:ShipData|null) => {
     let userData = retrieveUserData();
     let index = userData.ships.findIndex( (predicate:ShipData) => predicate.ship === shipId);
@@ -104,6 +104,56 @@ export const updateManifest = (manifestId:string, newManifest:ManifestData) => {
     );
     return true;
 }
+
+export const updateWorkorder = (workorderId:string, newWorkorder:WorkorderData) => {
+    let userData = retrieveUserData();
+    if (!userData.workorders) {
+        userData.workorders = [];
+    }
+    let index = userData.workorders.findIndex( (predicate:WorkorderData) => predicate.workorder === workorderId);
+    if (index >= 0) {
+        userData.workorders.splice(index, 1); // remove previous entry as it is no longer valid
+    }
+    userData.workorders.push(newWorkorder); // push updated or new entry into array
+    
+    writeFileSync(
+        join("data", "userdata.json"),
+        JSON.stringify(userData),
+        "utf-8"
+    );
+    return true;
+}
+
+export const findAllWorkorder= (by?:Function) => {
+    if (by) {
+        return retrieveUserData().workorders.filter(by);
+    } else {
+        return retrieveUserData().manifests;
+    }
+}
+
+
+export const deleteWorkorder = (workorderId: string) => {
+    const userData = retrieveUserData();
+    const indexOfWorkorder = userData.workorders.findIndex((wo:any) => wo.workorder === workorderId)
+    if (indexOfWorkorder >= 0) {
+        userData.workorders.splice(indexOfWorkorder, 1); // push updated or new entry into array
+    
+        writeFileSync(
+            join("data", "userdata.json"),
+            JSON.stringify(userData),
+            "utf-8"
+        );
+        return true;
+    } 
+    return false;
+}
+
+export const findWorkorder = (by:Function) => {
+    const userData = retrieveUserData();
+    return userData.workorders.find(by);
+}
+
 
 export const findManifest = (by:Function) => {
     const userData = retrieveUserData();

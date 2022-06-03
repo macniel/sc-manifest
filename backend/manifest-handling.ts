@@ -45,10 +45,10 @@ router.post("/archive", authenticateToken, (req:any, res:any) => {
             manifest.associatedShip = ship.ship;
             updateShip(ship.ship, ship);
             updateManifest(manifest.manifest, manifest);
-            res.send(JSON.stringify(manifest));
+            return res.send(JSON.stringify(manifest));
         }
     }
-    res.sendStatus(404);
+    return res.sendStatus(404);
 });
 
 router.post("/sell", authenticateToken, (req: any, res: any) => {
@@ -83,7 +83,7 @@ router.post("/sell", authenticateToken, (req: any, res: any) => {
     });
 
     manifest.profit =
-        parseFloat(manifest.profit) +
+        manifest.profit +
         parseInt(envelope.quantity) * parseFloat(envelope.price);
     
     updateManifest(manifest.manifest, manifest);

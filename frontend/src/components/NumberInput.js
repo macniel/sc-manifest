@@ -9,12 +9,13 @@ function NumberInput({ onChange, value, min, max }) {
       return;
     }
     // eslint-disable-next-line eqeqeq
-    if (innerValue == "0") {
+    if (innerValue == "0" || innerValue == 0 || innerValue == "" || innerValue.startsWith("0")) {
       setInnerValue(symbol);
+      onChange?.(symbol);
     } else {
       setInnerValue(innerValue + symbol);
+      onChange?.(innerValue + symbol);
     }
-    onChange?.(innerValue + symbol);
   };
 
   const clear = () => {
@@ -22,6 +23,7 @@ function NumberInput({ onChange, value, min, max }) {
   };
 
   useEffect(() => {
+    console.log(value);
     setInnerValue(value);
     onChange?.(value);
   // eslint-disable-next-line react-hooks/exhaustive-deps

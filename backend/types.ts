@@ -36,6 +36,16 @@ export interface PublicSystem extends TypedElement {
     trade: "0" | "1";
 }
 
+export interface WorkorderData {
+    workorder: string;
+    setupCost?: number;
+    owner: string;
+    ores: {
+        code: string;
+        volume: number
+    }[]
+}
+
 export interface PublicTradeport extends TypedElement {
     system?: string;
     planet?: string;
@@ -73,6 +83,7 @@ export type ManifestData = {
         name: string;
         code: string;
         kind: string;
+        total: number;
     }[]
     isArchived: boolean;
     associatedShip: string;
@@ -83,7 +94,7 @@ export type ManifestData = {
         commodity: string;
         when: Timestamp;
     }[]
-    profit: any;
+    profit: number;
     owner: string;
 }
 

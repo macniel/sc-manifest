@@ -17,6 +17,7 @@ import * as Commodities from './backend/commodities-handling';
 import * as Authentication from './backend/authentication-handling';
 import * as Shop from './backend/shop-handling';
 import * as System from './backend/system-handling';
+import * as Workorder from './backend/workorder-handling';
 
 const app: Application = express();
 const PORT = process.env.PORT;
@@ -34,6 +35,7 @@ app.use("/api", Commodities.router);
 app.use("/api", Authentication.router);
 app.use("/api", Shop.router);
 app.use("/api", System.router);
+app.use("/api", Workorder.router);
 
 app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
