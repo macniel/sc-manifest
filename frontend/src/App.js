@@ -1,6 +1,6 @@
 import "./App.css";
 import WelcomeScreen from "./components/WelcomeScreen";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import FleetManager from "./components/FleetManager";
 import CommodityEntry from "./components/CommodityEntry";
 import ManifestView from "./components/ManifestView";
@@ -55,23 +55,6 @@ function App() {
     },
     { position: 4, name: "log", component: <LogsView /> },
   ]);
-
-  useEffect(() => {
-    function checkManifest() {
-      const item = localStorage.getItem("manifests");
-
-      if (item) {
-        console.log(item);
-        // get head from server
-      }
-    }
-
-    window.addEventListener("storage", checkManifest);
-
-    return () => {
-      window.removeEventListener("storage", checkManifest);
-    };
-  }, []);
 
   return (
     <main>

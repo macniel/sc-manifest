@@ -105,7 +105,6 @@ function ShipSelector({ demands = {}, onChange, isInverse = false }) {
             isActive={cShip.ship === ship.ship}
             ship={cShip.ship}
             onClick={(newShip) => {
-              console.log(newShip);
               setShip(newShip);
               onChange?.(newShip);
             }}

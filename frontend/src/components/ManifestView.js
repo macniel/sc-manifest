@@ -13,7 +13,6 @@ function CargoChart({ cargo, onClick, isActive, isSellable }) {
         
       })}
       onClick={() => {
-          console.log(cargo);
           onClick?.(cargo);
       }}
     >
@@ -38,13 +37,17 @@ function ManifestView() {
   const [price, setPrice] = useState(0);
   const [estimatedProfit, setEstimatedProfit] = useState(0);
 
-  useEffect(() => {
-    console.log("changed Selected Cargo to", cargo[selectedCargo]);
-    if (cargo[selectedCargo]) {
-      console.log(cargo[selectedCargo].amount);
+  const updateSelectedCargo = (selectedCargoIndex) => {
+    if (selectedCargo === selectedCargoIndex) {
+      setSelectedCargo(-1)
+      setQuantity(0)
+      setPrice(0)
+    } else {
+      setSelectedCargo(selectedCargoIndex);
+      setQuantity(cargo[selectedCargoIndex].amount);
+      setPrice(sellDestination?.prices?.[cargo[selectedCargoIndex].code]?.price_sell || 0);
     }
-    setPrice(0);
-  }, [selectedCargo, cargo]);
+  }
 
   const [ship, setShip] = useState({});
 
@@ -135,10 +138,12 @@ function ManifestView() {
       code: key
     }
     })
-    console.log(commodities);
     setSellableCommodities(commodities);
     
     setSellDestination(shop)
+    if (selectedCargo) {
+      setPrice(shop.prices[cargo[selectedCargo].code].price_sell)
+    }
   }
 
   return (
@@ -153,9 +158,7 @@ function ManifestView() {
               cargo={c}
               key={c.name}
               onClick={() => {
-                setSelectedCargo(index);
-                setQuantity(cargo[index].amount);
-                setPrice(0);
+                updateSelectedCargo(index);
               }}
             />
           ))}
@@ -224,7 +227,7 @@ function ManifestView() {
                 disabled={selectedCargo == null || sellQuantity <= 0}
                 onClick={sell}
               >
-                Execute
+                Sell
               </button>
             </div>
           </fieldset>

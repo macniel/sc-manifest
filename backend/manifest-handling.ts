@@ -5,9 +5,9 @@ import { findManifest, findShip, findCommodity, updateManifest, updateShip, find
 import { CommodityEntry, ManifestData, ShipData } from './types';
 
 router.get("/logs", authenticateToken, (req: any, res: any) => {
-    let m = findAllManifests((manifest: ManifestData) => req.user.userid === manifest.owner && manifest.isArchived); 
-    console.log(m);
+    let m: ManifestData[] = findAllManifests((manifest: ManifestData) => req.user.userid === manifest.owner && manifest.isArchived); 
     if (m) {
+        m.forEach( (m:ManifestData) => m.associatedShip = findShip( (ship: ShipData) => ship.ship === m.associatedShip))
         res.send(JSON.stringify(m));
         return;
     }

@@ -24,7 +24,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   
   const getShopData = async (shopSymbol) => {
     
-      return await fetch('/api/shop/' + shopSymbol).then(res => res.json()).then(shop => {
+    return await fetch('/api/shop/' + shopSymbol).then(res => res.json()).then(shop => {
         let shopPath = [];
         for (let i = 0; i < shop.length - 1; ++i) {
           if (shop[i]) {
@@ -36,7 +36,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
             });
           }
         }
-        shopPath.push(shop[shop.length - 1]);
+      shopPath.push(shop[shop.length - 1]);
         return shopPath;
       })
     
@@ -146,7 +146,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
 
   const renderOutposts = () => {
     const rValue = outposts.map((outpost, index) =>
-      <li key={index + outpost.code} className={cx({ active: outpost.code === selection })} onClick={() => { if (outpost.trade === "1") { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
+      <li key={index + outpost.code} className={cx('entry', { active: outpost.code === selection, 'leaf': outpost.trade === "0" || outpost.trade === "1" })} onClick={() => { if (outpost.trade === "0" || outpost.trade === "1") { setSelection(outpost.code) } else { updatePath(outpost); } }}>{outpost.name}</li>
     );
     return rValue;
   }
@@ -168,7 +168,6 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
           </ul>
 
           <ul className="childrenSelection">
-            {path.length > 1 && <li onClick={() => updateShopSelector(path.length - 2)}>..</li>}
             { renderOutposts() }
           </ul>
         

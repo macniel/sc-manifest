@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import classNames, { cx } from 'classnames';
+import React, { useState } from "react";
+import classNames from 'classnames';
 import "./NumberInput.css";
 import { ReactComponent as OreIcon } from "../assets/metal.svg";
 import { ReactComponent as GasIcon } from "../assets/foam.svg";

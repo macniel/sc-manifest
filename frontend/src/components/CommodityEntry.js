@@ -143,8 +143,8 @@ function CommodityEntry({ onCargoChange }) {
           </div>
                     <fieldset>
             <legend>Actions</legend>
-            <div className="inner">
-              <div className="status">
+            <div className="inner-layout">
+              <div className="info">
                 <span>
                   Ship: {ship.shipsName} ({ship.name})
                 </span>

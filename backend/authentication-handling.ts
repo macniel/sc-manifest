@@ -40,7 +40,6 @@ router.post("/login", (req: any, res: any) => {
 })
 
 router.post("/register", (req: any, res: any) => {
-    console.log(req.body);
     if (!req.body.username) return res.sendStatus(400);
     if (!req.body.password) return res.sendStatus(400);
     const uuid = guid.raw();

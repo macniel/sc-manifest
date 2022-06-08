@@ -3,7 +3,6 @@ import ShipSelector from './ShipSelector';
 import './RefiningView.css';
 import NumberInput from './NumberInput';
 import classNames from 'classnames';
-import WorkOrder from './WorkOrder';
 import WorkorderSelector from './WorkorderSelector';
 
 function RefiningView(props) {
@@ -13,7 +12,6 @@ function RefiningView(props) {
     const [workorders, setWorkorders] = useState([]);
     const [totalCSCU, setTotalCSCU] = useState(0);
     const [totalSum, setTotalSum] = useState(0);
-    const [isValidTarget, setIsValidTarget] = useState(false);
     const [workorderCost, setWorkorderCost] = useState(0);
     const [tempWorkorderCost, setTempWorkorderCost] = useState(0);
     const [selectedCommodity, setSelectedCommodity] = useState({});
@@ -41,9 +39,6 @@ function RefiningView(props) {
     useEffect(() => {
         setTotalCSCU(volumes.reduce((previous, current) => previous + parseInt(current.volume || 0), 0));
         setTotalSum(volumes.reduce((previous, current) => previous + parseInt(current.volume || 0) * parseFloat(current.trade_price_sell), 0));
-        if (selectedShip) {
-            setIsValidTarget(volumes.reduce((previous, current) => previous + parseInt(current.volume || 0), 0) <= (selectedShip.scu - selectedShip.filled) * 100)
-        }
     }, [volumes, selectedShip]);
 
     useEffect(() => {
@@ -87,7 +82,6 @@ function RefiningView(props) {
     };
     
     const setSelection = (commodity, evt) => {
-        console.log(commodity);
         if (selectedCommodity === commodity) {
             setSelectedCommodity({});
             setTempVolume(0);
@@ -103,7 +97,6 @@ function RefiningView(props) {
         
         if (targetCommodity) {
             targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(tempVolume);
-            console.log(targetCommodity)
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
 
@@ -117,7 +110,6 @@ function RefiningView(props) {
         
         if (targetCommodity) {
             targetCommodity.volume = parseInt(targetCommodity.volume) - parseInt(tempVolume);
-            console.log(targetCommodity)
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
 
@@ -140,7 +132,6 @@ function RefiningView(props) {
             method: 'post',
             body: JSON.stringify({ setupCost: workorderCost, ores: order })
         }).then(res => res.json()).then(res => {
-            console.log(res)
             setWorkorders([...workorders, res.workorder]);
             setWorkorderCost(0);
             resetVolumes();
@@ -175,7 +166,6 @@ function RefiningView(props) {
             },
             method: 'delete',
         }).then(res => res.json()).then(res => {
-            console.log(res)
             setWorkorders([...workorders, res.workorder]);
             setWorkorder({});
             resetVolumes();

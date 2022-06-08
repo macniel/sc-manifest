@@ -37,7 +37,7 @@ function LogsView() {
                         "%",
                     }}
                   >
-                    {commodity.code}
+                    {commodity.name}
                   </div>
                 ))}
               </div>
