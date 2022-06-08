@@ -48,9 +48,9 @@ router.post("/register", (req: any, res: any) => {
     const userObject = users.find( (u:UserData) => u.username === req.body.username);
     if (userObject) return res.sendStatus(403);
     users.push({
-        username: req.body.username,
+        username: req.body.username.trim(),
         userid: uuid,
-        hashedPassword: bcrypt.hashSync(req.body.password, 10)
+        hashedPassword: bcrypt.hashSync(req.body.password.trim(), 10)
     });
     writeFileSync(join("data", "users.json"), JSON.stringify(users), "utf-8");
 
