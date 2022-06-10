@@ -4,7 +4,7 @@ export const router = express.Router();
 import { findShop, findPOI, retrievePublicData, findPOIByPath, updateWorkorder, findAllWorkorder, findWorkorder, findShip, findManifest, updateShip, findCommodity, updateManifest, deleteWorkorder } from './data-handling';
 import { authenticateToken } from './authentication-handling';
 import guid from 'guid';
-import { CommodityEntry, ManifestData, PublicTradeport, ShipData, UserData, WorkorderData } from './types';
+import { CommodityEntry, ManifestData, PublicTradeport, ShipData, TransferBody, TypedRequestBody, UserData, WorkorderData } from './types';
 import { cacheResult } from './lookup-handling';
 
 
@@ -12,9 +12,9 @@ import { cacheResult } from './lookup-handling';
  * Move Workorder to Manifest
  * this will delete the Workorder
  */
-router.post('/buy/from-workorder/:workorderId', authenticateToken, (req, res) => {
+router.post('/buy/from-workorder/:workorderId', authenticateToken, (req: TypedRequestBody<TransferBody, {workorderId: string}>, res) => {
 
-    if (((req as any).user as UserData).userid) {
+    if (req.user?.userid) {
         
         // find order
         const workorder = req.params.workorderId;
@@ -22,7 +22,7 @@ router.post('/buy/from-workorder/:workorderId', authenticateToken, (req, res) =>
 
         // find manifest
 
-        const shipId = (req as any).body.to;
+        const shipId = req.body.to;
         const foundShip: ShipData = findShip((ship: ShipData) => ship.ship === shipId);
 
         // transfer ores from workorder to manifest
@@ -36,15 +36,17 @@ router.post('/buy/from-workorder/:workorderId', authenticateToken, (req, res) =>
                 actualManifest = {
                     manifest: guid.raw(),
                     commodities: [],
-                    owner: (req as any).user.userid,
+                    owner: req.user?.userid,
                     profit: 0,
                     isArchived: false,
                     history: [],
+                    transactions: [],
                     associatedShip: ''
                 };
                 foundShip.associatedManifest = actualManifest.manifest;
                 updateShip(foundShip.ship as string, foundShip);
             }
+            
 
             actualManifest.profit -= costOfWorkorder || 0;
 
@@ -95,8 +97,8 @@ router.post('/buy/from-workorder/:workorderId', authenticateToken, (req, res) =>
 
 })
 
-router.delete('/workorder/:workorderId', authenticateToken, (req, res) => {
-    if (((req as any).user as UserData).userid) {
+router.delete('/workorder/:workorderId', authenticateToken, (req: TypedRequestBody<any, {workorderId: string}>, res) => {
+    if (req.user?.userid) {
         
         // find order
         const workorder = req.params.workorderId;
@@ -116,10 +118,10 @@ router.delete('/workorder/:workorderId', authenticateToken, (req, res) => {
     return res.sendStatus(400);
 });
 
-router.get('/workorder', authenticateToken, (req, res) => {
+router.get('/workorder', authenticateToken, (req: TypedRequestBody<any, any>, res) => {
         
-    if ((req as any).user.userid) {
-        const userId = (req as any).user.userid;
+    if (req.user?.userid) {
+        const userId = req.user.userid;
         const all = findAllWorkorder((wo: WorkorderData) => wo.owner === userId);
         if (all) {
             return res.json(all);
