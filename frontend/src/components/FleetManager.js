@@ -1,14 +1,15 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import "./FleetManager.css";
-// import ShipSelector from "./ShipSelector";
+import ShipSelector from "./ShipSelector";
 
 function FleetManager({ onFleetUpdate }) {
   const [ships, setShips] = useState([]);
   const [selectedShip, setSelectedShip] = useState(null);
   const [shipName, setShipName] = useState("");
-  // const [shipNewName, setShipNewName] = useState("");
-  // const [shipNew, setShipNew] = useState(null);
+  const [shipNewName, setShipNewName] = useState("");
+  const [shipNew, setShipNew] = useState(null);
+  const [token, setToken] = useState('');
 
   const addShip = () => {
     fetch("/api/ship", {
@@ -24,14 +25,7 @@ function FleetManager({ onFleetUpdate }) {
       .then((response) => response.json())
       .then((newShip) => {
         onFleetUpdate?.();
-        let shipList = localStorage.getItem("ships");
-
-        if (!shipList) {
-          shipList = "[]";
-        }
-        const l = JSON.parse(shipList);
-        l.push(newShip.ship);
-        localStorage.setItem("ships", JSON.stringify(l));
+        setToken(Date.now());
         setSelectedShip(null);
         setShipName("");
       });
@@ -40,6 +34,7 @@ function FleetManager({ onFleetUpdate }) {
   const selectShip = (ship) => {
     setSelectedShip(ship);
     setShipName(ship.name);
+    setShipNew({});
   };
 
   useEffect(() => {
@@ -48,26 +43,45 @@ function FleetManager({ onFleetUpdate }) {
       .then(setShips);
   }, []);
 
-  /*const shipChanged = (ship) => {
-    setShipNewName(ship.name);
+  const shipChanged = (ship) => {
+    setShipNewName(ship.shipsName || ship.name);
     setShipNew(ship);
-  }*/
+    setSelectedShip({});
+  }
+  const removeShip = () => {
+    if (shipNew.ship) {
+      
+        fetch('/api/ship/' + shipNew.ship, {
+          headers: { 'Content-Type': 'application/json' },
+          method: 'DELETE'
+        }).then(res => {
+          setToken(Date.now());
+          setShipNew({});
+          setShipNewName('');
+        })
+      }
+  }
 
-  /*const removeShip = () => {
-    // check if ship has commodities
-    // fetch delete /api/ship/:shipId
-    // then onFleetUpdate
-  }*/
-
-  /*const renameShip = () => {
-    // fetch patch /api/ship/:shipId payload {name: shipNewName}
-    // then onFleetUpdate
-  }*/
+  const renameShip = () => {
+    if (shipNew.ship && shipNewName.trim() !== '') {
+      fetch('/api/ship/' + shipNew.ship, {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: shipNewName
+        }),
+        method: 'PATCH'
+      }).then(res => res.json()).then(res => {
+        setToken(Date.now());
+        setShipNew({});
+        setShipNewName('');
+      })
+    }
+  }
 
   return (
-    <div className="fleet-manager">
-    <div className="fleet-selector">
-      <fieldset>
+    <div className="spatial-layout">
+    <div className="rows">
+      <fieldset className="main">
         <legend>Add new Ship to your Shipping Fleet</legend>
         <div className="list--scrollable">
           <div className="scrollcontent">
@@ -89,46 +103,35 @@ function FleetManager({ onFleetUpdate }) {
           </div>
         </div>
       </fieldset>
-      <fieldset className="ship-namer">
-        <legend>Name your Ship</legend>
-        <div className="inner">
-          <input
-            aria-label="ship name"
-            value={shipName}
-            onChange={(event) => setShipName(event.target.value)}
-          />
-          <button className="button--primary" onClick={() => addShip()}>
-            Add
-          </button>
-        </div>
-      </fieldset>
+        <div className="sidebar">
+          <fieldset className="shipEntry">
+          <legend>Your current ships</legend>
+           
+                <ShipSelector refreshToken={token} selected={shipNew} onChange={shipChanged}></ShipSelector>
+           
+          </fieldset>
+          <fieldset>
+          <legend>Actions</legend>
+          <div className="inner">
+            {shipNew?.name ? 
+              <>
+                <input value={shipNewName} onChange={({ target }) => setShipNewName(target.value)} />
+              <button className="button--primary" onClick={renameShip}>Rename</button>
+                <button disabled={shipNew.filled !== 0} title={shipNew.filled === 0 ? '' : 'Ship has remaining Cargo'} className="button--harmful" onClick={removeShip}>Remove</button>
+              </>
+              :
+              <>
+                  <input value={shipName} onChange={({ target }) => setShipName(target.value)} />
+          <button className="button--primary" onClick={addShip}>Add Ship</button></>
+          }
+            </div>
+        </fieldset>
       </div>
-      
-    </div>
+        
+      </div>
+      </div>
   );
 }
 
-/*
-<div className="ship-manager">
-        <fieldset className="own-ships">
-          <legend>Your current ships</legend>
-           <div className="list--scrollable">
-          <div className="scrollcontent">
-            <div role="list" className="ship-list"></div><ShipSelector onChange={shipChanged}>
 
-              </ShipSelector>
-            </div>
-            </div>
-        </fieldset>
-        <fieldset>
-          <legend>Manage your ship</legend>
-          <div className="inner">
-          <input value={shipNewName} onChange={({value}) => setShipNewName(value)} />
-          <button className="button--primary" onClick={renameShip}>Rename</button>
-            <button className="button--harmful" onClick={removeShip}>Remove</button>
-            </div>
-        </fieldset>
-        
-      </div>
-*/
 export default FleetManager;

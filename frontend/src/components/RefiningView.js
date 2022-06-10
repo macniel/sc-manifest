@@ -230,7 +230,7 @@ function RefiningView(props) {
                     {workorder?.workorder ?
                     <fieldset className="shipEntry">
                         <legend>Target Cargo Ship</legend>
-                        <ShipSelector demands={demands} onChange={(ship) => { setSelectedShip(ship) }}></ShipSelector>
+                        <ShipSelector selected={selectedShip} demands={demands} onChange={(ship) => { setSelectedShip(ship) }}></ShipSelector>
                     </fieldset> : <></>
                     }
                     { workorder?.workorder ? <></> : <div className="lower-row">

@@ -63,6 +63,7 @@ router.post("/archive", authenticateToken, (req:any, res:any) => {
             return ship.associatedManifest === manifest.manifest;
         })) {
             ship.associatedManifest = null;
+            manifest.shipNameCopy = ship.shipsName || ship.name
             manifest.isArchived = true;
             manifest.associatedShip = ship.ship;
             updateShip(ship.ship, ship);

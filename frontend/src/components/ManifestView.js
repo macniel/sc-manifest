@@ -166,7 +166,7 @@ function ManifestView() {
         <div className="sidebar">
           <fieldset className="shipEntry">
             <legend>From ship</legend>
-            <ShipSelector onChange={setShip} isInverse={true} />
+            <ShipSelector selected={ship} onChange={setShip} isInverse={true} />
           </fieldset>
 
           <fieldset>

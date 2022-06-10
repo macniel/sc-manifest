@@ -88,6 +88,7 @@ export type ManifestData = {
     }[]
     isArchived: boolean;
     associatedShip: string;
+    shipNameCopy?: string;
     transactions?: {
         code: string;
         source: string;

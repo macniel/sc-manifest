@@ -17,6 +17,18 @@
   background-size: cover;
 }
 
+.ship.active::after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--selection-color);
+  opacity: 0.5;
+  left: 0;
+}
+
 .ship:before {
   position: absolute;
   opacity: 0;

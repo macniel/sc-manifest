@@ -38,7 +38,9 @@ router.delete("/ship/:shipId", authenticateToken,
         let found;
         if (found = findShip((ship:ShipData) => ship.ship === req.params.shipId)) {
             updateShip(found.ship, null);
-        }
+            return res.sendStatus(204);
+        } 
+        return res.sendStatus(404);
     });
 
 router.patch("/ship/:shipId", authenticateToken,
@@ -46,7 +48,7 @@ router.patch("/ship/:shipId", authenticateToken,
         let found;
         if (found = findShip((ship:ShipData) => ship.ship === req.params.shipId)) {
             if (req.body.name) {
-                found.name = req.body.name;
+                found.shipsName = req.body.name;
             }
             updateShip(found.ship, found);
             res.send(JSON.stringify(found));

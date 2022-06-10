@@ -112,7 +112,7 @@ function CommodityEntry({ onCargoChange }) {
 
           <fieldset className="shipEntry">
             <legend>Ship</legend>
-            <ShipSelector onChange={setShip} refreshToken={refreshToken} />
+            <ShipSelector selected={ship} onChange={setShip} refreshToken={refreshToken} />
           </fieldset>
 
           <fieldset className="shopEntry">

@@ -81,18 +81,24 @@ function ShipButton({
   );
 }
 
-function ShipSelector({ demands = {}, onChange, isInverse = false }) {
+function ShipSelector({ demands = {}, onChange, isInverse = false, selected = {}, refreshToken }) {
   const [ownShips, setOwnShips] = useState([]);
 
   const [ship, setShip] = useState({});
 
-  // register storage changes
-  useEffect(() => {}, []);
-
-  // load ships from storage
   useEffect(() => {
     fetch('/api/ships').then(res => res.json()).then(setOwnShips);
   }, []);
+
+  useEffect(() => {
+    fetch('/api/ships').then(res => res.json()).then(setOwnShips);
+  }, [refreshToken]); 
+
+  useEffect(() => {
+    if (ship.ship !== selected?.ship) {
+      setShip(selected);
+    }
+  }, [selected])
 
   return (
     <div className="list--scrollable">
@@ -100,7 +106,7 @@ function ShipSelector({ demands = {}, onChange, isInverse = false }) {
         {ownShips.map((cShip, index) => (
           <ShipButton
             demands={demands}
-            key={cShip.ship}
+            key={cShip.ship + cShip.shipsName}
             isInverse={isInverse}
             isActive={cShip.ship === ship.ship}
             ship={cShip.ship}
