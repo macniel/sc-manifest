@@ -15,8 +15,8 @@ function LogsView() {
         <legend>Logs</legend>
 
         <div className="logs">
-          {logs.map((log) => (
-            <div className="log">
+          {logs.length > 0 && logs.map((log) => (
+            <div className="log" key={log.manifest}>
               <div className="log__name">{log.associatedShip?.name}</div>
               <div className="log__scu">{log.associatedShip?.scu} cSCU</div>
               <div
@@ -28,10 +28,12 @@ function LogsView() {
                 {log.profit.toFixed(2)} aUEC
               </div>
               <div className="meter">
-                {log.commodities.map((commodity) => (
-                  <div
+                {log.commodities.map((commodity, index) => (
+                  <div 
+                    key={log.manifest + commodity.name}
                     className="fill"
                     style={{
+                      "--perc-loss": (commodity.cost / commodity.profit * 100).toFixed(2) + "%",
                       width:
                         Math.floor(commodity.total / log.associatedShip?.scu) +
                         "%",
@@ -44,6 +46,35 @@ function LogsView() {
             </div>
           ))}
         </div>
+        
+        
+      </fieldset>
+      <fieldset>
+        <legend>Legend</legend>
+        <div className="legend">
+        <label>
+          <div className="log">
+            <div className="meter" style={{width: "24px", height: "24px"}}></div>
+          </div>
+          Empty Space
+        </label>
+        <label>
+          <div className="log">
+            <div className="meter" style={{ width: "24px", height: "24px" }}>
+              <div className="fill" style={{"--perc-loss": "100%", "width": "100%"}}></div>
+            </div>
+          </div>
+          Loss
+        </label>
+        <label>
+          <div className="log">
+            <div className="meter" style={{ width: "24px", height: "24px" }}>
+              <div className="fill" style={{"--perc-loss": "0%", "width": "100%"}}></div>
+            </div>
+          </div>
+          Win
+          </label>
+          </div>
       </fieldset>
     </div>
   );

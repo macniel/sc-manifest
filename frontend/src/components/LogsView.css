@@ -33,7 +33,7 @@
   display: block;
   width: 100%;
   overflow: hidden;
-  height: 20px;
+  height: 24px;
   border: 1px solid var(--selection-color);
   background-color: var(--application-color);
   background-image: linear-gradient(45deg, var(--workspace-color) 25%, var(--application-color) 25%, var(--application-color) 50%, var(--workspace-color)50%, var(--workspace-color) 75%, var(--application-color) 75%, var(--application-color) 100%);
@@ -51,9 +51,33 @@ background-size: 7.07px 7.07px;
   border-top: 0;
   background-color: var(--workspace-color);
   box-sizing: border-box;
-  height: 20px;
+  height: 24px;
   line-height: 1;
+  position: relative;
 }
+
+.log .meter .fill::before {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  left: 0;
+  right: 0;
+  background-color: var(--profit-color);
+  content: '';
+  display: block;
+}
+
+.log .meter .fill::after {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  left: 0;
+  width: var(--perc-loss);
+  background-color: var(--loss-color);
+  content: '';
+  display: block;
+}
+
 
 .log .log__profit.negative {
   color: red;

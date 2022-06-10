@@ -5,6 +5,8 @@
   --primary-button-text: black;
   --primary-button-border: #fad41b;
   --dangerous-button-color: rgb(140, 0, 0);
+  --loss-color: rgb(140, 0, 0);
+  --profit-color: rgb(128, 192, 128);
   --dangerous-button-text: white;
   --button-border: rgba(255, 255, 255, 0.6);
   --button-background: black;
@@ -482,4 +484,16 @@ ul.childrenSelection li.entry.active {
   flex-direction: row;
   padding: 4px;
   padding-left: 8px;
+}
+
+
+.legend {
+  display: flex;
+}
+
+.legend label {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  color: var(--input-text);
 }

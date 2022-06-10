@@ -84,9 +84,18 @@ export type ManifestData = {
         code: string;
         kind: string;
         total: number;
+        cost?: number;
     }[]
     isArchived: boolean;
     associatedShip: string;
+    transactions?: {
+        code: string;
+        source: string;
+        destination?: string;
+        quantity: number;
+        price: number;
+        when: Timestamp;
+    }[]
     history: {
         destination: string;
         quantity: number;
@@ -98,7 +107,15 @@ export type ManifestData = {
     owner: string;
 }
 
-import {Request} from 'express';
+export interface TransferBody {
+    to: string;
+}
+
+export interface TypedRequestBody<T, P> extends Express.Request {
+    user?: UserData
+    body: T
+    params: P
+}
 
 export interface CommodityEntry extends TypedElement {
     operation?: "buy" | "sell";

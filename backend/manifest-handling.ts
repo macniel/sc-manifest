@@ -2,12 +2,34 @@ export const router = require('express').Router();
 import guid from 'guid';
 import { authenticateToken } from './authentication-handling';
 import { findManifest, findShip, findCommodity, updateManifest, updateShip, findAllManifests } from './data-handling';
-import { CommodityEntry, ManifestData, ShipData } from './types';
+import { CommodityEntry, ManifestData, ShipData, TypedElement, TypedRequestBody } from './types';
 
 router.get("/logs", authenticateToken, (req: any, res: any) => {
     let m: ManifestData[] = findAllManifests((manifest: ManifestData) => req.user.userid === manifest.owner && manifest.isArchived); 
+
+    const costMapper = (c: any, m: ManifestData) => {
+        let cost = 0;
+        let profit = 0;
+        if (m.transactions) {
+            cost = Object.values(m.transactions).filter(v => v.code === c.code).reduce((value, currentValue) => value += (currentValue.price * currentValue.quantity), 0)
+        }
+        if (m.history) {
+            profit = Object.values(m.history).filter(v => v.commodity === c.code).reduce((value, currentValue) => value += (currentValue.price * currentValue.quantity), 0)
+        }
+        return {cost, profit}
+    }
     if (m) {
-        m.forEach( (m:ManifestData) => m.associatedShip = findShip( (ship: ShipData) => ship.ship === m.associatedShip))
+        m.forEach((m: ManifestData) => {
+            m.associatedShip = findShip((ship: ShipData) => ship.ship === m.associatedShip)
+            m.commodities = m.commodities.map(c => {
+                return {
+                    ...c,
+                    ...costMapper(c, m),
+                }
+            })
+        })
+        
+        
         res.send(JSON.stringify(m));
         return;
     }
@@ -104,33 +126,15 @@ router.post("/sell", authenticateToken, (req: any, res: any) => {
     );
 });
 
-/**
- * @typedef BuyRequest
- * @property {BuyRequestBody} body
- */
+type BuyBody = {
+    to: string;
+    quantity: string;
+    price: string;
+    commodity: string;
+    from: string;
+}
 
-/**
- * @typedef BuyRequestBody
- * @property {ShipId} to the target ship
- * @property {number} quantity the amount of commodity that should be bought
- * @property {number} price of the bought commodity per unit
- * @property {CommodityId} commodity which should be bought
- * @property {ShopId} from a shop
- */
-
-/**
- * @typedef CommodityId
- * A four letter code associated with a Commodity e.g. HADA - Hadanite, QUAN - Quantanium, AGRI - Agricultural Supplies
- */
-
-/**
- * @typedef ShipId
- * A uuid assigned to a ship on creation
- */
-/**
- * @function
- */
-router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req: any, res: any) => {
+router.post("/buy", authenticateToken, (req: TypedRequestBody<BuyBody, any>, res: any) => {
     if (req.body.to) {
         let ship = findShip((ship: ShipData) => req.body.to === ship.ship);
         let manifest = findManifest(
@@ -141,7 +145,7 @@ router.post("/buy", authenticateToken, (/** @type {BuyRequest} */ req: any, res:
                 manifest: guid.raw(),
                 transactions: [],
                 commodities: [],
-                owner: req.user.userid,
+                owner: req.user?.userid,
                 profit: 0,
             };
             ship.associatedManifest = manifest.manifest;
