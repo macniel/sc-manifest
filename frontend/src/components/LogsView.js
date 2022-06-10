@@ -18,7 +18,7 @@ function LogsView() {
           {logs.length > 0 && logs.map((log) => (
             <div className="log" key={log.manifest}>
               <div className="log__name">{log.associatedShip?.name || log.shipNameCopy}</div>
-              <div className="log__scu">{log.associatedShip?.scu} cSCU</div>
+              <div className="log__scu">{log.commodities?.reduce((value, commodity) => { return value += parseInt(commodity.total) }, 0)} cSCU</div>
               <div
                 className={classNames("log__profit", {
                   negative: log.profit < 0,

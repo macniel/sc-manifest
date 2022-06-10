@@ -5,7 +5,7 @@ import NumberInput from './NumberInput';
 import classNames from 'classnames';
 import WorkorderSelector from './WorkorderSelector';
 
-function RefiningView(props) {
+function RefiningView({onCargoChange}) {
 
     const [volumes, setVolumes] = useState([]);
     const [selectedShip, setSelectedShip] = useState({});
@@ -76,7 +76,7 @@ function RefiningView(props) {
             setSelectedShip({});
 
             setTempVolume('');
-
+                    onCargoChange?.();
             });
         }
     };

@@ -45,7 +45,7 @@ function App() {
     {
       position: 2,
       name: "refined goods",
-      component: <RefiningView />,
+      component: <RefiningView onCargoChange={onCargoChange} />,
     },
     {
       position: 3,
