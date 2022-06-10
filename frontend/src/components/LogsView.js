@@ -33,7 +33,7 @@ function LogsView() {
                     key={log.manifest + commodity.name}
                     className="fill"
                     style={{
-                      "--perc-loss": (commodity.cost / commodity.profit * 100).toFixed(2) + "%",
+                      "--perc-loss": (parseFloat(commodity.profit) > 0 ? (commodity.cost / commodity.profit * 100) : 100).toFixed(2) + "%",
                       width:
                         Math.floor(commodity.total / log.associatedShip?.scu) +
                         "%",
