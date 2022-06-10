@@ -73,7 +73,8 @@ fieldset {
   background-color: var(--panel-background);
   box-shadow: var(--panel-shadow);
   margin: 4px;
-  padding: 4px 0 0 0;
+  padding: 24px 0 0 0;
+  position: relative;
 }
 
 fieldset > legend {
@@ -82,8 +83,12 @@ fieldset > legend {
   float: none;
   background-color: var(--panel-titlebar-color);
   color: var(--panel-titlebar-text);
-  width: 100%;
   text-indent: 4px;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 20px;
+  position: absolute;
 }
 .tab-bar {
   position: absolute;
