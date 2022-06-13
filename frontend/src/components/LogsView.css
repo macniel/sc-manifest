@@ -80,9 +80,9 @@ background-size: 7.07px 7.07px;
 
 
 .log .log__profit.negative {
-  color: red;
+  color: var(--loss-color);
 }
 
 .log .log__profit.positive {
-  color: lime;
+  color: var(--profit-color);
 }
