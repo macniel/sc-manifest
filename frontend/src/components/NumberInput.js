@@ -5,17 +5,22 @@ function NumberInput({ onChange, value, min, max }) {
   const [innerValue, setInnerValue] = useState(value);
 
   const append = (symbol) => {
-    if (innerValue >= max) {
-      return;
-    }
+    let iV = innerValue;
     // eslint-disable-next-line eqeqeq
     if (innerValue == "0" || innerValue == 0 || innerValue == "" || innerValue.startsWith?.("0")) {
-      setInnerValue(symbol);
-      onChange?.(symbol);
+      iV = symbol;
+      
     } else {
-      setInnerValue(innerValue + symbol);
-      onChange?.(innerValue + symbol);
+      iV += symbol;
+      
     }
+
+    console.log(innerValue, max);
+    if (iV >= max) {
+      iV = max;
+    }
+    setInnerValue(iV);
+    onChange?.(iV);
   };
 
   const clear = () => {
