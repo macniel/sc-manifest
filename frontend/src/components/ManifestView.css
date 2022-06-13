@@ -39,22 +39,10 @@
   padding-left: 8px;
 }
 
-.profit {
-}
-
 .profit.negative {
   color: red;
 }
 
 .profit.positive {
   color: lime;
-}
-
-.crate {
-  width: 16px;
-  height: 16px;
-  border: 1px solid orange;
-  display: inline-block;
-  background-image: linear-gradient(45deg, var(--workspace-color) 25%, var(--application-color) 25%, var(--application-color) 50%, var(--workspace-color)50%, var(--workspace-color) 75%, var(--application-color) 75%, var(--application-color) 100%);
-background-size: 7.07px 7.07px;
 }

@@ -30,17 +30,12 @@ function CargoChart({ cargo, onClick, isActive, isSellable }) {
       <span>{cargo.name}</span>
       {!isSellable && <span className="danger" title="Cargo is not sellable at this port"/>}
       <div className="meter">
-        <div style={{ width: "100%" }}>
-        {crates.map(crate => 
-        <div className="crate"><div
+        <div
           className="fill"
-          style={{ width: (crate.amount / crate.total) * 100 + "%" }}
+          style={{ width: (cargo.amount / cargo.total) * 100 + "%" }}
           >  
-            </div>
-            </div>
-        )}
+          <span style={{ position: "absolute"}}>{cargo.amount} cSCU </span>
         </div>
-          {cargo.amount} cSCU
         </div>
     </div>
   );
