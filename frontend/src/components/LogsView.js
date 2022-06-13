@@ -10,8 +10,8 @@ function LogsView() {
   }, []);
 
   return (
-    <div className="log-view">
-      <fieldset>
+    <div className="spatial-layout">
+      <fieldset className="main">
         <legend>Logs</legend>
 
         <div className="logs">
