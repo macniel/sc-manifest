@@ -5,8 +5,8 @@
   --primary-button-text: black;
   --primary-button-border: #fad41b;
   --dangerous-button-color: rgb(140, 0, 0);
-  --loss-color: rgb(140, 0, 0);
-  --profit-color: rgb(128, 192, 128);
+  --loss-color: maroon;
+  --profit-color: lime;
   --dangerous-button-text: white;
   --button-border: rgba(255, 255, 255, 0.6);
   --button-background: black;
