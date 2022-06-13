@@ -60,11 +60,11 @@ router.post('/buy/from-workorder/:workorderId', authenticateToken, (req: TypedRe
                 );
                 if (!commodity) {
                     commodity = {
-                        amount: ore.volume,
+                        amount: parseInt(ore.volume as unknown as string),
                         code: template.code,
                         kind: template.kind as string,
                         name: template.name,
-                        total: ore.volume
+                        total: parseInt(ore.volume as unknown as string)
                     };
                     actualManifest.commodities.push(commodity);
                 } else {

@@ -159,8 +159,8 @@ router.post("/buy", authenticateToken, (req: TypedRequestBody<BuyBody, any>, res
                 code: req.body.commodity,
                 source: req.body.from,
                 destination: req.body.to,
-                quantity: req.body.quantity,
-                price: req.body.price,
+                quantity: parseInt(req.body.quantity),
+                price: parseFloat(req.body.price),
                 when: Date.now(),
             });
             // find similar commodity to add
