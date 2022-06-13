@@ -58,8 +58,7 @@ function CommodityInput({ onChange, commodities }) {
                 commodity.name.indexOf("Raw") === -1
         )
         .map((commodityItem) => (
-            <div><button
-                key={commodityItem.code}
+            <div key={commodityItem.name}><button
                 onClick={() => updateCommodity(commodityItem)}
                 className={classNames("commodity", {
                     active: commodity.code === commodityItem.code,
@@ -67,7 +66,7 @@ function CommodityInput({ onChange, commodities }) {
                 title={commodityItem.name}
             >
             {renderSvg(commodityItem.kind.toLowerCase())}
-            <span className="commodity__price">{commodityItem.price_buy || commodityItem.price_sell}</span>
+            {commodityItem.price_buy || commodityItem.price_sell ? <span className="commodity__price">{commodityItem.price_buy || commodityItem.price_sell}</span> : <></>}
                 <span className="commodity__label">{commodityItem.name}</span>
             </button></div>
         ))}

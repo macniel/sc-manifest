@@ -153,8 +153,8 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
 
   const renderShopButton = (shop, index, array) => {
     if (shop) {
-      return <button key={shop.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shop-selector-button shop-selector-button", { "active": selectedShop?.code === shop.code })}>
-        {getSymbol(shop.type)}<span>{shop.name_short || shop.name}</span></button>
+      return <button key={shop.name} onClick={() => showShopSelector(index)} style={{backgroundPosition: "center center", backgroundSize: "cover", backgroundImage: "url('./poi/" + shop.code + ".png')"}} className={cx("shopSelector__shop-selector-button shop-selector-button", { "active": selectedShop?.code === shop.code })}>
+        <span>{shop.name_short || shop.name}</span></button>
     }
   }
 

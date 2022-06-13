@@ -28,8 +28,12 @@ function NumberInput({ onChange, value, min, max }) {
   };
 
   useEffect(() => {
-    setInnerValue(value);
-    onChange?.(value);
+    let v = value;
+    if (!value || Number.isNaN(value)) {
+      v = 0;
+    }
+    setInnerValue(v);
+    onChange?.(v);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 

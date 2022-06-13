@@ -103,9 +103,11 @@ function CommodityEntry({ onCargoChange }) {
       <div className="rows">
         <fieldset className="main">
           <legend>Add Commodity</legend>
-          <div className="commodity-matrix">
+          <div className="list--scrollable">
+          <div className="commodity-matrix scrollcontent" style={{width: "auto"}}>
             <CommodityInput commodities={commodities} onChange={(c) => { updateCommodity(c) }}></CommodityInput>
-          </div>
+            </div>
+            </div>
         </fieldset>
 
         <div className="sidebar">

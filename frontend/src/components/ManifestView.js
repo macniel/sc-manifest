@@ -6,6 +6,17 @@ import "./ManifestView.css";
 import ShopSelector from "./ShopSelector";
 
 function CargoChart({ cargo, onClick, isActive, isSellable }) {
+
+  console.log(Math.ceil(cargo.amount / 100) + " SCU Crates");
+  
+  let crates = [];
+  let cratesTotal = Math.ceil(cargo.amount / 100);
+  for (let i = 0; i < cratesTotal; ++i) {
+    crates.push({
+      amount: cargo.total - i*100 > 100 ? 100: cargo.total - i*100,
+      total: 100,
+    })
+  }
   return (
     <div
       className={classNames("cargo-chart", {
@@ -19,13 +30,18 @@ function CargoChart({ cargo, onClick, isActive, isSellable }) {
       <span>{cargo.name}</span>
       {!isSellable && <span className="danger" title="Cargo is not sellable at this port"/>}
       <div className="meter">
-        <div
+        <div style={{ width: "100%" }}>
+        {crates.map(crate => 
+        <div className="crate"><div
           className="fill"
-          style={{ width: (cargo.amount / cargo.total) * 100 + "%" }}
-        >
+          style={{ width: (crate.amount / crate.total) * 100 + "%" }}
+          >  
+            </div>
+            </div>
+        )}
+        </div>
           {cargo.amount} cSCU
         </div>
-      </div>
     </div>
   );
 }
