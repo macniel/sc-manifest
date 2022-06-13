@@ -49,8 +49,6 @@ a:visited {
 
 body {
   padding-top: 44px;
-  /*background-color: var(--workspace-color);*/
- 
   background: linear-gradient(90deg, var(--workspace-color) 7px, transparent 1%) center, linear-gradient(var(--workspace-color) 7px, transparent 1%) center, #a799cc;
   background-size: 8px 8px;
 
@@ -129,6 +127,10 @@ fieldset > legend {
   transition-duration: 500ms;
 }
 
+.tab-list li span {
+  display: block;
+}
+
 .tab-list li.tab-login {
   float: right;
   background-color: unset;
@@ -173,7 +175,7 @@ fieldset > legend {
   color: var(--dangerous-button-text);
 }
 
-.shopSelectorButton {
+.shop-selector-button {
   width: var(--button-size);
   height: var(--button-size);
   overflow: hidden;
@@ -186,16 +188,16 @@ fieldset > legend {
   color: var(--primary-button-text);
 }
 
-.shopSelectorButton.active {
+.shop-selector-button.active {
   background-color: var(--selection-color);
 }
 
-.shopSelectorButton span {
+.shop-selector-button span {
   position: absolute;
   left: 2px;
-  bottom: 1px;
+  bottom: 0;
   right: 2px;
-  height: 12px;
+  height: 14px;
   background-color: var(--button-label-color);
   text-align: center;
   color: var(--button-text);
@@ -329,6 +331,9 @@ fieldset .inner {
 
 dialog {
   width: 50vw;
+  max-height: 100%;
+  background: transparent;
+  border: 0;
 }
 
 li.active {
@@ -368,7 +373,7 @@ ul.breadcrumb li span {
   display: inline-block;
 }
 
-ul.childrenSelection {
+ul.children-selection {
   list-style-type: none;
   text-indent: 0;
   padding-left: 4px;
@@ -377,7 +382,7 @@ ul.childrenSelection {
   padding-right: 0;
 }
 
-ul.childrenSelection li.entry {
+ul.children-selection li.entry {
   display: block;
   box-shadow: var(--button-shadow);
   padding: 8px;
@@ -387,15 +392,15 @@ ul.childrenSelection li.entry {
   cursor: pointer;
 }
 
-ul.childrenSelection li.entry.leaf {
+ul.children-selection li.entry.leaf {
   box-shadow: var(--half-shadow);
 }
 
-ul.childrenSelection li.entry.active {
+ul.children-selection li.entry.active {
   border-color: var(--primary-button-border);
 }
 
-.dialogActions button {
+.dialog-actions button {
   float: right;
 }
 
@@ -448,6 +453,10 @@ ul.childrenSelection li.entry.active {
   cursor: pointer;
 }
 
+.workorder:first-child {
+  margin-top: 0;
+}
+
 .workorder+.workorder {
   margin-top: 8px;
 }
@@ -469,7 +478,8 @@ ul.childrenSelection li.entry.active {
 .workorder-list {
   list-style-type: none;
   text-indent: 0;
-  padding: 0 8px;
+  padding: 0 8px 8px 8px;
+  margin-top: 10px;
 }
 
 .pills {

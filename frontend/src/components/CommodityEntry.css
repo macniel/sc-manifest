@@ -1,74 +1,56 @@
 .commodity.active {
-  background-color: var(--selection-color);
+  background-color: rgba(--selection-color, 0.5);
+  border: 1px solid var(--primary-button-border);
+}
+
+.commodity.active > * {
+  color: var(--selection-color);
+  fill: var(--selection-color);
 }
 
 .commodity {
-  width: var(--button-size);
-  height: var(--button-size);
-  border: 1px solid var(--primary-button-border);
+  border: 1px solid var(--push-button-color);
   margin: 2px 2px;
   background-size: var(--button-size);
-  position: relative;
   background-color: var(--primary-button-color);
+  display: grid;
+  grid-template-columns: 50px max-content; 
+  grid-template-rows: 25px 25px; 
+  gap: 0 8px; 
+  width: 240px;
+  grid-template-areas: 
+    "icon name"
+    "icon price"; 
 }
 
-.commodity--metal--is-raw {
-  background-image: url("../assets/ore.svg");
+.commodity svg {
+  grid-area: icon;
+  fill: var(--button-text);
 }
 
-.commodity--metal {
-  background-image: url("../assets/metal.svg");
-}
-
-.commodity--gas,
-.commodity--halogen {
-  background-image: url("../assets/foam.svg");
-}
-
-.commodity--mineral--is-raw {
-  background-image: url("../assets/minerals.svg");
-}
-.commodity--mineral {
-  background-image: url("../assets/gems.svg");
-}
-.commodity--drug,
-.commodity--vice {
-  background-image: url("../assets/medicines.svg");
-}
-.commodity--medical {
-  background-image: url("../assets/hospital-cross.svg");
-}
-.commodity--food {
-  background-image: url("../assets/knife-fork.svg");
-}
-.commodity--agricultural {
-  background-image: url("../assets/wheat.svg");
-}
-
-.commodity--natural {
-  background-image: url("../assets/three-leaves.svg");
-}
-.commodity--waste {
-  background-image: url("../assets/waste.svg");
-}
-.commodity--junk,
-.commodity--scrap,
-.commodity--temporary {
-  background-image: url("../assets/recycle.svg");
-}
 
 .commodity-matrix {
   padding: 4px;
 }
+.commodity-matrix > div {
+  display: inline-block;
+}
 
 .commodity__label {
-  position: absolute;
-  left: 2px;
-  bottom: 1px;
-  right: 2px;
-  height: 10px;
-  background-color: var(--button-label-color);
-  text-align: center;
+  grid-area: name;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 25px;
   color: var(--button-text);
-  margin: 0 -2px;
+}
+
+.commodity__price {
+  grid-area: price;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 25px;
+  color: var(--button-text);
+}
+.commodity__price::after {
+  content: " aUEC"
 }

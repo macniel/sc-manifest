@@ -1,4 +1,5 @@
-import "./App.css";
+// import "./Casaba.css";
+import './App.css';
 import WelcomeScreen from "./components/WelcomeScreen";
 import React, { useState } from "react";
 import FleetManager from "./components/FleetManager";
@@ -6,6 +7,7 @@ import CommodityEntry from "./components/CommodityEntry";
 import ManifestView from "./components/ManifestView";
 import LogsView from "./components/LogsView";
 import RefiningView from "./components/RefiningView";
+import classNames from "classnames";
 
 function App() {
   const [tab, setTab] = useState(-1);
@@ -65,16 +67,16 @@ function App() {
             {tabList.map((tabItem) => {
               return (
                 <li
-                  key={`${tabItem.name}${
-                    tabItem.manifest ? "-" + tabItem.manifest : ""
-                  }`}
+                  key={`${tabItem.name}${tabItem.manifest ? "-" + tabItem.manifest : ""
+                    }`}
                   id={tabItem.name}
-                  className={tab === tabItem.position ? "active" : ""}
+                  className={classNames('tab', { 'active': tab === tabItem.position }
+              )}
                   onClick={() => {
                     setTab(tabItem.position);
                   }}
                 >
-                  {tabItem.name}
+                  <span>{tabItem.name}</span>
                 </li>
               );
             })}

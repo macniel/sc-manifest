@@ -153,7 +153,7 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
 
   const renderShopButton = (shop, index, array) => {
     if (shop) {
-      return <button key={shop.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shopSelectorButton shopSelectorButton", { "active": selectedShop?.code === shop.code })}>
+      return <button key={shop.name} onClick={() => showShopSelector(index)} className={cx("shopSelector__shop-selector-button shop-selector-button", { "active": selectedShop?.code === shop.code })}>
         {getSymbol(shop.type)}<span>{shop.name_short || shop.name}</span></button>
     }
   }
@@ -166,24 +166,23 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
           <ul className="breadcrumb">
             {breadcrumbs.map((breadcrumb, index) => <li key={breadcrumb.name} onClick={() => updateShopSelector(index)}><span>{ breadcrumb.name }</span></li>)}
           </ul>
-
-          <ul className="childrenSelection">
+         <div style={{height: "50vh", overflowY:"auto"}}>
+          <ul className="children-selection">
             { renderOutposts() }
-          </ul>
-        
+              </ul>
+              </div>
 
         </fieldset>
-        <fieldset className="dialogActions">
+        <fieldset className="dialog-actions">
           <legend>Actions</legend>
           <button className="button--harmful" onClick={() => { dialogRef.current.close(null); setInternalPath(path) }}>Cancel</button>
           <button className="button--primary" onClick={() => { dialogRef.current.close(); updateShopSelection(internalPath) }}>Select</button>
         </fieldset>
       </dialog >
-    <div className="shopSelector">
+    <div className="shop-selector">
         {path?.map((pathSegment, index, arr) => renderShopButton(pathSegment, index, arr))}
-      <button className="shopSelector__shopSelectorButton shopSelectorButton" style={{"float": "right"}} onClick={resetShop}>
+      <button className="shop-selector__shop-selector-button shop-selector-button" style={{"float": "right"}} onClick={resetShop}>
         <ResetIcon/></button>
-      <span className="shopSelector__selected-shop-name selected-shop-name">{selectedShop?.name ?? 'none'}</span>
       </div>
       </>
   );

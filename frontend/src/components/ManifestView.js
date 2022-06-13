@@ -151,6 +151,8 @@ function ManifestView() {
       <div className="rows">
         <fieldset className="main">
           <legend>cargo</legend>
+          <div className="list--scrollable">
+            <div className="scrollcontent">
           {cargo.map((c, index) => (
             <CargoChart
               isActive={index === selectedCargo}
@@ -162,7 +164,10 @@ function ManifestView() {
               }}
             />
           ))}
+              </div>
+            </div>
         </fieldset>
+        
         <div className="sidebar">
           <fieldset className="shipEntry">
             <legend>From ship</legend>

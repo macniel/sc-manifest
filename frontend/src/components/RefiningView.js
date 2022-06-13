@@ -205,7 +205,7 @@ function RefiningView({onCargoChange}) {
                     <span className="subtotal">{((ore.volume || 0) * ore.trade_price_sell).toFixed(0)} aUEC</span>
                 </div>
                         )} 
-                        <div className="total--line"><span>Setup Cost</span>
+                        <div className="total--line" onClick={() => { setSelectedCommodity({}); setTempVolume(0); }}><span>Setup Cost</span>
                             <input disabled={workorder?.workorder} type="number" className="unit" value={workorderCost} onChange={({ target }) => {
                                 setWorkorderCost(target.value);
                             }}/><span>aUEC</span>
