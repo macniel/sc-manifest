@@ -179,7 +179,7 @@ function ManifestView() {
               <legend>Quantity</legend>
               <NumberInput
                 max={quantity}
-                value={quantity}
+                value={sellQuantity}
                 min={0}
                 onChange={setSellQuantity}
               />
