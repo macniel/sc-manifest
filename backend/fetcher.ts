@@ -57,8 +57,8 @@ const fetchTradeports = async function (systems?: any) {
       const path: string[] = [];
       if (tradeport.system) path.push(tradeport.system);  
       if (tradeport.planet) path.push(tradeport.planet);
-      if (tradeport.satellite) path.push(tradeport.satellite)
-      else if (tradeport.city) path.push(tradeport.city)
+      if (tradeport.satellite) path.push(tradeport.satellite);
+      else if (tradeport.city) path.push(tradeport.city);
       
       const location = publicData.systems?.find((s) => {
         if (s.path) {
@@ -68,16 +68,18 @@ const fetchTradeports = async function (systems?: any) {
         } else {
           return false
         }
-      });
+      });        
       if (location) {
         if (!location.children) {
           location.children = [];
         }
-        console.log('adding ' + tradeport.code + ' to ' + location.code);
-        location.children.push(tradeport.code)
+        if (!location.children.find(t => t as unknown as string === tradeport.code)) {
+          location.children.push(tradeport.code);
+        }
+      } else {
+        tradeport.path = path;
+        publicData.tradeports?.push(tradeport);
       }
-      tradeport.path = path;
-      publicData.tradeports?.push(tradeport);
     })
     return publicData;
   }

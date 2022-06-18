@@ -55,15 +55,6 @@
     ]
   },
   {
-    "code": "EVERU",
-    "type": "station",
-    "path": [
-      "ST",
-      "HUR"
-    ],
-    "name": "Everus Harbor"
-  },
-  {
     "code": "MAGD",
     "type": "satellite",
     "path": [
@@ -100,15 +91,6 @@
     "code": "ORI",
     "type": "city",
     "name": "Orison",
-    "path": [
-      "ST",
-      "CRU"
-    ]
-  },
-  {
-    "code": "POLIS",
-    "type": "station",
-    "name": "Port Olisar",
     "path": [
       "ST",
       "CRU"
@@ -178,15 +160,6 @@
     "name": "Area18"
   },
   {
-    "code": "BAIJI",
-    "type": "station",
-    "path": [
-      "ST",
-      "ARC"
-    ],
-    "name": "Baijini Point"
-  },
-  {
     "code": "LYRI",
     "type": "satellite",
     "path": [
@@ -227,15 +200,6 @@
       "MIC"
     ],
     "name": "New Babbage"
-  },
-  {
-    "code": "TRESS",
-    "type": "station",
-    "path": [
-      "ST",
-      "MIC"
-    ],
-    "name": "Port Tressler"
   },
   {
     "code": "CLIO",
