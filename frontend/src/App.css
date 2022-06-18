@@ -507,3 +507,37 @@ ul.children-selection li.entry.active {
   padding-right: 20px;
   color: var(--input-text);
 }
+
+.list--scrollable.with-statusbar .scrollcontent {
+  bottom: 24px;
+  top: 0;
+}
+
+fieldset > div.statusbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  line-height: 24px;
+  vertical-align: middle;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0 8px;
+}
+fieldset > div.statusbar * {
+  line-height: 24px;
+  vertical-align: top;
+  display: inline-block;
+  height: 24px;
+}
+fieldset > div.statusbar svg {
+  height: 20px;
+  width: 20px;
+  position: relative;
+  display: inline-block;
+  vertical-align: -4px;
+}
+
+div.statusbar .status-right {
+  float: right;
+}

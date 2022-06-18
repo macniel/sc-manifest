@@ -53,7 +53,7 @@ margin: 2px;
 .tab-list .tab {
   background-color: transparent;
   margin: 0;
-  margin-right: 10px;
+  margin-right: 12px;
   border-radius: 20px;
   width: 120px;
   max-height: 30px;
@@ -82,4 +82,39 @@ margin: 2px;
 
 .tab-list .tab span {
 
+}
+
+.spatial-layout .rows {
+  flex-direction: row-reverse !important;
+}
+
+fieldset {
+  background: transparent;
+  border-radius: 20px;
+  border-color: white;
+  box-shadow: 0 0 0 2px white !important;
+  padding-top: 24px !important;
+}
+
+fieldset > legend {
+  background-color: transparent !important;
+  border-bottom: 2px solid white;
+  line-height: 20px !important;
+  height: 20px !important;
+  margin: 0 4px !important;
+  text-align: center;
+  color: white !important;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.numberinput__button {
+  width: 40px !important;
+  max-width: 40px !important;
+  height: 40px !important;
+  max-height: 40px !important;
+  border-radius: 20px !important;
+  border: none !important;
+  box-shadow: 0 0 0 2px white !important;
+  
 }

@@ -4,6 +4,8 @@ import './RefiningView.css';
 import NumberInput from './NumberInput';
 import classNames from 'classnames';
 import WorkorderSelector from './WorkorderSelector';
+import { ReactComponent as ClockIcon } from '../assets/ui-clock.svg';
+import { ReactComponent as SCUIcon } from '../assets/ui-scu.svg';
 
 function RefiningView({onCargoChange}) {
 
@@ -183,6 +185,16 @@ function RefiningView({onCargoChange}) {
             setVolumes(resetVolumes);
     }
 
+    const [totalPending, setTotalPending] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const externalWorkorders = (workorders) => {
+        console.log('update workorders');
+        
+        setTotalPending(workorders.reduce((accumulator, workorder) => accumulator += workorder.ores.reduce((wAccum, ore) => wAccum += ore.volume, 0), 0));
+        setTotalOrders(workorders.length);
+    }
+
     return (
          <div className="spatial-layout">
       <div className="rows">
@@ -221,11 +233,14 @@ function RefiningView({onCargoChange}) {
                 <div className="sidebar">
                     <fieldset style={{flex: "1"}}>
                         <legend>Workorders</legend>
-                        <div className="list--scrollable">
+                        <div className="list--scrollable with-statusbar">
                             <div className="scrollcontent">
-                                <WorkorderSelector onChange={updateSelectedWorkorder} workorder={workorders} />
+                                <WorkorderSelector onChange={updateSelectedWorkorder} workorder={workorders} onReady={externalWorkorders} />
                                 </div>
-                            </div>
+                        </div>
+                        <div className="statusbar">
+                            <span className="status-right">{Math.ceil(totalPending/100)} <SCUIcon width="24px" height="24px" /></span>
+                        </div>
                     </fieldset>
                     {workorder?.workorder ?
                     <fieldset className="shipEntry">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from 'classnames';
 
-export default function WorkorderSelector({ onChange, workorder }) {
+export default function WorkorderSelector({ onChange, workorder, onReady }) {
 
     const [workorders, setWorkorders] = useState([]);
 
@@ -23,6 +23,7 @@ export default function WorkorderSelector({ onChange, workorder }) {
         const fetchData = async () => {
             const resolvedWorkorders = await fetch('/api/workorder', { headers: { 'Content-Type': 'application/json' } }).then(res => res.json());
             setWorkorders(resolvedWorkorders);
+            onReady?.(resolvedWorkorders);
         }
 
         fetchData();
@@ -34,6 +35,7 @@ export default function WorkorderSelector({ onChange, workorder }) {
         const fetchData = async () => {
             const resolvedWorkorders = await fetch('/api/workorder', { headers: { 'Content-Type': 'application/json' } }).then(res => res.json());
             setWorkorders(resolvedWorkorders);
+            onReady?.(resolvedWorkorders);
         }
 
         fetchData();
