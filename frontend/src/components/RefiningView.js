@@ -253,7 +253,8 @@ function RefiningView({onCargoChange}) {
     };
     
     const timeCodeToText = (code) => {
-        if (code.days || code.hours || code.minutes || code.seconds) {
+        
+        if (code && (code.days || code.hours || code.minutes || code.seconds)) {
             let str = '';
             if (code.days) str += `${code.days}d`;
             if (code.hours) str += `${code.hours}h`;
