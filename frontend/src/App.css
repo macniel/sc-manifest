@@ -231,8 +231,7 @@ fieldset > legend {
 }
 
 .spatial-layout .main {
-  flex-grow: 1;
-  flex-basis: auto;
+  flex: 1;
 }
 
 .spatial-layout .sidebar {
@@ -426,6 +425,7 @@ ul.children-selection li.entry.active {
   display: block;
   position: relative;
   margin-bottom: 1px;
+  line-height: 20px;
 }
 
 .namedPill, .namedPill * {
@@ -540,4 +540,133 @@ fieldset > div.statusbar svg {
 
 div.statusbar .status-right {
   float: right;
+}
+
+.status-element {
+  height: 24px;
+  line-height: 24px;
+  display: inline-block;
+  vertical-align: middle;
+  color: black;
+}
+
+.status-element svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+}
+.status-element svg * {
+  stroke: black;
+  fill: none;
+}
+
+.status-element.status-right {
+  float: right;
+}
+
+.commodity.active {
+  background-color: rgba(--selection-color, 0.5);
+  border: 1px solid var(--primary-button-border);
+}
+
+.commodity.active > * {
+  color: var(--selection-color);
+  fill: var(--selection-color);
+}
+
+.commodity {
+  border: 1px solid var(--push-button-color);
+  margin: 2px 2px;
+  background-size: var(--button-size);
+  background-color: var(--primary-button-color);
+  display: grid;
+  grid-template-columns: 50px max-content; 
+  grid-template-rows: 25px 25px; 
+  gap: 0 8px; 
+  width: 240px;
+  grid-template-areas: 
+    "icon name"
+    "icon price"; 
+}
+
+.commodity.selected {
+  background-color: var(--selection-semi-color)
+}
+.compact .commodity {
+  width: 170px;
+}
+
+.commodity svg {
+  grid-area: icon;
+  fill: var(--button-text);
+}
+
+
+.commodity-matrix {
+  padding: 4px;
+}
+.commodity-matrix > .commodity-container {
+  display: inline-block;
+}
+
+.commodity__label {
+  grid-area: name;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 25px;
+  color: var(--button-text);
+}
+
+.commodity__price {
+  grid-area: price;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 25px;
+  color: var(--button-text);
+}
+.commodity__price::after {
+  content: " aUEC"
+}
+
+.total--line {
+  display: flex;
+  margin: 0 8px;
+  min-height: 40px;
+  padding: 10px 0;
+  vertical-align: middle;
+}
+
+.total--line__head {
+  flex: 1;
+  line-height: 40px;
+  vertical-align: middle;
+}
+
+.total--line__value {
+  display: flex;
+  
+  line-height: 40px;
+  vertical-align: middle;
+  flex: 3;
+  justify-content: end;
+}
+
+.total--line__value input {
+  flex: 1;
+}
+
+.total--line__value__unit {
+  margin-left: 10px;
+  line-height: 40px;
+  vertical-align: middle;
+}
+
+.col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.no-flex {
+  display: initial;
 }

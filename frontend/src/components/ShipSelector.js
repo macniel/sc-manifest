@@ -98,7 +98,7 @@ function ShipSelector({ demands = {}, onChange, isInverse = false, selected = {}
     if (ship.ship !== selected?.ship) {
       setShip(selected);
     }
-  }, [selected])
+  }, [selected, ship])
 
   return (
     <div className="list--scrollable">

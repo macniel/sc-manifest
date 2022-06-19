@@ -38,13 +38,3 @@
     display: inline-block;
     width: 80px;
 }
-
-.total--line {
-    padding-left: 8px;
-    font-weight: bold;
-    color: var(--input-text);
-}
-.total--line span:first-child {
-    width: 120px;
-    display: inline-block;
-}

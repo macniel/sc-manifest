@@ -130,6 +130,11 @@ router.get('/workorder', authenticateToken, (req: TypedRequestBody<any, any>, re
     return res.sendStatus(400);
 })
 
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+
 /**
  * Setup Workorder
  * returns workorderId
@@ -140,6 +145,14 @@ router.post('/workorder', authenticateToken, (req, res) => {
         const workorder = req.body;
         workorder.workorder = guid.raw();
         workorder.owner = ((req as any).user as UserData).userid;
+        if (workorder.timeToFinish) {
+            let nowPlus = Date.now();
+            nowPlus += DAY * (workorder.timeToFinish.days || 0);
+            nowPlus += HOUR * (workorder.timeToFinish.hours || 0);
+            nowPlus += MINUTE * (workorder.timeToFinish.minutes || 0);
+            nowPlus += SECOND * (workorder.timeToFinish.seconds || 0);
+            workorder.timeWhen = nowPlus;
+        }
         const success = updateWorkorder(workorder.workorder, workorder);
         if (success) {
             return res.json(workorder);

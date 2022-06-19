@@ -12,6 +12,11 @@
   color: var(--primary-button-text);
 }
 
+.numberinput__button.blank {
+  border: 0;
+  background-color: transparent;
+}
+
 .numberinput {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;

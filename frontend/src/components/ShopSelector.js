@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import cx from 'classnames';
 
-import { ReactComponent as SystemIcon } from '../assets/shop-star.svg';
-import { ReactComponent as PlanetIcon } from '../assets/shop-planet.svg';
-import { ReactComponent as CityIcon } from '../assets/shop-city.svg';
-import { ReactComponent as MoonIcon } from '../assets/shop-moon.svg';
-import { ReactComponent as StationIcon } from '../assets/shop-station.svg';
-import { ReactComponent as ShopIcon } from '../assets/shop-outpost.svg';
 import { ReactComponent as ResetIcon } from '../assets/shop-reset.svg';
 
 function ShopSelector({ onChange, refreshToken, defaultShop }) {
@@ -58,19 +52,6 @@ function ShopSelector({ onChange, refreshToken, defaultShop }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultShop]);
   
-  const getSymbol = (of) => {
-    switch (of?.toLowerCase()) {
-      case 'system': return <SystemIcon />;
-      case 'planet': return <PlanetIcon />;
-      case 'city': return <CityIcon />;
-      case 'satellite':
-      case 'moon': return <MoonIcon />;
-      case 'station': return <StationIcon />;
-      default:
-      case 'tradepost': return <ShopIcon />;
-    }
-  }
-
   const showShopSelector = (atIndex) => {
     dialogRef.current.showModal();
   }

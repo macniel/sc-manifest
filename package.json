@@ -31,6 +31,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^6.0.2",
     "guid": "0.0.12",
+    "momentjs": "^2.0.0",
     "node-fetch": "^2.6.6",
     "react": "^17.0.2",
     "swagger-autogen": "^2.19.0",

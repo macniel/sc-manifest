@@ -58,7 +58,7 @@ function CommodityInput({ onChange, commodities }) {
                 commodity.name.indexOf("Raw") === -1
         )
         .map((commodityItem) => (
-            <div key={commodityItem.name}><button
+            <div className="commodity-container" key={commodityItem.name}><button
                 onClick={() => updateCommodity(commodityItem)}
                 className={classNames("commodity", {
                     active: commodity.code === commodityItem.code,
