@@ -26,6 +26,10 @@ function TimeCodeInput({ onChange, value }) {
     let iV = innerValue;
 
     if (symbol === 'dhms') {
+      let lastSymbol = iV[iV.length - 1] || '';
+      if (!lastSymbol.match(/\d/)) {
+        iV += '0';
+      }
       iV += getNextSymbol(iV);
     } else {
       iV += symbol;

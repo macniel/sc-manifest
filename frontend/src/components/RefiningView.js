@@ -259,7 +259,7 @@ function RefiningView({onCargoChange}) {
             if (code.days) str += `${code.days}d`;
             if (code.hours) str += `${code.hours}h`;
             if (code.minutes) str += `${code.minutes}m`;
-            if (code.seconds) str += `${code.seconds} s`;
+            if (code.seconds) str += `${code.seconds}s`;
             return str;
         } else {
             return code;
