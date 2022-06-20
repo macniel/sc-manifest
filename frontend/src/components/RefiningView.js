@@ -218,8 +218,8 @@ function RefiningView({onCargoChange}) {
 
     const externalWorkorders = (workorders) => {
         const now = Date.now()
-        setTotalPending(workorders.filter(wo => wo.timeWhen - now <= 0).reduce((accumulator, workorder) => accumulator += parseInt(workorder.ores.reduce((wAccum, ore) => wAccum += parseInt(ore.volume), 0)), 0));
-        setTotalRefining(workorders.filter(wo => wo.timeWhen - now > 0).reduce((accumulator, workorder) => accumulator += parseInt(workorder.ores.reduce((wAccum, ore) => wAccum += parseInt(ore.volume), 0)), 0));
+        setTotalPending(workorders.filter(wo => (wo.timeWhen||0) - now <= 0).reduce((accumulator, workorder) => accumulator += parseInt(workorder.ores.reduce((wAccum, ore) => wAccum += parseInt(ore.volume), 0)), 0));
+        setTotalRefining(workorders.filter(wo => (wo.timeWhen||0) - now > 0).reduce((accumulator, workorder) => accumulator += parseInt(workorder.ores.reduce((wAccum, ore) => wAccum += parseInt(ore.volume), 0)), 0));
     }
 
   const renderSvg = (kind) => {
