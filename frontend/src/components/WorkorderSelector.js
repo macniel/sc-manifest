@@ -28,8 +28,8 @@ export default function WorkorderSelector({ onChange, workorder, onReady, onUpda
         }
 
         fetchData();
-
-    }, [workorder, onReady])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [workorder])
 
     const getTimeRemaining = (time) => {
         const now = Date.now();
@@ -72,23 +72,15 @@ export default function WorkorderSelector({ onChange, workorder, onReady, onUpda
         }
     }, [workorders, onUpdate])
 
-    useEffect(() => {
-
-        const fetchData = async () => {
-            const resolvedWorkorders = await fetch('/api/workorder', { headers: { 'Content-Type': 'application/json' } }).then(res => res.json());
-            setWorkorders(resolvedWorkorders);
-            onReady?.(resolvedWorkorders);
-        }
-
-        fetchData();
-
-    }, [onReady])
+    const getTotalSize = (workorder) => {
+        return workorder.ores.reduce( (accum, ore) => accum += parseInt(ore.volume), 0)
+    }
 
     return <ul className="workorder-list">
         {workorders.map((workorder, index) => <li key={workorder.workorder} className={classNames("workorder", { "active": selectedWorkorder?.workorder === workorder.workorder })} onClick={() => updateSelection(workorder)}>
             <span className="workorder__title">Workorder {index + 1}
             <span className="status-element status-right">{workorder.timeRemaining || 'ready'} <ClockIcon /></span>
-            </span><div className="pills">{workorder.ores.map(ore => <span key={workorder.workorder + ore.code} className="namedPill" title={ore.code}>{ore.volume}</span>)}</div></li>)}
+            </span><div className="pills">{workorder.ores.map(ore => <span key={workorder.workorder + ore.code} className="namedPill" style={{'--volume': ore.volume, '--percentage': (ore.volume*100)/getTotalSize(workorder) + '%'}} bg-title={ore.code}>{ore.volume}</span>)}</div></li>)}
     </ul>
 
 }

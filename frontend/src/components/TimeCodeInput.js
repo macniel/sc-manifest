@@ -11,7 +11,7 @@ function TimeCodeInput({ onChange, value }) {
       if (value.indexOf('h') >= 0)
         if (value.indexOf('m') >= 0)
           if (value.indexOf('s') >= 0)
-            return
+            return ''
           else
             return 's'
         else
@@ -91,7 +91,7 @@ function TimeCodeInput({ onChange, value }) {
       <button className="numberinput__button" onClick={() => append("3")}>
         3
       </button>
-      <button className="numberinput__button" onClick={() => append('dhms')}>
+      <button className="numberinput__button" disabled={getNextSymbol(innerValue) === ''} onClick={() => append('dhms')}>
         {getNextSymbol(innerValue)}
       </button>
       <button className="numberinput__button" onClick={() => append("0")}>

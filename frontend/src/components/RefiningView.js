@@ -359,7 +359,7 @@ function RefiningView({onCargoChange}) {
                         <div className="total--line"><span className="total--line__head">Content</span>
                             <div className="total--line__value no-flex">
                             <div className="pills">
-                            {volumes.filter(o => o.volume > 0).sort((a, b) => a.volume - b.volume).map(ore => <span key={'wo'+ore.code} className="namedPill" title={ore.code}>{ore.volume}</span>)}
+                            {volumes.filter(o => o.volume > 0).sort((a, b) => a.volume - b.volume).map(ore => <span key={'wo'+ore.code} className="namedPill" style={{'--volume': ore.volume}} title={ore.code}>{ore.volume}</span>)}
                             </div>                        
 
                             </div>

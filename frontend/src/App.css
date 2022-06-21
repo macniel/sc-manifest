@@ -272,6 +272,10 @@ button {
   box-shadow: var(--button-shadow);
 }
 
+button[disabled] {
+  box-shadow: none;
+}
+
 button,
 li.ship,
 .ship-list__button,
@@ -434,7 +438,7 @@ ul.children-selection li.entry.active {
 .namedPill::after {
   background-color: var(--primary-button-border);
   color: var(--application-color);
-  content: attr(title);
+  content: attr(bg-title);
   margin-left: 4px;
   position: absolute;
   right: 0;
