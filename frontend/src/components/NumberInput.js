@@ -42,6 +42,12 @@ function NumberInput({ onChange, value, min, max }) {
       <input
         aria-label="input value"
         value={innerValue}
+        onKeyDown={(event) => {
+          const lowerCode = event.code?.toLowerCase();
+          if (lowerCode === 'enter' || lowerCode === 'numpadenter') {
+            onChange?.(innerValue, 'add')
+          }
+        }}
         onChange={(event) => {
           if (event.target) {
             setInnerValue(event.target.value);

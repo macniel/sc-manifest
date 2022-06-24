@@ -110,11 +110,12 @@ function RefiningView({onCargoChange}) {
         
     }
 
-    const addVolume = () => {
+    const addVolume = (value) => {
         let targetCommodity = volumes.find(v => v.code === selectedCommodity.code);
         
         if (targetCommodity) {
-            targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(tempVolume);
+            const v = value || tempVolume;
+            targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(v);
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
 
@@ -125,11 +126,13 @@ function RefiningView({onCargoChange}) {
         }
     }
 
-    const removeVolume = () => {
+    const removeVolume = (value) => {
   let targetCommodity = volumes.find(v => v.code === selectedCommodity.code);
         
         if (targetCommodity) {
-            targetCommodity.volume = parseInt(targetCommodity.volume) - parseInt(tempVolume);
+             const v = value || tempVolume;
+            targetCommodity.volume = parseInt(targetCommodity.volume) - parseInt(v);
+           
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
 
@@ -312,7 +315,21 @@ function RefiningView({onCargoChange}) {
             case 'commodity':
                 return <>
                     <legend>Add {selectedCommodity.name}</legend>
-                    <NumberInput min={0} value={tempVolume} onChange={setTempVolume}/>
+                    <NumberInput min={0} value={tempVolume} onChange={(value, mode) => {
+                        switch (mode) {
+                            case 'add':
+                                console.log(selectedCommodity);
+                                addVolume(value);
+                                break;
+                            case 'subtract':
+                                removeVolume(value);
+                                break;
+                            case '':
+                            default:
+                                setTempVolume(value);
+                        }
+                    }
+                    }/>
                 </>
             case 'workordercost':
                 return <>
@@ -359,7 +376,7 @@ function RefiningView({onCargoChange}) {
                         <div className="total--line"><span className="total--line__head">Content</span>
                             <div className="total--line__value no-flex">
                             <div className="pills">
-                            {volumes.filter(o => o.volume > 0).sort((a, b) => a.volume - b.volume).map(ore => <span key={'wo'+ore.code} className="namedPill" style={{'--volume': ore.volume}} title={ore.code}>{ore.volume}</span>)}
+                            {volumes.filter(o => o.volume > 0).sort((a, b) => a.volume - b.volume).map(ore => <span key={'wo'+ore.code} className="namedPill" style={{'--volume': ore.volume}} bg-title={ore.code}>{ore.volume}</span>)}
                             </div>                        
 
                             </div>
