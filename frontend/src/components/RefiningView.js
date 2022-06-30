@@ -115,7 +115,7 @@ function RefiningView({onCargoChange}) {
         
         if (targetCommodity) {
             const v = value || tempVolume;
-            targetCommodity.volume = parseInt(targetCommodity.volume) + parseInt(v);
+            targetCommodity.volume = parseInt(targetCommodity.volume || 0) + parseInt(v, 10);
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
 
@@ -131,7 +131,7 @@ function RefiningView({onCargoChange}) {
         
         if (targetCommodity) {
              const v = value || tempVolume;
-            targetCommodity.volume = parseInt(targetCommodity.volume) - parseInt(v);
+            targetCommodity.volume = parseInt(targetCommodity.volume || 0) - parseInt(v, 10);
            
             let temp = [...volumes];
             temp.splice(volumes.findIndex(v => v.code === selectedCommodity.code), 1)
@@ -284,8 +284,8 @@ function RefiningView({onCargoChange}) {
                 return <>
                     <button className="button--primary" onClick={setupWorkorder}>Set Up</button>
                     <span className="spacer" />
-                    <button onClick={addVolume} disabled={parseInt(tempVolume) === 0} className="button--primary">+Volume</button>
-                    <button onClick={removeVolume} disabled={parseInt(tempVolume) === 0} className="button--primary">-Volume</button>
+                    <button onClick={ () => addVolume() } disabled={parseInt(tempVolume) === 0} className="button--primary">+Volume</button>
+                    <button onClick={ () => removeVolume() } disabled={parseInt(tempVolume) === 0} className="button--primary">-Volume</button>
                 </>
             default:
             case 'workordercost':
