@@ -118,3 +118,116 @@ fieldset > legend {
   box-shadow: 0 0 0 2px white !important;
   
 }
+
+.workorder .pills {
+  display: block;
+  width: 100%;
+  grid-template-columns: none;
+  grid-row-gap: 0;
+  grid-column-gap: 0;
+  column-gap: 0;
+  row-gap: 0;
+}
+
+.namedPill {
+  padding-left: 0 !important;
+  position: relative;
+  margin-bottom: 0 !important;
+  background-color: inherit;
+  
+}
+
+.workorder .pills, .workorder .pills * {
+  font-size: 0;
+  color: transparent;
+}
+
+.workorder .namedPill {
+  width: var(--percentage);
+  display: inline-block;
+  border: 0;
+  font-size: 0;
+}
+.workorder .namedPill::after {
+  content: '';
+  display: none;
+}
+
+[bg-title='QUAN'] {
+  background-color: coral !important;
+}
+[bg-title='BEXA'] {
+  background-color: darkcyan !important;
+}
+[bg-title='BORA'] {
+  background-color: tomato !important;
+}
+[bg-title='TARA'] {
+  background-color: cadetblue !important;
+}
+[bg-title='LARA'] {
+  background-color: lightskyblue !important;
+}
+[bg-title='AGRI'] {
+  background-color: turquoise !important;
+}
+[bg-title='HEPH'] {
+  background-color: royalblue !important;
+}
+[bg-title='TITA'] {
+  background-color: lightsteelblue !important;
+}
+[bg-title='DIAM'] {
+  background-color: whitesmoke !important;
+}
+[bg-title='GOLD'] {
+  background-color: goldenrod !important;
+}
+[bg-title='COPP'] {
+  background-color: sienna !important;
+}
+[bg-title='BERY'] {
+  background-color: skyblue !important;
+}
+[bg-title='TUNG'] {
+  background-color: slategray !important;
+}
+[bg-title='CORU'] {
+  background-color: brown !important;
+}
+[bg-title='QUAR'] {
+  background-color: darkkhaki !important;
+}
+[bg-title='ALUM'] {
+  background-color: darkgray !important;
+}
+
+dialog {
+  padding: 0;
+  margin: 8px;
+  position: absolute;
+  top: 40px;
+  bottom: 114px;
+  left: 468px;
+  right: 0;
+  width: unset !important;
+  max-height: unset !important;
+  height: unset !important;
+}
+
+dialog .dialog-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 82px;
+  margin: 10px;
+  z-index: 10;
+}
+
+dialog .contentpane {
+ height: 100%;
+}
+dialog fieldset:first-child {
+  height: fit-content;
+}
