@@ -54,7 +54,7 @@ app.listen(PORT, async () => {
         }
         publicData.commodities = await fetchCommodities();
         publicData.ships = await fetchShips();
-
+        console.log(publicData.commodities);
         const d = await fetchTradeports();
         publicData.tradeports = d?.tradeports;
         publicData.systems = d?.systems;

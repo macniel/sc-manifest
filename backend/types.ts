@@ -122,6 +122,7 @@ export interface CommodityEntry extends TypedElement {
     operation?: "buy" | "sell";
     price_buy?: number;
     price_sell?: number;
+    trade_price_buy?: number;
     trade_price_sell?: number;
     data_modified?: number;
     date_updated?: Timestamp;

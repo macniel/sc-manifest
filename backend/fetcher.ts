@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { PublicData, PublicTradeport, ShipData, ShipResponse } from "./types";
+import { CommodityEntry, PublicData, PublicTradeport, ShipData, ShipResponse } from "./types";
 import { join } from"path";
 import { readFileSync } from "fs";
 
@@ -28,6 +28,16 @@ const fetchShips = async function () {
   }
 }
 
+const update319Prices = function (dataset:CommodityEntry[]):any {
+  return dataset.map( (set: CommodityEntry) => {
+    return {
+      ...set,
+      trade_price_buy: (set.trade_price_buy || 0) / 100,
+      trade_price_sell: (set.trade_price_sell || 0) / 100,
+    }
+  });
+}
+
 const fetchCommodities = async function () {
   if (process.env.UEX_APIKEY && process.env.UEX_ENDPOINT) {
     const UEX_APIKEY = process.env.UEX_APIKEY;
@@ -35,7 +45,8 @@ const fetchCommodities = async function () {
     const commodities = await fetch(UEX_ENDPOINT + "commodities", {
       headers: { api_key: UEX_APIKEY },
     }).then((response) => response.json());
-    return commodities.data;
+    
+    return update319Prices(commodities.data);
   }
 }
 
