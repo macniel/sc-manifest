@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { CommodityEntry, PublicData, PublicTradeport, ShipData, ShipResponse } from "./types";
+import { CommodityEntry, PublicData, PublicTradeport, ShipData, ShipResponse, TradeportCommodities, TradeportCommodity } from "./types";
 import { join } from"path";
 import { readFileSync } from "fs";
 
@@ -28,13 +28,22 @@ const fetchShips = async function () {
   }
 }
 
-const update319Prices = function (dataset:CommodityEntry[]):any {
+const update319Prices = function (dataset:any):any {
+  debugger;
   return dataset.map( (set: CommodityEntry) => {
     return {
       ...set,
       trade_price_buy: (set.trade_price_buy || 0) / 100,
       trade_price_sell: (set.trade_price_sell || 0) / 100,
     }
+  });
+}
+
+const update319PricesOfTradeport = function (dataset:TradeportCommodities):any {
+  debugger;
+  Object.values(dataset).forEach( v => {
+    v.price_buy /= 100;
+    v.price_sell /= 100;
   });
 }
 
@@ -62,7 +71,6 @@ const fetchTradeports = async function (systems?: any) {
     const tradeports = await fetch(UEX_ENDPOINT + "tradeports", {
       headers: { api_key: UEX_APIKEY },
     }).then((response) => response.json());
-
     publicData.tradeports = tradeports.data;
     tradeports.data.forEach( (tradeport:PublicTradeport) => {
       const path: string[] = [];
@@ -71,6 +79,9 @@ const fetchTradeports = async function (systems?: any) {
       if (tradeport.satellite) path.push(tradeport.satellite);
       else if (tradeport.city) path.push(tradeport.city);
       
+      // update prices for 3.19
+      update319PricesOfTradeport(tradeport.prices);
+
       const location = publicData.systems?.find((s) => {
         if (s.path) {
           const target = JSON.stringify([...s.path, s.code]);

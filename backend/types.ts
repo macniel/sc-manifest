@@ -46,6 +46,20 @@ export interface WorkorderData {
     }[]
 }
 
+export type TradeportCommodity = {
+    name: string;
+    kind: string;
+    operation: "sell" | "buy";
+    price_buy: number;
+    price_sell: number;
+    date_update: Timestamp;
+    is_updated: boolean;
+}
+
+export type TradeportCommodities = {   
+    [key: string]: TradeportCommodity
+}
+
 export interface PublicTradeport extends TypedElement {
     system?: string;
     planet?: string;
@@ -62,17 +76,7 @@ export interface PublicTradeport extends TypedElement {
     minable: "0" | "1";
     date_added: Timestamp;
     date_modified: Timestamp;
-    prices: {
-        [key: string]: {
-            name: string;
-            kind: string;
-            operation: "sell" | "buy";
-            price_buy: number;
-            price_sell: number;
-            date_update: Timestamp;
-            is_updated: boolean;
-        }
-    };
+    prices: TradeportCommodities;
     
 }
 
